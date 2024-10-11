@@ -3,13 +3,13 @@ import {Nav, NavLink, NavMenu} from "./NavbarElements"
 
 const Navbar = () => {
 	return (
-		<div>
+		<>
 			<Nav>
 				<NavMenu>
 					<NavLink to="/Profile" activeStyle>
 						My Profile
 					</NavLink>
-					<NavLink to="/Pokedex" activeStyle>
+					<NavLink to="/" activeStyle>
 						Pokedex
 					</NavLink>
 					<NavLink to="/Login" activeStyle>
@@ -17,7 +17,7 @@ const Navbar = () => {
 					</NavLink>
 				</NavMenu>
 			</Nav>
-		</div>
+		</>
 	);
 };
 

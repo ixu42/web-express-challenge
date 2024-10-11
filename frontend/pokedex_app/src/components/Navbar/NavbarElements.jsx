@@ -4,7 +4,7 @@ import React from "react";
 import styled from "styled-components";
 
 export const Nav = styled.nav`
-    background: #ffb3ff;
+    background: #3e175e;
     height: 85px;
     display: flex;
     justify-content: space-between;
@@ -13,21 +13,23 @@ export const Nav = styled.nav`
 `;
 
 export const NavLink = styled(Link)`
-    color: #808080;
+    color: #8e6dc7;
     display: flex;
     align-items: center;
     text-decoration: none;
     padding: 0 1rem;
     height: 100%;
     cursor: pointer;
+    font-size: 2rem;
+    font-family: "Garamond", sans-serif;
     &.active {
-        color: #4d4dff;
+        color: #ffffff;
     }
 `;
 
 export const Bars = styled(FaBars)`
     display: none;
-    color: #808080;
+    color: #3d069c;
     @media screen and (max-width: 768px) {
         display: block;
         position: absolute;

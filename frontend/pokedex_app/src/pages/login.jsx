@@ -3,9 +3,10 @@ import React from "react";
 const Login = () => {
 
 	return (
-	<div>
-        <h1>Login</h1>
-    </div>)
+	<main>
+		<h1>Login</h1>
+	</main>
+	)
 }
 
 export default Login;
