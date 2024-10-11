@@ -3,7 +3,7 @@ import {Nav, NavLink, NavMenu} from "./NavbarElements"
 
 const Navbar = () => {
 	return (
-		<>
+		<div>
 			<Nav>
 				<NavMenu>
 					<NavLink to="/Profile" activeStyle>
@@ -17,8 +17,8 @@ const Navbar = () => {
 					</NavLink>
 				</NavMenu>
 			</Nav>
-		</>
-	)
-}
+		</div>
+	);
+};
 
 export default Navbar

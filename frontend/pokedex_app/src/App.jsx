@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import React from "react";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Pokedex from './pages/pokedex';
 import Profile from './pages/profile';
 import Login from './pages/login';
 import Pokemon from './pages/pokemon';
-import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
