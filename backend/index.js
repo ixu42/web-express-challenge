@@ -54,40 +54,26 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
   } catch (err) {
     console.error(err)
     if (err.response) {
+      // The request was made and the server responded with a status code
       res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
     } else {
+      // Something happened in setting up the request that triggered an error
       res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.' })
     }
   }
 })
 
-// Details of a Pokémon by name
-app.get('/api/pokemon/:name', async (req, res) => {
-  const { name } = req.params
-  console.log("name:", name)
-  try {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
-    res.json(response.data)
-  } catch (err) {
-    console.error(err)
-    if (err.response) {
-      // The request was made and the server responded with a status code
-      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
-    } else {
-      // Something happened in setting up the request that triggered an error
-      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
-    }
-  }
-})
-
 // A list of Pokémon by type
-app.get('/api/pokemon/type/:type', async (req, res) => {
+app.get('/api/pokemon/type/:type?', async (req, res) => {
   const { type } = req.params
   console.log("type:", type)
   try {
+    if (!type || type.trim() === "") {
+      return res.status(404).json({ 'error': 'Type not provided.' })
+    }
     const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
 
-  // Extract a list of Pokémon of the given type
+  // Extract a list of Pokémon of a given type
   const typePokemon = response.data.pokemon.map(p => ({
     name: p.pokemon.name,
     url: p.pokemon.url
@@ -95,6 +81,26 @@ app.get('/api/pokemon/type/:type', async (req, res) => {
 
   res.json(typePokemon)
 
+  } catch (err) {
+    console.error(err)
+    if (err.response) {
+      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
+    } else {
+      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
+    }
+  }
+})
+
+// Details of a Pokémon by name
+app.get('/api/pokemon/:name?', async (req, res) => {
+  const { name } = req.params
+  console.log("name:", name)
+  try {
+    if (!name || name.trim() === "") {
+      return res.status(404).json({ 'error': 'Name not provided.' })
+    }
+    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
+    res.json(response.data)
   } catch (err) {
     console.error(err)
     if (err.response) {
