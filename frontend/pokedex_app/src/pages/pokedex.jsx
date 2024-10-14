@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from '../../img/logo.png';
 
 const Pokedex = () => {
 	const [pokemonList, setPokemonList] = useState([]);
+	const [pokemonInfo, setPokemonInfo] = useState(null);
 	// const [searchTerm, setSearchTerm] = useState("");
-	const [selectedPokemon, setSelectedPokemon] = useState(null);
+	// const [selectedPokemon, setSelectedPokemon] = useState(null);
 
 	const fetchPokemonList = async () => {
 		try {
-			const response = await fetch(`/api/pokemon}`);
+			const response = await fetch(`/api/pokemon`);
 			const data = await response.json();
 			setPokemonList(data);
 		} catch (error) {
@@ -17,13 +18,6 @@ const Pokedex = () => {
 	};
 
 	fetchPokemonList();
-
-	// const showPokemon = async (url) => {
-	// 	const response = await fetch(url);
-	// 	const data = await response.json();
-	// 	setSelectedPokemon(data);
-	//   };
-
 	return (
 	<div>
 		<header>
@@ -35,18 +29,20 @@ const Pokedex = () => {
 			</div>
 			<h1>Pokémon List</h1>
 			<div className="pokemon-list">
-				{pokemonList.map((pokemon) => (
-					<div key={pokemon.name} className="pokemon-card">
-					<img
-						src={selectedPokemon.sprites.other.dream_world.front_default}
+				{pokemonList.map((pokemon) => {
+					//console.log(pokemon.url.sprites.front_default)
+					return (<div key={pokemon.name} className="pokemon-details">
+					{/* <img
+						src={pokemon.sprites.front_default}
 						alt={pokemon.name}
-					/>
+					/> */}
 					<p>{pokemon.name}</p>
-					</div>
-				))}
+					</div>)
+				})}
 			</div>
 		</main>
-	</div>)
+	</div>
+	)
 }
 
 export default Pokedex;

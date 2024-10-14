@@ -6,13 +6,13 @@ const Navbar = () => {
 		<div>
 			<Nav>
 				<NavMenu>
-					<NavLink to="/" activeStyle>
+					<NavLink to="/">
 						Pokédex
 					</NavLink>
-					<NavLink to="/Profile" activeStyle>
+					<NavLink to="/Profile">
 						My Profile
 					</NavLink>
-					<NavLink to="/Login" activeStyle>
+					<NavLink to="/Login">
 						Log in / Sign-up
 					</NavLink>
 				</NavMenu>
