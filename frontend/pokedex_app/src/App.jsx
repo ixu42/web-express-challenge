@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar/Navbar";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Pokedex from './pages/pokedex';
@@ -9,8 +8,6 @@ import './App.css';
 import Pokemon from './pages/pokemon';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <Router>
       <Navbar />
