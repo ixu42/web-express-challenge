@@ -25,6 +25,15 @@ app.get('/', async (req, res) => {
       res.status(500).send('Error fetching data from PokeAPI')
     }
 })
+/* app.get('/', async (req, res) => {
+    try {
+      const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=42')
+      res.json(response.data.results)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send('Error fetching data from PokeAPI')
+    }
+}) */
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)
