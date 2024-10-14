@@ -42,10 +42,40 @@ app.get('/api/pokemon', async (req, res) => {
   }
 })
 
+// Fetch a list of Pokémon based on a substring match
+app.get('/api/pokemon/search/:query?', async (req, res) => {
+  const { query } = req.params
+  console.log("query:", query)
+
+  try {
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
+    const pokemonList = response.data.results
+
+    if (!query || query.trim() === "") {
+      return res.json(pokemonList)
+    }
+
+    const matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
+
+    if (matchingPokemon.length === 0) {
+      return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+    }
+
+    res.json(matchingPokemon)
+  } catch (err) {
+    console.error(err)
+    if (err.response) {
+      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
+    } else {
+      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.' })
+    }
+  }
+})
+
 // Details of a Pokémon by name
 app.get('/api/pokemon/:name', async (req, res) => {
   const { name } = req.params
-  console.log(name)
+  console.log("name:", name)
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
     res.json(response.data)
@@ -64,7 +94,7 @@ app.get('/api/pokemon/:name', async (req, res) => {
 // A list of Pokémon by type
 app.get('/api/pokemon/type/:type', async (req, res) => {
   const { type } = req.params
-  console.log(type)
+  console.log("type:", type)
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
 
