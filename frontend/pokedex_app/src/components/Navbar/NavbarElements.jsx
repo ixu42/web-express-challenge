@@ -1,6 +1,5 @@
 import { FaBars } from "react-icons/fa";
 import { NavLink as Link } from "react-router-dom";
-import React from "react";
 import styled from "styled-components";
 
 export const Nav = styled.nav`
