@@ -2,7 +2,7 @@ const express = require('express')
 const axios = require('axios')
 const { Pool } = require('pg')
 
-const port = 3000;
+const port = 3000
 const app = express()
 
 app.use(express.json())
@@ -18,8 +18,21 @@ const pool = new Pool({
 
 app.use(express.json())
 
+// Base URL endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'This is internal API',
+    version: '1.0.0',
+    endpoints: {
+      getPokemon: '/api/pokemon',
+      getPokemonByName: '/api/pokemon/:name',
+      getPokemonByType: '/api/pokemon/type/:type'
+    }
+  })
+})
+
 // A non-exhaustive list of 42 Pokémon
-app.get('/pokemon', async (req, res) => {
+app.get('/api/pokemon', async (req, res) => {
   try {
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=42')
     res.json(response.data.results)
@@ -30,8 +43,8 @@ app.get('/pokemon', async (req, res) => {
 })
 
 // Details of a Pokémon by name
-app.get('/pokemon/:name', async (req, res) => {
-  const { name } = req.params;
+app.get('/api/pokemon/:name', async (req, res) => {
+  const { name } = req.params
   console.log(name)
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
@@ -49,8 +62,8 @@ app.get('/pokemon/:name', async (req, res) => {
 })
 
 // A list of Pokémon by type
-app.get('/pokemon/type/:type', async (req, res) => {
-  const { type } = req.params;
+app.get('/api/pokemon/type/:type', async (req, res) => {
+  const { type } = req.params
   console.log(type)
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
@@ -66,7 +79,7 @@ app.get('/pokemon/type/:type', async (req, res) => {
   } catch (err) {
     console.error(err)
     if (err.response) {
-      res.status(err.response.status).json({ 'error': 'Pokémon not found.' });
+      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
     } else {
       res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
     }
