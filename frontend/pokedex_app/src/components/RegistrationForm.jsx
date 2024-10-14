@@ -1,12 +1,12 @@
 import React from "react";
 import { useState } from "react";
 
-const LoginForm = (props) => {
+const RegistrationForm = (props) => {
 
 	const [username, setUsername] = useState('');
 	const [user, setUser] = useState([]);
 	const [password, setPassword] = useState('');
-	const [signupUsername, setSignupUsername] = useState();
+	const [email, setEmail] = useState('')
 
 
 	const handleUsername = (event) => {
@@ -15,26 +15,35 @@ const LoginForm = (props) => {
 
 	const loginAttempt = (event) => {
 		event.preventDefault()
-		console.log(`Login attempt: ${username}, ${password}`)
+		console.log(`Registration attempt: ${username}, ${password}`)
 	}
 
 	const handlePassword = (event) => {
 		setPassword(event.target.value)
 	}
 
+	const handleEmail = (event) => {
+		setEmail(event.target.value)
+	}
+
 	return (
+		
 		<section>
+			<header>Don't have an account yet? Register here</header>
 			<form onSubmit={loginAttempt}>
 				<div>
-					Username: <input value={username}  onChange={handleUsername}/>
+					Email address: <input value={email}  onChange={handleEmail}/>
+				</div>
+				<div>
+					Username: <input value={username} onChange={handleUsername}/>
 				</div>
 				<div>
 					Password: <input value={password} onChange={handlePassword}/>
 				</div>
-			<button type="submit">Log in</button>
+			<button type="submit">Register</button>
 			</form>
 		</section>
 	)
 }
 
-export default LoginForm;
+export default RegistrationForm;
