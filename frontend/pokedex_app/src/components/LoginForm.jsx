@@ -26,10 +26,12 @@ const LoginForm = (props) => {
 		<section>
 			<form onSubmit={loginAttempt}>
 				<div>
-					Username: <input value={username}  onChange={handleUsername}/>
+					<label>Username:</label>
+					<input value={username}  onChange={handleUsername}/>
 				</div>
 				<div>
-					Password: <input value={password} onChange={handlePassword}/>
+					<label>Password:</label>
+					<input value={password} onChange={handlePassword}/>
 				</div>
 			<button type="submit">Log in</button>
 			</form>

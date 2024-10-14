@@ -15,7 +15,7 @@ const RegistrationForm = (props) => {
 
 	const loginAttempt = (event) => {
 		event.preventDefault()
-		console.log(`Registration attempt: ${username}, ${password}`)
+		console.log(`Registration attempt: ${username}, ${password}, ${email}`)
 	}
 
 	const handlePassword = (event) => {
