@@ -6,9 +6,8 @@ import RegistrationForm from "../components/RegistrationForm.jsx"
 const Login = () => {
 
 	return (
-	<main lassName="flex h-screen bg-indigo-700">
-	<div className="w-full max-w-xs m-auto bg-indigo-100 rounded p-5">
-		<header className="font-bold">Login</header>
+	<main className="flex h-screen bg-indigo-700">
+	<div className="w-full max-w-md m-auto bg-indigo-100 rounded p-5">
 		<LoginForm />
 		<RegistrationForm  />
 	</div>

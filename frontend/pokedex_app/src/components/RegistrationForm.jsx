@@ -29,18 +29,21 @@ const RegistrationForm = (props) => {
 	return (
 		
 		<section>
-			<header>Don't have an account yet? Register here</header>
+			<header className="font-bold text-indigo-800 text-3xl">Don't have an account yet? Register here</header>
 			<form onSubmit={loginAttempt}>
 				<div>
-					Email address: <input value={email}  onChange={handleEmail}/>
+					<label className="block mb-2 text-indigo-500" for="email">Email address:</label>
+					<input className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300" value={email}  onChange={handleEmail}/>
 				</div>
 				<div>
-					Username: <input value={username} onChange={handleUsername}/>
+					<label className="block mb-2 text-indigo-500" for="username">Username:</label>
+					<input className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300" value={username} onChange={handleUsername}/>
 				</div>
 				<div>
-					Password: <input value={password} onChange={handlePassword}/>
+					<label className="block mb-2 text-indigo-500" for="password">Password:</label>
+					<input className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300" value={password} onChange={handlePassword}/>
 				</div>
-			<button type="submit">Register</button>
+			<button className="w-full bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Register</button>
 			</form>
 		</section>
 	)
