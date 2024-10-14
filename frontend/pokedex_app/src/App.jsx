@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import Pokedex from './pages/pokedex';
 import Profile from './pages/profile';
 import Login from './pages/login';
+import './App.css';
 import Pokemon from './pages/pokemon';
 
 function App() {
