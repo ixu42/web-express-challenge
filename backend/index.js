@@ -31,17 +31,6 @@ app.get('/api', (req, res) => {
   })
 })
 
-// A non-exhaustive list of 42 Pokémon
-app.get('/api/pokemon', async (req, res) => {
-  try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=42')
-    res.json(response.data.results)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ 'error': 'Error fetching data from PokeAPI'})
-  }
-})
-
 // Fetch a list of Pokémon based on a substring match
 app.get('/api/pokemon/search/:query?', async (req, res) => {
   const { query } = req.params
@@ -113,6 +102,18 @@ app.get('/api/pokemon/type/:type', async (req, res) => {
     } else {
       res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
     }
+  }
+})
+
+// A full list of Pokémon
+app.get('/api/pokemon', async (req, res) => {
+  console.log("a full list of pokemon requested")
+  try {
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
+    res.json(response.data.results)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ 'error': 'Error fetching data from PokeAPI'})
   }
 })
 
