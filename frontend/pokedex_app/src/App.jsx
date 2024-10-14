@@ -8,7 +8,6 @@ import Login from './pages/login';
 import Pokemon from './pages/pokemon';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <Router>
