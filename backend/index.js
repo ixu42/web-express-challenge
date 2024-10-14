@@ -91,6 +91,18 @@ app.get('/api/pokemon/type/:type?', async (req, res) => {
   }
 })
 
+// A full list of Pokémon
+app.get('/api/pokemon', async (req, res) => {
+  console.log("a full list of pokemon requested")
+  try {
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
+    res.json(response.data.results)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ 'error': 'Error fetching data from PokeAPI'})
+  }
+})
+
 // Details of a Pokémon by name
 app.get('/api/pokemon/:name?', async (req, res) => {
   const { name } = req.params
@@ -111,17 +123,7 @@ app.get('/api/pokemon/:name?', async (req, res) => {
   }
 })
 
-// A full list of Pokémon
-app.get('/api/pokemon', async (req, res) => {
-  console.log("a full list of pokemon requested")
-  try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
-    res.json(response.data.results)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ 'error': 'Error fetching data from PokeAPI'})
-  }
-})
+
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)
