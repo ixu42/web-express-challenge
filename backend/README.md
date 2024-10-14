@@ -9,7 +9,7 @@ https://localhost.com:3000/api
 ### 1. Get a list of Pokémon
 - **Endpoint**: `/api/pokemon`
 - **Method**: `GET`
-- **Description**: Fetches the details of a non-exhaustive list of 42 Pokémon.
+- **Description**: Fetches the details of a full list of Pokémon.
 - **Response**:
   - **200 OK**
     ```json
@@ -27,7 +27,7 @@ https://localhost.com:3000/api
     ```
 
 ### 2. Get Pokémon by Name
-- **Endpoint**: `/api/pokemon/:name`
+- **Endpoint**: `/api/pokemon/:name?`
 - **Method**: `GET`
 - **Description**: Fetches the details of a Pokémon by its name.
 - **Path Parameters**:
@@ -59,7 +59,7 @@ https://localhost.com:3000/api
     ```
 
 ### 3. Get Pokémon by Type
-- **Endpoint**: `/api/pokemon/type/:type`
+- **Endpoint**: `/api/pokemon/type/:type?`
 - **Method**: `GET`
 - **Description**: Fetches the details of a list of Pokémon by its type.
 - **Path Parameters**:
@@ -83,5 +83,37 @@ https://localhost.com:3000/api
     ```json
     {
       "error": "Pokémon not found."
+    }
+    ```
+
+### 4. Get a list of Pokémon by query
+- **Endpoint**: `/api/pokemon/search/:query?`
+- **Method**: `GET`
+- **Description**: Fetches a list of Pokémon based on a substring match.
+- **Path Parameters**:
+  - `query` (string, required): The string entered in the search bar.
+- **Response**:
+  - **200 OK**
+    ```json
+    [
+      {
+        "name": "pikachu",
+        "url": "https://pokeapi.co/api/v2/pokemon/25/"
+      },
+      {
+        "name": "magikarp",
+        "url": "https://pokeapi.co/api/v2/pokemon/129/"
+      },
+      {
+        "name": "zebstrika",
+        "url": "https://pokeapi.co/api/v2/pokemon/523/"
+      },
+      ...
+    ]
+    ```
+  - **404 Not Found**
+    ```json
+    {
+      "error": "No matching Pokémon found."
     }
     ```
