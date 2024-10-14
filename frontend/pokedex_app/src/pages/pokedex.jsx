@@ -18,6 +18,7 @@ const Pokedex = () => {
 	};
 
 	fetchPokemonList();
+
 	return (
 	<div>
 		<header>
@@ -27,19 +28,13 @@ const Pokedex = () => {
 			<div className="search-container">
 				<input className="search-box" type="text" placeholder="Search..." />
 			</div>
-			<h1>Pokémon List</h1>
-			<div className="pokemon-list">
-				{pokemonList.map((pokemon) => {
-					//console.log(pokemon.url.sprites.front_default)
-					return (<div key={pokemon.name} className="pokemon-details">
-					{/* <img
-						src={pokemon.sprites.front_default}
-						alt={pokemon.name}
-					/> */}
-					<p>{pokemon.name}</p>
-					</div>)
-				})}
-			</div>
+			<ul>
+				{pokemonList.map((pokemon) => (
+			 		<li key={pokemon.id} className="pokemon-item">
+						<a href={`/pokemon/${pokemon.name}`} onClick={() => pokemon.url}>{pokemon.name}</a>
+					</li>
+				))}
+			</ul>
 		</main>
 	</div>
 	)
