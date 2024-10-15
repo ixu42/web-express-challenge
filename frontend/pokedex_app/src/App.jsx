@@ -6,8 +6,10 @@ import Profile from './pages/profile';
 import Login from './pages/login';
 import './App.css';
 import Pokemon from './pages/pokemon';
+import './index.css'
 
 function App() {
+
   return (
     <Router>
       <Navbar />
