@@ -7,9 +7,11 @@ const Login = () => {
 
 	return (
 	<main className="h-screen bg-cover bg-center" style={{backgroundImage: `url(${background})`}}>
-	<div className="opacity-50 w-full max-w-md m-auto bg-yellow-200 rounded p-5">
+	<div className="flex h-screen">
+	<div className="opacity-60 w-full max-w-md m-auto bg-gray-400 rounded p-5">
 		<LoginForm />
 		<RegistrationForm  />
+	</div>
 	</div>
 	</main>
 	)
