@@ -95,7 +95,7 @@ app.get('/api/pokemon/type/:type?', async (req, res) => {
 app.get('/api/pokemon', async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  console.log("/api/pokemon requested:", "limit=", limit, "offset=", offset)
+  console.log("/api/pokemon requested:", "limit =", limit, "offset =", offset)
   
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
