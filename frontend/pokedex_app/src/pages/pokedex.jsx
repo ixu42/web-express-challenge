@@ -8,10 +8,12 @@ const Pokedex = () => {
 	const [offset, setOffset] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [MorePokemon, setMorePokemon] = useState(true);
+  const [matchingList, setMatchingList] = useState([]);
 
-	const limit = 24; // Number of Pokémon per page
+	const limit = 5; // Number of Pokémon per page
 
 	const fetchPokemonList = async () => {
+    console.log("fetchPokemonList() called")
 		setLoading(true);
 		try {
 			const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
@@ -28,19 +30,22 @@ const Pokedex = () => {
 	};
 
 	const searchPokemon = async (query) => {
+    console.log("searchPokemon() called")
 		setLoading(true);
 		try {
 			const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offset}`);
 			if (response.ok) {
-				const filteredList = await response.json();
-				setPokemonList(filteredList); // Update list with the search results
+				const newMatchingList = await response.json();
+        console.log("matchingList", matchingList)
+        console.log("newMatchingList", newMatchingList)
 
-			// if (filteredList.length < limit) {
-			// 	setMorePokemon(false);
-			// }
-			// setPokemonList(prevList => [...prevList, ...filteredList])
+        if (newMatchingList.length < limit) {
+          setMorePokemon(false);
+			}
+			setMatchingList(prevList => [...prevList, ...newMatchingList])
+      console.log("matchingList...", matchingList)
 			} else {
-				setPokemonList([]); // Clear the list if no Pokémon found
+				setMatchingList([]); // Clear the list if no Pokémon found
 			}
 		} catch (error) {
 			console.error("Error searching Pokémon:", error);
@@ -50,14 +55,22 @@ const Pokedex = () => {
 	};
 
 	const loadMorePokemon = () => {
-		setOffset(prevOffset => prevOffset + limit);
+    console.log("loadMorePokemon")
+    setOffset(prevOffset => prevOffset + limit);
 	};
 
 	useEffect(() => {
+    console.log("useEffect() called")
 		if (searchTerm) {
+      if (pokemonList) {
+        setPokemonList([]);
+      }
 			// Call the search function if there is a search term
 			searchPokemon(searchTerm);
 		} else {
+      if (matchingList) {
+        setMatchingList([]);
+      }
 			// Fetch the list if there is no search term
 			fetchPokemonList();
 		}
@@ -78,13 +91,20 @@ const Pokedex = () => {
 					onChange={(e) => setSearchTerm(e.target.value)} // Update search term on change
 				/>
 			</div>
-			<ul>
-				{pokemonList.map((pokemon) => (
+			{!searchTerm && (<ul>
+        {pokemonList.map((pokemon) => (
 			 		<li key={pokemon.name} className="pokemon-item">
 						<a href={`/pokemon/${pokemon.name}`} onClick={() => pokemon.url}>{pokemon.name}</a>
 					</li>
 				))}
-			</ul>
+			</ul>)}
+      {searchTerm && (<ul>
+        {matchingList.map((pokemon) => (
+			 		<li key={pokemon.name} className="pokemon-item">
+						<a href={`/pokemon/${pokemon.name}`} onClick={() => pokemon.url}>{pokemon.name}</a>
+					</li>
+				))}
+			</ul>)}
 		</main>
 		{MorePokemon && (<button
 			onClick={loadMorePokemon}
