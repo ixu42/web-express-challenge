@@ -5,7 +5,7 @@ const Navbar = () => {
 	return (
 		<>
 			<nav className="h-24 bg-rose-900 text-center">
-				<div className="font-pokemon text-zinc-700 text-6xl py-5 flex justify-evenly">
+				<div className="font-bold font-pokemon text-zinc-800 text-6xl py-5 flex justify-evenly">
 					<NavLink to="/Profile">
 						My Profile
 					</NavLink>
