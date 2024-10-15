@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom'; // For internal linking to profile pages
 import logo from '../../img/logo.png';
 
 const Pokedex = () => {
 	const [pokemonList, setPokemonList] = useState([]);
-	// const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState("");
 	// const [selectedPokemon, setSelectedPokemon] = useState(null);
 	const [offset, setOffset] = useState(0);
 	const [loading, setLoading] = useState(false);
@@ -28,13 +27,41 @@ const Pokedex = () => {
 		}
 	};
 
+	const searchPokemon = async (query) => {
+		setLoading(true);
+		try {
+			const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offset}`);
+			if (response.ok) {
+				const filteredList = await response.json();
+				setPokemonList(filteredList); // Update list with the search results
+
+			// if (filteredList.length < limit) {
+			// 	setMorePokemon(false);
+			// }
+			// setPokemonList(prevList => [...prevList, ...filteredList])
+			} else {
+				setPokemonList([]); // Clear the list if no Pokémon found
+			}
+		} catch (error) {
+			console.error("Error searching Pokémon:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const loadMorePokemon = () => {
 		setOffset(prevOffset => prevOffset + limit);
 	};
 
 	useEffect(() => {
-		fetchPokemonList();
-	}, [offset]);
+		if (searchTerm) {
+			// Call the search function if there is a search term
+			searchPokemon(searchTerm);
+		} else {
+			// Fetch the list if there is no search term
+			fetchPokemonList();
+		}
+	}, [searchTerm, offset]); // Trigger fetch based on searchTerm and offset
 
 	return (
 	<div>
@@ -43,7 +70,13 @@ const Pokedex = () => {
 		</header>
 		<main>
 			<div className="search-container">
-				<input className="search-box" type="text" placeholder="Search..." />
+				<input
+					className="search-box"
+					type="text"
+					placeholder="Search..."
+					value={searchTerm} // Set input value to the search term
+					onChange={(e) => setSearchTerm(e.target.value)} // Update search term on change
+				/>
 			</div>
 			<ul>
 				{pokemonList.map((pokemon) => (
