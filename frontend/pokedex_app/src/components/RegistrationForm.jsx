@@ -7,6 +7,8 @@ const RegistrationForm = (props) => {
 	const [user, setUser] = useState([]);
 	const [password, setPassword] = useState('');
 	const [email, setEmail] = useState('')
+	const [pwordVisibility, setPwordVisibility] = useState(false);
+
 
 
 	const handleUsername = (event) => {
@@ -41,9 +43,15 @@ const RegistrationForm = (props) => {
 				</div>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="register-password">Password:</label>
-					<input id="register-password" className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300" type="password" value={password} onChange={handlePassword}/>
+					<input id="register-password" className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300" type={
+						pwordVisibility	?	"text"	:	"password"
+					} value={password} onChange={handlePassword}/>
 				</div>
-			<button className="font-pokemon w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Register</button>
+				<div>
+					<label htmlFor="show-password">Show password? </label>
+					<input id="show-password" type="checkbox" value={pwordVisibility} onChange={() => setPwordVisibility((previous) => !previous)}/>
+				</div>
+			<button className="font-pokemon w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded" type="submit">Register</button>
 			</form>
 		</section>
 	)
