@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom'; // For internal linking to profile pages
 import logo from '../../img/logo.png';
 
 const Pokedex = () => {
 	const [pokemonList, setPokemonList] = useState([]);
-	const [pokemonInfo, setPokemonInfo] = useState(null);
 	// const [searchTerm, setSearchTerm] = useState("");
 	// const [selectedPokemon, setSelectedPokemon] = useState(null);
 	const [offset, setOffset] = useState(0);
 	const [loading, setLoading] = useState(false);
 	const [MorePokemon, setMorePokemon] = useState(true);
 
-	const limit = 40; // Number of Pokémon per page
+	const limit = 24; // Number of Pokémon per page
 
 	const fetchPokemonList = async () => {
 		setLoading(true);
