@@ -29,8 +29,6 @@ const PokemonProfile = () => {
 	if (loading) return <div>Loading...</div>;
 	if (error) return <div>{error}</div>;
 
-	//console.log(pokemonInfo.types[0].type.name)
-
 	return (
 		<div className="pokemon-details">
 		<h1 className="font-pokemon text-zinc-700 text-6xl py-5 flex justify-evenly">{pokemonInfo.name }</h1>
