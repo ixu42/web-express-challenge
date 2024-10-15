@@ -16,8 +16,8 @@ const PokemonProfile = () => {
 		}
 		const data = await response.json();
 		setPokemonInfo(data);
-		} catch (err) {
-		setError(err.message);
+		} catch (error) {
+		setError(error.message);
 		} finally {
 		setLoading(false);
 		}
@@ -42,6 +42,7 @@ const PokemonProfile = () => {
 		<p>Weight: {pokemonInfo.weight}</p>
 		<p> Type: {pokemonInfo.types[0].type.name}
 		{pokemonInfo.types[1]?.type.name && `, ${pokemonInfo.types[1].type.name}`}</p>
+		<div className="stats-section">
 		<h2>Stats</h2>
 		{pokemonInfo.stats.map((stats, index) => (
 			<div key={index}>
@@ -50,8 +51,39 @@ const PokemonProfile = () => {
 				</p>
 			</div>
 		))}
-		{/* Add more fields as needed */}
-	</div>
+		</div>
+			{/* Like and Dislike Buttons */}
+			{/* <div className="like-dislike-section">
+				<button
+					className={`like-button ${likeStatus === 'like' ? 'active' : ''}`}
+					onClick={() => handleLikeDislike('like')}
+				>
+					Like
+				</button>
+				<button
+					className={`dislike-button ${likeStatus === 'dislike' ? 'active' : ''}`}
+					onClick={() => handleLikeDislike('dislike')}
+				>
+					Dislike
+				</button>
+			</div> */}
+			{/* Like and Dislike Buttons */}
+			{/* <div className="like-dislike-section">
+				<button
+					className={`like-button ${likeStatus === 'like' ? 'active' : ''}`}
+					onClick={() => handleLikeDislike('like')}
+				>
+					Like
+				</button>
+				<button
+					className={`dislike-button ${likeStatus === 'dislike' ? 'active' : ''}`}
+					onClick={() => handleLikeDislike('dislike')}
+				>
+					Dislike
+				</button>
+			</div> */}
+			{/* Add more fields as needed */}
+		</div>
 	);
 };
 
