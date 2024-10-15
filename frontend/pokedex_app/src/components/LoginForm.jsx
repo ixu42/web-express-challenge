@@ -24,7 +24,7 @@ const LoginForm = (props) => {
 
 	return (
 		<section className="">
-			<header className="w-28 mx-auto mb-5 font-bold text-indigo-800 text-5xl">Login</header>
+			<header className="font-pokemon w-28 mx-auto mb-5 font-bold text-blue-700 text-5xl">Login</header>
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-indigo-500" for="username">Username:</label>
@@ -34,7 +34,7 @@ const LoginForm = (props) => {
 					<label className="block mb-2 text-indigo-500" for="password">Password:</label>
 					<input className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300" value={password} onChange={handlePassword}/>
 				</div>
-			<button className="w-full bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Log in</button>
+			<button className="w-full text-2xl font-pokemon bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Log in</button>
 			</form>
 		</section>
 	)

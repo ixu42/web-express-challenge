@@ -29,7 +29,7 @@ const RegistrationForm = (props) => {
 	return (
 		
 		<section className="border-t-4 border-indigo-700">
-			<header className="w-full text-center font-bold text-indigo-800 text-2xl">Don't have an account yet?<br/>Register here</header>
+			<header className="pt-4 font-pokemon w-full text-center font-bold text-blue-700 text-2xl">Don't have an account yet?<br/>Register here</header>
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-indigo-500" for="email">Email address:</label>
@@ -43,7 +43,7 @@ const RegistrationForm = (props) => {
 					<label className="block mb-2 text-indigo-500" for="password">Password:</label>
 					<input className="w-full p-2 mb-6 text-indigo-700 border-b-2 border-indigo-500 outline-none focus:bg-gray-300" value={password} onChange={handlePassword}/>
 				</div>
-			<button className="w-full bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Register</button>
+			<button className="font-pokemon w-full text-2xl bg-indigo-700 hover:bg-pink-700 text-white font-bold py-2 px-4 mb-6 rounded" type="submit">Register</button>
 			</form>
 		</section>
 	)
