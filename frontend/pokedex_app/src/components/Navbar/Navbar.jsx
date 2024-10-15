@@ -1,11 +1,11 @@
 import React from "react";
-import {Nav, NavLink, NavMenu} from "./NavbarElements"
+import {NavLink} from "react-router-dom"
 
 const Navbar = () => {
 	return (
 		<>
-			<Nav>
-				<NavMenu>
+			<nav className="h-24 bg-rose-900 text-center">
+				<div className="font-pokemon text-zinc-700 text-6xl py-5 flex justify-evenly">
 					<NavLink to="/Profile">
 						My Profile
 					</NavLink>
@@ -13,10 +13,10 @@ const Navbar = () => {
 						Pokedex
 					</NavLink>
 					<NavLink to="/Login">
-						Log in / Sign-up
+						Login | Signup
 					</NavLink>
-				</NavMenu>
-			</Nav>
+				</div>
+			</nav>
 		</>
 	);
 };

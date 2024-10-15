@@ -33,7 +33,7 @@ const RegistrationForm = (props) => {
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="email">Email address:</label>
-					<input className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300" value={email}  onChange={handleEmail}/>
+					<input className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300" type="email" value={email}  onChange={handleEmail}/>
 				</div>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="username">Username:</label>
