@@ -6,10 +6,11 @@ https://localhost.com:3000/api
 
 ## Endpoints
 
-### 1. Get a list of Pokémon
+### 1. Get a list of Pokémon, given limit and offset
 - **Endpoint**: `/api/pokemon`
 - **Method**: `GET`
-- **Description**: Fetches the details of a full list of Pokémon.
+- **Description**: Fetches the details of a list of Pokémon. 
+Limit: Number of Pokémon per page; offset: How many Pokémon to skip
 - **Response**:
   - **200 OK**
     ```json
