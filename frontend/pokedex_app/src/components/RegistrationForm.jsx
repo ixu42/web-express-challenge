@@ -28,8 +28,8 @@ const RegistrationForm = (props) => {
 
 	return (
 		
-		<section>
-			<header className="font-bold text-indigo-800 text-3xl">Don't have an account yet? Register here</header>
+		<section className="border-t-4 border-indigo-700">
+			<header className="w-full text-center font-bold text-indigo-800 text-2xl">Don't have an account yet?<br/>Register here</header>
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-indigo-500" for="email">Email address:</label>

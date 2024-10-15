@@ -23,8 +23,8 @@ const LoginForm = (props) => {
 	}
 
 	return (
-		<section className="justify-center">
-			<header className="font-bold text-indigo-800 text-5xl">Login</header>
+		<section className="">
+			<header className="w-28 mx-auto mb-5 font-bold text-indigo-800 text-5xl">Login</header>
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-indigo-500" for="username">Username:</label>
