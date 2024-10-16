@@ -22,6 +22,7 @@ const Pokedex = () => {
       console.log("offset:", offset);
       const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
       const newPokemonList = await response.json();
+      console.log("newPokemonList:", newPokemonList)
       if (newPokemonList.length < limit) {
         setMorePokemon(false);
       }
@@ -48,6 +49,7 @@ const Pokedex = () => {
         setMatchingList(prevList => [...prevList, ...newMatchingList])
       } else {
         setMatchingList([]);
+        setMorePokemon(false);
       }
     } catch (error) {
       console.error("Error searching Pokémon:", error);
@@ -76,7 +78,9 @@ const Pokedex = () => {
     if (userInput === "") {
       fetchPokemonList();
     } else {
-      searchPokemon(userInput);
+      if (offsetForSearching === 0) {
+        searchPokemon(userInput);
+      }
     }
   };
 
@@ -84,8 +88,8 @@ const Pokedex = () => {
     fetchPokemonList(); // Fetch pokemonList in non-search mode
   }, [offset]); // Run when offset changes
 
-   useEffect(() => {
-      searchPokemon(searchTerm); // Fetch matchingList in search mode
+  useEffect(() => {
+    searchPokemon(searchTerm); // Fetch matchingList in search mode
   }, [offsetForSearching]); // Run when offsetForSearching changes
 
   return (
