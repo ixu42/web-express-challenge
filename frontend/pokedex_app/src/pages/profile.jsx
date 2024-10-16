@@ -39,7 +39,6 @@ const Profile = () => {
     }
 
 	return (
-	<div>
         <main className="h-screen bg-cover bg-center" style={{backgroundImage: `url(${background})`}}>
             <div className="bg-slate-500 opacity-80 pb-10 pt-10 mb-10">
             <h1 className="font-bold w-full max-w-md mx-auto rounded-lg opacity-90 border-8 bg-sky-700 text-center text-5xl font-pokemon py-10 text-pink-950 border-pink-950">{testData.username}</h1>
@@ -58,7 +57,6 @@ const Profile = () => {
             <h1 className="font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-sky-700 text-center text-5xl font-pokemon py-6 text-pink-950 border-pink-950">Pokemon that I like:</h1>
             <UserLikedPokemon likedPokemon={testData.liked_pokemons}/>
         </main>
-    </div>
     )
 }
 

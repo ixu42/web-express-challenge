@@ -1,12 +1,20 @@
 import React from "react";
+import { useState } from "react";
 
-const UserLikedPokemon = (likedPokemon) => {
+const UserLikedPokemon = (props) => {
 
-	console.log(likedPokemon)
+	const likedPokemon = props.likedPokemon
+
 	return (
-		<div className="mx-96 font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-sky-700">
-			Hello
-		</div>
+		<section className="justify-center items-center grid columns-3">
+		<ul className="grid grid-cols-10 px-4 text-center pb-3 pt-3 list-inside font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-sky-700">
+			{
+				likedPokemon.map((pokemon) => {	
+					return (<li className="p-3 items-center" key={pokemon}><br/>{pokemon}</li>)
+				}
+			)}
+		</ul>
+		</section>
 	)
 }
 
