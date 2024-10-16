@@ -7,6 +7,8 @@ import Login from './pages/login';
 import './App.css';
 import PokemonProfile from './pages/pokemon_profile';
 import './index.css'
+import Footer from './components/footer';
+
 
 function App() {
 
@@ -19,6 +21,7 @@ function App() {
         <Route path="/Profile" element={<Profile/>}/>
         <Route path="/pokemon/:name" element={<PokemonProfile />} />
       </Routes>
+      <Footer />
     </Router>
   )
 }
