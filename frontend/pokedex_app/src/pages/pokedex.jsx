@@ -82,12 +82,12 @@ const Pokedex = () => {
   };
 
   const loadMorePokemon = () => {
-    console.log("loadMorePokemon");
-    if (searchTerm === "") {
-      setOffset((prevOffset) => prevOffset + limit);
-    } else {
-      setOffsetForSearching((prevOffset) => prevOffset + limit);
-    }
+	console.log("loadMorePokemon");
+	if (searchTerm === "") {
+	  setOffset((prevOffset) => prevOffset + limit);
+	} else {
+	  setOffsetForSearching((prevOffset) => prevOffset + limit);
+	}
   };
 
   const updateList = (userInput) => {
@@ -111,11 +111,11 @@ const Pokedex = () => {
   };
 
   useEffect(() => {
-    fetchPokemonList(); // Fetch pokemonList in non-search mode
+	fetchPokemonList(); // Fetch pokemonList in non-search mode
   }, [offset]); // Run when offset changes
 
   useEffect(() => {
-    searchPokemon(searchTerm); // Fetch matchingList in search mode
+	searchPokemon(searchTerm); // Fetch matchingList in search mode
   }, [offsetForSearching]); // Run when offsetForSearching changes
 
   return (
