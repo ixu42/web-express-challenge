@@ -139,7 +139,7 @@ const Pokedex = () => {
             {pokemonList.map((pokemon) => (
               <li key={pokemon.name} className="pokemon-item">
                 <a href={`/pokemon/${pokemon.name}`}>
-                  <img 
+                  <img
                     src={pokemon.image}
                     alt={pokemon.name}
                     className="pokemon-image"
@@ -158,7 +158,7 @@ const Pokedex = () => {
                 {matchingList.map((pokemon) => (
                   <li key={pokemon.name} className="pokemon-item">
                     <a href={`/pokemon/${pokemon.name}`}>
-                      <img 
+                      <img
                         src={pokemon.image}
                         alt={pokemon.name}
                         className="pokemon-image"
