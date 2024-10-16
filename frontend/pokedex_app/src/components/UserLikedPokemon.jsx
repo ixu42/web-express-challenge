@@ -7,10 +7,10 @@ const UserLikedPokemon = (props) => {
 
 	return (
 		<section className="justify-center items-center grid columns-3">
-		<ul className="grid grid-cols-10 px-4 text-center pb-3 pt-3 list-inside font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-sky-700">
+		<ul className="grid grid-cols-10 px-4 text-center pb-3 pt-3 list-inside font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-slate-800">
 			{
 				likedPokemon.map((pokemon) => {	
-					return (<li className="p-3 items-center" key={pokemon}><br/>{pokemon}</li>)
+					return (<li className="p-3 items-center text-white" key={pokemon}><br/>{pokemon}</li>)
 				}
 			)}
 		</ul>
