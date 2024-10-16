@@ -58,7 +58,25 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
       }
     }
 
-    const paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    let paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    // Fetch detailed information for each Pokémon to get the ID and image
+    paginatedResults = await Promise.all(
+      paginatedResults.map(async (pokemon) => {
+        // Fetch detailed data for each Pokemon
+        const pokemonData = await axios.get(pokemon.url);
+        const pokemonId = pokemonData.data.id;
+  
+        // Construct image URL based on the Pokemon ID (official artwork)
+        const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+  
+        return {
+          ...pokemon,
+          id: pokemonId,
+          image: imageUrl
+        };
+      })
+    );
+
     res.json(paginatedResults)
   } catch (err) {
     console.error(err)
@@ -108,7 +126,27 @@ app.get('/api/pokemon', async (req, res) => {
   
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
-    res.json(response.data.results)
+    let pokemonList = response.data.results
+
+    // Fetch detailed information for each Pokémon to get the ID and image
+    pokemonList = await Promise.all(
+    pokemonList.map(async (pokemon) => {
+      // Fetch detailed data for each Pokemon
+      const pokemonData = await axios.get(pokemon.url);
+      const pokemonId = pokemonData.data.id;
+
+      // Construct image URL based on the Pokemon ID (official artwork)
+      const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+
+      return {
+        ...pokemon,
+        id: pokemonId,
+        image: imageUrl
+      };
+    })
+  );
+
+    res.json(pokemonList)
   } catch (err) {
     res.status(500).json({ 'error': 'Error fetching Pokémon data' })
   }

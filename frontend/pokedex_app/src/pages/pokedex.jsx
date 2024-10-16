@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from '../../img/logo.png';
+import './pokedex.css';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
@@ -10,7 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 8; // Number of Pokémon per page
+  const limit = 20; // Number of Pokémon per page
 
   console.log("rendering Pokedex...");
 
@@ -122,23 +123,36 @@ const Pokedex = () => {
 
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
-          <ul>
+          <ul className="pokemon-list">
             {pokemonList.map((pokemon) => (
               <li key={pokemon.name} className="pokemon-item">
-                <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
+                <a href={`/pokemon/${pokemon.name}`}>
+                  <img 
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                  <p>{pokemon.name}</p>
+                </a>
               </li>
             ))}
-          </ul>
+        </ul>
         )}
 
         {/* Matching Pokémon list when searching */}
         {searchTerm && (
           <>
             {matchingList && matchingList.length > 0 ? (
-              <ul>
+              <ul className="pokemon-list">
                 {matchingList.map((pokemon) => (
                   <li key={pokemon.name} className="pokemon-item">
-                    <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
+                    <a href={`/pokemon/${pokemon.name}`}>
+                      <img 
+                        src={pokemon.image}
+                        alt={pokemon.name}
+                        className="pokemon-image"
+                      />
+                    {pokemon.name}</a>
                   </li>
                 ))}
               </ul>
