@@ -133,13 +133,19 @@ const Pokedex = () => {
 
         {/* Matching Pokémon list when searching */}
         {searchTerm && (
-          <ul>
-            {matchingList.map((pokemon) => (
-              <li key={pokemon.name} className="pokemon-item">
-                <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-              </li>
-            ))}
-          </ul>
+          <>
+            {matchingList && matchingList.length > 0 ? (
+              <ul>
+                {matchingList.map((pokemon) => (
+                  <li key={pokemon.name} className="pokemon-item">
+                    <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p align='center'>No Pokémon matched your search</p>
+            )}
+          </>
         )}
       </main>
     </div>
