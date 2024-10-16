@@ -2,6 +2,8 @@ const express = require('express')
 const axios = require('axios')
 const { Pool } = require('pg')
 
+const { registerUser, loginUser } = require('./userController')
+
 const port = 3000
 const app = express()
 
@@ -17,6 +19,10 @@ const pool = new Pool({
   })
 
 app.use(express.json())
+
+
+app.post('/register', registerUser)
+app.post('/login', loginUser)
 
 // Base URL endpoint
 app.get('/api', (req, res) => {
@@ -124,8 +130,6 @@ app.get('/api/pokemon/:name?', async (req, res) => {
     }
   }
 })
-
-
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)
