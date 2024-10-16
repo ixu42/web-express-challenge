@@ -7,18 +7,19 @@ import { useState } from "react";
 const Profile = () => {
 
     const [editingBio, setEditingBio] = useState(false);
+    const [bio, setBio] = useState(testData.bio)
 
     const handleBio = () => {
 
         console.log("Handling bio")
 
         if (editingBio === false)
-            return (<p className="m-3 text-pink-950">{testData.bio}</p>)
+            return (<p className="m-3 text-pink-950">{bio}</p>)
         else
         {
             return (
                 <section>
-                    <input type="text"/>
+                    <textarea defaultValue={bio} maxLength={3000} rows={10} type="text"/>
                 </section>
             )
         }
@@ -28,8 +29,8 @@ const Profile = () => {
         setEditingBio(true);
     }
 
-    const handleBioChanging = (event) => {
-        
+    const handleBioSaving = (event) => {
+        setEditingBio(false);
     }
 
 	return (
@@ -45,7 +46,7 @@ const Profile = () => {
             </div>
             <div className="flex m-8 justify-between">
             <button type="button" className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Change profile picture</button>
-            <button className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Save bio changes</button>
+            <button type="button" onClick={handleBioSaving} className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Save bio changes</button>
             <button type="button" onClick={handleBioEditing} className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Edit bio</button>
             </div>
             </div>
