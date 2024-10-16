@@ -42,14 +42,14 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
     const pokemonList = response.data.results
 
+    let matchingPokemon;
     if (!query || query.trim() === "") {
-      return res.json(pokemonList)
-    }
-
-    const matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
-
-    if (matchingPokemon.length === 0) {
-      return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+      matchingPokemon = pokemonList
+    } else {
+      matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
+      if (matchingPokemon.length === 0) {
+        return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+      }
     }
 
     const paginatedResults = matchingPokemon.slice(offset, offset + limit);
