@@ -32,7 +32,6 @@ const insertPokemonTypes = async (pokemonId, typeId) => {
 
 const savePokemon = async (pokemon) => {
   try {
-    //await db.query("BEGIN");
     const pokemonId = await insertPokemon(pokemon);
     console.log("pokemonId", pokemonId);
 
@@ -45,9 +44,7 @@ const savePokemon = async (pokemon) => {
         typeIds.map((typeId) => insertPokemonTypes(pokemonId, typeId))
       );
     }
-    //await db.query("COMMIT");
   } catch (error) {
-   // await db.query("ROLLBACK");
     console.error(error);
   }
 };

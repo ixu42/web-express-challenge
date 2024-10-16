@@ -12,7 +12,7 @@ CREATE TABLE users (
 
 -- auth table 
 CREATE TABLE auth (
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     token VARCHAR(100),
     last_login TIMESTAMP DEFAULT NOW(),
     PRIMARY KEY(user_id)
@@ -21,9 +21,9 @@ CREATE TABLE auth (
 -- Profile Table
 CREATE TABLE profile (
     id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     bio TEXT,
-    profile_pic VARCHAR(255),
+    profile_pic bytea,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
