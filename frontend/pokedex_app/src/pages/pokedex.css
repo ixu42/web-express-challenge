@@ -1,0 +1,27 @@
+.pokemon-list {
+  display: flex; /* enables Flexbox layout for the list items */
+  flex-wrap: wrap; /* allows the flex items to wrap onto the next line if there isn’t enough space in the container */
+  gap: 20px;
+  padding: 0;
+}
+
+.pokemon-item {
+  text-align: center;
+  width: 250px;
+}
+
+.pokemon-image {
+  width: 100px;
+  height: 80px;
+  display: block;
+  margin: 0 auto;
+}
+
+.pokemon-item a {
+  text-decoration: none;
+  color: #333;
+}
+
+.pokemon-item a:hover {
+  color: #007bff;
+}
