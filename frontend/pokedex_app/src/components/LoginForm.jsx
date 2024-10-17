@@ -15,7 +15,36 @@ const LoginForm = (props) => {
 
 	const loginAttempt = (event) => {
 		event.preventDefault()
-		console.log(`Login attempt: ${username}, ${password}`)
+		const userInfo = {
+			username: username,
+			password: password
+		}
+		fetch("/api/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(userInfo),
+		})
+		.then((response) => {
+			if (response.status === 400)
+			{
+				alert("Both username and password are required")
+			}
+			else if (response.status === 401)
+			{
+				alert("Invalid username or password")
+			}
+			else if (response.status === 500)
+			{
+				alert("Error logging in")
+			}
+			else
+			{
+				alert("Logged in successfully!")
+			}
+			})
+		.catch((error) => alert("Error registering user"))
 	}
 
 	const handlePassword = (event) => {

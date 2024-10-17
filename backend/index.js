@@ -18,8 +18,8 @@ const pool = new Pool({
     port: 5432,
   })
 
-app.post('/register', registerUser)
-app.post('/login', loginUser)
+app.post('/api/register', registerUser)
+app.post('/api/login', loginUser)
 
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'

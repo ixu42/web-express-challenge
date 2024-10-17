@@ -4,7 +4,6 @@ import { useState } from "react";
 const RegistrationForm = (props) => {
 
 	const [username, setUsername] = useState('');
-	const [user, setUser] = useState([]);
 	const [password, setPassword] = useState('');
 	const [email, setEmail] = useState('')
 	const [pwordVisibility, setPwordVisibility] = useState(false);
@@ -15,9 +14,35 @@ const RegistrationForm = (props) => {
 		setUsername(event.target.value)
 	}
 
-	const loginAttempt = (event) => {
+	const attemptRegistration = (event) => {
 		event.preventDefault()
-		console.log(`Registration attempt: ${username}, ${password}, ${email}`)
+		const newUser = {
+			username: username,
+			password: password,
+			email: email
+		}
+
+		fetch("/api/register", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(newUser),
+		})
+		.then((response) => {
+			if (response.status === 201)
+			{
+				alert("Successfully registered!")
+			}
+			else if (response.status === 400)
+			{
+				alert("Username and password are required")
+			}
+			else
+			{
+				alert("Error registering user")
+			}})
+		.catch((error) => alert("Error registering user"))
 	}
 
 	const handlePassword = (event) => {
@@ -32,7 +57,7 @@ const RegistrationForm = (props) => {
 		
 		<section className="border-t-4 border-pink-700">
 			<header className="pt-4 font-pokemon w-full text-center font-bold text-pink-950 text-2xl">Don't have an account yet?<br/>Register here</header>
-			<form onSubmit={loginAttempt}>
+			<form onSubmit={attemptRegistration}>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="register-email">Email address:</label>
 					<input autoComplete="off" id="register-email" className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300" type="email" value={email}  onChange={handleEmail}/>
