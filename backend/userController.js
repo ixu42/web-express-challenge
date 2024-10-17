@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
   try {
     const hash = await bcrypt.hash(password, saltRounds)
     console.log(username, password)
-    const query = 'INSERT INTO users (name, password) VALUES ($1, $2)'
+    const query = 'INSERT INTO users (username, password) VALUES ($1, $2)'
     await pool.query(query, [username, hash])
     res.status(201).json({msg: 'User registered'})
   } catch (error) {
@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    const query = 'SELECT * FROM users WHERE name = $1'
+    const query = 'SELECT * FROM users WHERE username = $1'
     const result = await pool.query(query, [username])
 
     if (result.rows.length === 0) {
