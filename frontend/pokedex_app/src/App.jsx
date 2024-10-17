@@ -5,7 +5,7 @@ import Pokedex from './pages/pokedex';
 import Profile from './pages/profile';
 import Login from './pages/login';
 import './App.css';
-import Pokemon from './pages/pokemon';
+import PokemonProfile from './pages/pokemon_profile';
 import './index.css'
 
 function App() {
@@ -17,6 +17,7 @@ function App() {
         <Route exact path="/" element={<Pokedex/>}/>
         <Route path="/Login" element={<Login />}/>
         <Route path="/Profile" element={<Profile/>}/>
+        <Route path="/pokemon/:name" element={<PokemonProfile />} />
       </Routes>
     </Router>
   )

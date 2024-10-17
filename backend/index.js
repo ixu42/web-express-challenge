@@ -2,6 +2,8 @@ const express = require('express')
 const axios = require('axios')
 const { Pool } = require('pg')
 
+const { registerUser, loginUser } = require('./userController')
+
 const port = 3000
 const app = express()
 
@@ -17,6 +19,10 @@ const pool = new Pool({
   })
 
 app.use(express.json())
+
+
+app.post('/register', registerUser)
+app.post('/login', loginUser)
 
 // Base URL endpoint
 app.get('/api', (req, res) => {
@@ -34,23 +40,26 @@ app.get('/api', (req, res) => {
 // Fetch a list of Pokémon based on a substring match
 app.get('/api/pokemon/search/:query?', async (req, res) => {
   const { query } = req.params
-  console.log("query:", query)
+  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
+  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
+  console.log("query:", query, "limit:", limit, "offset:", offset)
 
   try {
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
     const pokemonList = response.data.results
 
+    let matchingPokemon;
     if (!query || query.trim() === "") {
-      return res.json(pokemonList)
+      matchingPokemon = pokemonList
+    } else {
+      matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
+      if (matchingPokemon.length === 0) {
+        return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+      }
     }
 
-    const matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
-
-    if (matchingPokemon.length === 0) {
-      return res.status(404).json({ 'error': 'No matching Pokémon found.' })
-    }
-
-    res.json(matchingPokemon)
+    const paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    res.json(paginatedResults)
   } catch (err) {
     console.error(err)
     if (err.response) {
@@ -124,8 +133,6 @@ app.get('/api/pokemon/:name?', async (req, res) => {
     }
   }
 })
-
-
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)
