@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    const query = 'SELECT * FROM users WHERE username = $1'
+    const query = 'SELECT * FROM users WHERE name = $1'
     const result = await pool.query(query, [username])
 
     if (result.rows.length === 0) {
