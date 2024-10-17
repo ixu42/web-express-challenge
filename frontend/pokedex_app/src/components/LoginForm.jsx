@@ -19,8 +19,6 @@ const LoginForm = (props) => {
 			username: username,
 			password: password
 		}
-		console.log(`Login attempt: ${userInfo.username}, ${userInfo.password}`)
-
 		fetch("/api/login", {
 			method: "POST",
 			headers: {

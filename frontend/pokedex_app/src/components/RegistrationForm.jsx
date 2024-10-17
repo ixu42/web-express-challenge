@@ -21,7 +21,6 @@ const RegistrationForm = (props) => {
 			password: password,
 			email: email
 		}
-		console.log(`Registration attempt: ${newUser.username}, ${newUser.password}, ${newUser.email}`)
 
 		fetch("/api/register", {
 			method: "POST",
