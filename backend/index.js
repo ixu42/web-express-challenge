@@ -42,7 +42,7 @@ const isValidUrl = async (url) => {
     const response = await axios.head(url) // Use HEAD to check URL without downloading
     return response.status === 200 // Only return true if the response status is 200 OK
   } catch (error) {
-    console.error(`Invalid URL: ${url}`, error.message)
+    // console.error(`Invalid URL: ${url}`, error.message)
     return false
   }
 }
@@ -76,11 +76,12 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
         const pokemonData = await axios.get(pokemon.url)
         const pokemonId = pokemonData.data.id
   
-        // Construct image URL based on the Pokemon ID (official artwork)
-        const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
-
-        // Validate the image URL before returning it
-        const isImageValid = await isValidUrl(imageUrl)
+        let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+        let isImageValid = await isValidUrl(imageUrl)
+        if (!isImageValid) {
+          imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+        }
+        isImageValid = await isValidUrl(imageUrl)
 
         return {
           ...pokemon,
@@ -148,11 +149,12 @@ app.get('/api/pokemon', async (req, res) => {
       const pokemonData = await axios.get(pokemon.url)
       const pokemonId = pokemonData.data.id
 
-      // Construct image URL based on the Pokemon ID (official artwork)
-      const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
-
-     // Validate the image URL before returning it
-     const isImageValid = await isValidUrl(imageUrl)
+      let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+      let isImageValid = await isValidUrl(imageUrl)
+      if (!isImageValid) {
+        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+      }
+      isImageValid = await isValidUrl(imageUrl)
 
      return {
        ...pokemon,
