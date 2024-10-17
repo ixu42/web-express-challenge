@@ -12,7 +12,7 @@ const Pokedex = () => {
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
   const limit = 10; // Number of Pokémon per page
-  const searchTimeoutRef = useRef(null); // Ref to store the debounce timeout
+  const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
 
@@ -39,10 +39,23 @@ const Pokedex = () => {
   // Function to search for Pokemon
   const searchPokemon = async (query) => {
     console.log("searchPokemon() called");
+
+    // Cancel the previous fetch request if it exists
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create a new AbortController instance
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setLoading(true);
     console.log("offsetForSearching:", offsetForSearching);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`);
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`, {
+        signal: abortController.signal, // Pass the signal to the fetch request
+      });
+
       if (response.ok) {
         const newMatchingList = await response.json();
         console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
@@ -55,7 +68,9 @@ const Pokedex = () => {
         setMorePokemon(false);
       }
     } catch (error) {
-      console.error("Error searching Pokémon:", error);
+      if (error.name !== 'AbortError') {
+        console.error("Error searching Pokémon:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -72,42 +87,22 @@ const Pokedex = () => {
 
   const updateList = (userInput) => {
     console.log("updateList() called, userInput:", userInput);
-    // Clear the previous timeout to reset the delay
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
 
-    // Set the new search term
     setSearchTerm(userInput);
     setOffset(0);
+    console.log("offset:", offset);
     setOffsetForSearching(0);
+    console.log("offsetForSearching:", offsetForSearching);
     setMorePokemon(true);
     setPokemonList([]);
     setMatchingList([]);
-
-    // Debounce API calls by waiting 300ms after the user stops typing
-    searchTimeoutRef.current = setTimeout(() => {
-      if (userInput === "") {
-        fetchPokemonList();
-      } else {
+    if (userInput === "") {
+      fetchPokemonList();
+    } else {
+      if (offsetForSearching === 0) {
         searchPokemon(userInput);
       }
-    }, 300); // Wait for 300ms after the user stops typing
-    // setSearchTerm(userInput);
-    // setOffset(0);
-    // console.log("offset:", offset);
-    // setOffsetForSearching(0);
-    // console.log("offsetForSearching:", offsetForSearching);
-    // setMorePokemon(true);
-    // setPokemonList([]);
-    // setMatchingList([]);
-    // if (userInput === "") {
-    //   fetchPokemonList();
-    // } else {
-    //   if (offsetForSearching === 0) {
-    //     searchPokemon(userInput);
-    //   }
-    // }
+    }
   };
 
   useEffect(() => {
@@ -133,7 +128,6 @@ const Pokedex = () => {
             onChange={(e) => updateList(e.target.value)}
           />
         </div>
-
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
           <ul className="pokemon-list">
@@ -151,7 +145,6 @@ const Pokedex = () => {
             ))}
         </ul>
         )}
-
         {/* Matching Pokémon list when searching */}
         {searchTerm && (
           <>
@@ -174,7 +167,6 @@ const Pokedex = () => {
             )}
           </>
         )}
-
         {/* Load more button (placed before the list for testing purpose)*/}
         {morePokemon && (
           <button
@@ -186,7 +178,6 @@ const Pokedex = () => {
             {loading ? "Loading..." : "Load More Pokémon"}
           </button>
         )}
-
       </main>
     </div>
   );
