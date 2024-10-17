@@ -24,7 +24,7 @@ const likedPokemon = async (user_id, pokemon_id, name) => {
   if (result.rows.length === 0) {
     throw new ValidationError("Pokemon already liked");
   }
-  return result;
+  return result.rows[0];
 };
 
 module.exports = {
