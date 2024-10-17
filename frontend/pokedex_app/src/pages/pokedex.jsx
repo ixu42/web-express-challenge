@@ -11,7 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 20; // Number of Pokémon per page
+  const limit = 200; // Number of Pokémon per page
 
   console.log("rendering Pokedex...");
 
@@ -109,18 +109,6 @@ const Pokedex = () => {
           />
         </div>
 
-        {/* Load more button (placed before the list for testing purpose)*/}
-        {morePokemon && (
-          <button
-            onClick={loadMorePokemon}
-            disabled={loading}
-            className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-              ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
-          >
-            {loading ? "Loading..." : "Load More Pokémon"}
-          </button>
-        )}
-
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
           <ul className="pokemon-list">
@@ -161,6 +149,19 @@ const Pokedex = () => {
             )}
           </>
         )}
+
+        {/* Load more button (placed before the list for testing purpose)*/}
+        {morePokemon && (
+          <button
+            onClick={loadMorePokemon}
+            disabled={loading}
+            className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+              ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+          >
+            {loading ? "Loading..." : "Load More Pokémon"}
+          </button>
+        )}
+
       </main>
     </div>
   );
