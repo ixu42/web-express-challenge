@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const pokeApiController = require('../controllers/pokeApiController');
+const pokemonController = require("../controllers/pokemonController");
 
-// Route for fetching and storing Pokémon data
-router.get('/', pokeApiController.fetchPokemons);
-router.get('/fetch', pokeApiController.fetchPokemon);
+router.post('/liked', pokemonController.likedPokemon);
 
 module.exports = router;

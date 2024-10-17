@@ -17,6 +17,20 @@ const registerUser = async ({ username, email, password }) => {
   }
 };
 
+const getLikedPokemonsByUserId = async (user_id) => {
+  try {
+    console.log('getLikedPokemons');
+    const pokemons = await userModel.getLikedPokemonsByUserId(user_id);
+    console.log('getLikedPokemons successfull:', pokemons);
+    return pokemons;
+  } catch (error) {
+    console.log('error getLikedPokemons:', error.message);
+    throw error;
+  }
+};
+
+
 module.exports = {
   registerUser,
+  getLikedPokemonsByUserId,
 };

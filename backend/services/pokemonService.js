@@ -1,19 +1,6 @@
 const axios = require("axios");
 
-const fetchPokemons = async () => {
-  try {
-    console.log("hello from fetchPokemonData");
-    const response = await axios.get(
-      "https://pokeapi.co/api/v2/pokemon?limit=10"
-    );
-    console.log(response.data.results);
-    return response.data.results; // Assuming you want only the Pokémon data
-  } catch (error) {
-    throw new Error("Error fetching pokemons data from PokeAPI");
-  }
-};
-
-const fetchPokemon = async (NameOrId) => {
+const getPokemonById = async (id) => {
   try {
     const response = await axios.get(
       `https://pokeapi.co/api/v2/pokemon/${NameOrId}`
@@ -25,6 +12,5 @@ const fetchPokemon = async (NameOrId) => {
 };
 
 module.exports = {
-  fetchPokemons,
-  fetchPokemon,
+  getPokemonById,
 };

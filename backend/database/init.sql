@@ -5,7 +5,7 @@ CREATE TABLE users (
     username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,  -- Encrypted password
-    role VARCHAR(20) DEFAULT 'guest',  -- 'guest', 'user', 'admin'
+    role VARCHAR(20) DEFAULT 'user',  -- 'guest', 'user', 'admin'
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -19,37 +19,23 @@ CREATE TABLE auth (
 );
 
 -- Profile Table
-CREATE TABLE profile (
+CREATE TABLE profiles (
     id SERIAL PRIMARY KEY,
     user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(100),
     bio TEXT,
-    profile_pic bytea,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    profile_pic BYTEA,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- pokemons table
 CREATE TABLE pokemons (
-    id SERIAL PRIMARY KEY,
-    api_id INT UNIQUE NOT NULL,
+    --id SERIAL PRIMARY KEY,
+    id INT UNIQUE NOT NULL,
     name VARCHAR(100) UNIQUE NOT NULL,
-    url VARCHAR(255) NOT NULL,
-    description TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
-);
-
--- types table
-CREATE TABLE types (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(50) UNIQUE NOT NULL
-);
-
--- pokemon_types table
--- many to many relationship between pokemons and types
-CREATE TABLE pokemon_types (
-    pokemon_id INTEGER REFERENCES pokemons(id) ON DELETE CASCADE,
-    type_id INTEGER REFERENCES types(id) ON DELETE CASCADE,
-    PRIMARY KEY(pokemon_id, type_id)
 );
 
 -- liked_pokemons table
