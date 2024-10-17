@@ -21,8 +21,8 @@ const pool = new Pool({
 app.use(express.json())
 
 
-app.post('/register', registerUser)
-app.post('/login', loginUser)
+app.post('/api/register', registerUser)
+app.post('/api/login', loginUser)
 
 // Base URL endpoint
 app.get('/api', (req, res) => {
