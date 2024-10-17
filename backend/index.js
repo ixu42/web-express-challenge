@@ -64,7 +64,7 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
     } else {
       matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
       if (matchingPokemon.length === 0) {
-        return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+        return res.json([])
       }
     }
 
