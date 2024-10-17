@@ -179,7 +179,22 @@ app.get('/api/pokemon/:name?', async (req, res) => {
       return res.status(404).json({ 'error': 'Name not provided.' })
     }
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
-    res.json(response.data)
+    const pokemonData = response.data
+    const pokemonId = pokemonData.id
+
+    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+      let isImageValid = await isValidUrl(imageUrl)
+      if (!isImageValid) {
+        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+      }
+      isImageValid = await isValidUrl(imageUrl)
+
+    const pokemonWithValidImage = {
+      ...pokemonData,
+      image: isImageValid ? imageUrl : defaultPokemonImgUrl
+    }
+
+    res.json(pokemonWithValidImage)
   } catch (err) {
     console.error(err)
     if (err.response) {
