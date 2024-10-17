@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import logo from '../../img/logo.png';
+import './pokedex.css';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
@@ -10,7 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 8; // Number of Pokémon per page
+  const limit = 20; // Number of Pokémon per page
 
   console.log("rendering Pokedex...");
 
@@ -108,6 +109,47 @@ const Pokedex = () => {
           />
         </div>
 
+        {/* List of Pokémon when not searching */}
+        {!searchTerm && (
+          <ul className="pokemon-list">
+            {pokemonList.map((pokemon) => (
+              <li key={pokemon.name} className="pokemon-item">
+                <a href={`/pokemon/${pokemon.name}`}>
+                  <img 
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                  <p>{pokemon.name}</p>
+                </a>
+              </li>
+            ))}
+        </ul>
+        )}
+
+        {/* Matching Pokémon list when searching */}
+        {searchTerm && (
+          <>
+            {matchingList && matchingList.length > 0 ? (
+              <ul className="pokemon-list">
+                {matchingList.map((pokemon) => (
+                  <li key={pokemon.name} className="pokemon-item">
+                    <a href={`/pokemon/${pokemon.name}`}>
+                      <img 
+                        src={pokemon.image}
+                        alt={pokemon.name}
+                        className="pokemon-image"
+                      />
+                    {pokemon.name}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p align='center'>No Pokémon matched your search</p>
+            )}
+          </>
+        )}
+
         {/* Load more button (placed before the list for testing purpose)*/}
         {morePokemon && (
           <button
@@ -120,33 +162,6 @@ const Pokedex = () => {
           </button>
         )}
 
-        {/* List of Pokémon when not searching */}
-        {!searchTerm && (
-          <ul>
-            {pokemonList.map((pokemon) => (
-              <li key={pokemon.name} className="pokemon-item">
-                <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* Matching Pokémon list when searching */}
-        {searchTerm && (
-          <>
-            {matchingList && matchingList.length > 0 ? (
-              <ul>
-                {matchingList.map((pokemon) => (
-                  <li key={pokemon.name} className="pokemon-item">
-                    <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p align='center'>No Pokémon matched your search</p>
-            )}
-          </>
-        )}
       </main>
     </div>
   );

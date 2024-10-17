@@ -34,7 +34,7 @@ const PokemonProfile = () => {
 		<h1 className="font-pokemon text-zinc-700 text-6xl py-5 flex justify-evenly">{pokemonInfo.name }</h1>
 		{/* Display the Pokémon's image */}
 		<img
-			src={pokemonInfo.sprites.other.dream_world.front_default}
+			src={pokemonInfo.image}
 			alt={`${pokemonInfo.name} sprite`}
 			style={{ width: '150px', height: '150px' }} // Adjust size as needed
 		/>

@@ -18,11 +18,11 @@ const pool = new Pool({
     port: 5432,
   })
 
-app.use(express.json())
-
-
 app.post('/api/register', registerUser)
 app.post('/api/login', loginUser)
+
+// If a fetched pokemon img is invalid, fall back to default img
+const defaultPokemonImgUrl = '../img/default_pokemon.png'
 
 // Base URL endpoint
 app.get('/api', (req, res) => {
@@ -36,6 +36,16 @@ app.get('/api', (req, res) => {
     }
   })
 })
+
+const isValidUrl = async (url) => {
+  try {
+    const response = await axios.head(url) // Use HEAD to check URL without downloading
+    return response.status === 200 // Only return true if the response status is 200 OK
+  } catch (error) {
+    // console.error(`Invalid URL: ${url}`, error.message)
+    return false
+  }
+}
 
 // Fetch a list of Pokémon based on a substring match
 app.get('/api/pokemon/search/:query?', async (req, res) => {
@@ -58,7 +68,29 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
       }
     }
 
-    const paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    let paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    // Fetch detailed information for each Pokémon to get the ID and image
+    paginatedResults = await Promise.all(
+      paginatedResults.map(async (pokemon) => {
+        // Fetch detailed data for each Pokemon
+        const pokemonData = await axios.get(pokemon.url)
+        const pokemonId = pokemonData.data.id
+  
+        let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+        let isImageValid = await isValidUrl(imageUrl)
+        if (!isImageValid) {
+          imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+        }
+        isImageValid = await isValidUrl(imageUrl)
+
+        return {
+          ...pokemon,
+          id: pokemonId,
+          image: isImageValid ? imageUrl : defaultPokemonImgUrl
+        }
+      })
+    )
+
     res.json(paginatedResults)
   } catch (err) {
     console.error(err)
@@ -108,7 +140,31 @@ app.get('/api/pokemon', async (req, res) => {
   
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
-    res.json(response.data.results)
+    let pokemonList = response.data.results
+
+    // Fetch detailed information for each Pokémon to get the ID and image
+    pokemonList = await Promise.all(
+    pokemonList.map(async (pokemon) => {
+      // Fetch detailed data for each Pokemon
+      const pokemonData = await axios.get(pokemon.url)
+      const pokemonId = pokemonData.data.id
+
+      let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+      let isImageValid = await isValidUrl(imageUrl)
+      if (!isImageValid) {
+        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+      }
+      isImageValid = await isValidUrl(imageUrl)
+
+     return {
+       ...pokemon,
+       id: pokemonId,
+       image: isImageValid ? imageUrl : defaultPokemonImgUrl
+     }
+    })
+  )
+
+    res.json(pokemonList)
   } catch (err) {
     res.status(500).json({ 'error': 'Error fetching Pokémon data' })
   }
@@ -123,7 +179,22 @@ app.get('/api/pokemon/:name?', async (req, res) => {
       return res.status(404).json({ 'error': 'Name not provided.' })
     }
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
-    res.json(response.data)
+    const pokemonData = response.data
+    const pokemonId = pokemonData.id
+
+    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
+      let isImageValid = await isValidUrl(imageUrl)
+      if (!isImageValid) {
+        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
+      }
+      isImageValid = await isValidUrl(imageUrl)
+
+    const pokemonWithValidImage = {
+      ...pokemonData,
+      image: isImageValid ? imageUrl : defaultPokemonImgUrl
+    }
+
+    res.json(pokemonWithValidImage)
   } catch (err) {
     console.error(err)
     if (err.response) {

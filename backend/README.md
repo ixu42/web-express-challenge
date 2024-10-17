@@ -17,11 +17,15 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
     [
       {
         "name": "bulbasaur",
-        "url": "https://pokeapi.co/api/v2/pokemon/1/"
+        "url": "https://pokeapi.co/api/v2/pokemon/1/",
+        "id": 1,
+        "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
       },
       {
         "name": "ivysaur",
-        "url": "https://pokeapi.co/api/v2/pokemon/2/"
+        "url": "https://pokeapi.co/api/v2/pokemon/2/",
+        "id": 2,
+        "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
       },
       ...
     ]
@@ -97,18 +101,18 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
   - **200 OK**
     ```json
     [
-      {
-        "name": "pikachu",
-        "url": "https://pokeapi.co/api/v2/pokemon/25/"
-      },
-      {
-        "name": "magikarp",
-        "url": "https://pokeapi.co/api/v2/pokemon/129/"
-      },
-      {
-        "name": "zebstrika",
-        "url": "https://pokeapi.co/api/v2/pokemon/523/"
-      },
+    {
+      "name": "pikachu",
+      "url": "https://pokeapi.co/api/v2/pokemon/25/",
+      "id": 25,
+      "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+    },
+    {
+      "name": "magikarp",
+      "url": "https://pokeapi.co/api/v2/pokemon/129/",
+      "id": 129,
+      "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/129.png"
+    },
       ...
     ]
     ```
