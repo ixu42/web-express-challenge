@@ -11,7 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 100; // Number of Pokémon per page
+  const limit = 20; // Number of Pokémon per page
 
   console.log("rendering Pokedex...");
 
