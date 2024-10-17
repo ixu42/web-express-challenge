@@ -167,19 +167,21 @@ app.get('/api/pokemon/type/:type?', async (req, res) => {
 app.get('/api/pokemon', async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  const sort = req.query.sort
+  const sort = req.query.sort || 'id'
   console.log("/api/pokemon requested:", "limit =", limit, "offset =", offset, "sortorder=", sort)
 
   try {
     const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
     let pokemonList = response.data.results
 
+    //console.log("sortedPokemonList:", sortedPokemonList)
     // Fetch detailed information for each Pokémon to get the ID and image
-    pokemonList = await Promise.all(
-    pokemonList.map(async (pokemon) => {
-      // Fetch detailed data for each Pokemon
-      const pokemonData = await axios.get(pokemon.url)
-      const pokemonId = pokemonData.data.id
+    const paginatedPokemonList = sortedPokemonList.slice(offset, offset + limit);
+    let detailedPokemonList = await Promise.all(
+      paginatedPokemonList.map(async (pokemon) => {
+        // Fetch detailed data for each Pokemon
+        const pokemonData = await axios.get(pokemon.url)
+        const pokemonId = pokemonData.data.id
 
       let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
       let isImageValid = await isValidUrl(imageUrl)
@@ -188,16 +190,18 @@ app.get('/api/pokemon', async (req, res) => {
       }
       isImageValid = await isValidUrl(imageUrl)
 
-     return {
-       ...pokemon,
-       id: pokemonId,
-       image: isImageValid ? imageUrl : defaultPokemonImgUrl
-     }
+      return {
+        ...pokemon,
+        id: pokemonId,
+        image: isImageValid ? imageUrl : defaultPokemonImgUrl
+      }
     })
   )
 
-    res.json(pokemonList)
+    console.log("detailedPokemonList:", detailedPokemonList)
+    res.json(detailedPokemonList)
   } catch (err) {
+    console.error('Error in fetching Pokémon:', err.message);
     res.status(500).json({ 'error': 'Error fetching Pokémon data' })
   }
 })

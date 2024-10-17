@@ -10,7 +10,7 @@ const Pokedex = () => {
   const [morePokemon, setMorePokemon] = useState(true);
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
-  const [sortOrder, setSortOrder] = useState("id");
+  const [sortOrder, setSortOrder] = useState('id');
 
   const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
