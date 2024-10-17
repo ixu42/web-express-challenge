@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import logo from '../../img/logo.png';
 import './pokedex.css';
 
@@ -11,7 +11,8 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 20; // Number of Pokémon per page
+  const limit = 10; // Number of Pokémon per page
+  const searchTimeoutRef = useRef(null); // Ref to store the debounce timeout
 
   console.log("rendering Pokedex...");
 
@@ -19,8 +20,8 @@ const Pokedex = () => {
   const fetchPokemonList = async () => {
     console.log("fetchPokemonList() called");
     setLoading(true);
+    console.log("offset:", offset);
     try {
-      console.log("offset:", offset);
       const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
@@ -39,11 +40,12 @@ const Pokedex = () => {
   const searchPokemon = async (query) => {
     console.log("searchPokemon() called");
     setLoading(true);
+    console.log("offsetForSearching:", offsetForSearching);
     try {
       const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`);
       if (response.ok) {
         const newMatchingList = await response.json();
-        console.log("newMatchingList:", newMatchingList)
+        console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
         if (newMatchingList.length < limit) {
           setMorePokemon(false);
         }
@@ -70,19 +72,42 @@ const Pokedex = () => {
 
   const updateList = (userInput) => {
     console.log("updateList() called, userInput:", userInput);
+    // Clear the previous timeout to reset the delay
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set the new search term
     setSearchTerm(userInput);
     setOffset(0);
     setOffsetForSearching(0);
     setMorePokemon(true);
     setPokemonList([]);
     setMatchingList([]);
-    if (userInput === "") {
-      fetchPokemonList();
-    } else {
-      if (offsetForSearching === 0) {
+
+    // Debounce API calls by waiting 300ms after the user stops typing
+    searchTimeoutRef.current = setTimeout(() => {
+      if (userInput === "") {
+        fetchPokemonList();
+      } else {
         searchPokemon(userInput);
       }
-    }
+    }, 300); // Wait for 300ms after the user stops typing
+    // setSearchTerm(userInput);
+    // setOffset(0);
+    // console.log("offset:", offset);
+    // setOffsetForSearching(0);
+    // console.log("offsetForSearching:", offsetForSearching);
+    // setMorePokemon(true);
+    // setPokemonList([]);
+    // setMatchingList([]);
+    // if (userInput === "") {
+    //   fetchPokemonList();
+    // } else {
+    //   if (offsetForSearching === 0) {
+    //     searchPokemon(userInput);
+    //   }
+    // }
   };
 
   useEffect(() => {
