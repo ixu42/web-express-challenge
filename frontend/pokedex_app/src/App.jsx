@@ -7,27 +7,36 @@ import Login from './pages/login';
 import './App.css';
 import PokemonProfile from './pages/pokemon_profile';
 import './index.css'
+import Footer from './components/footer';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import ErrorBoundary from './ErrorBoundary';
 
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        {/* Wrap the element inside ErrorBoundary */}
-        <Route
-          exact
-          path="/"
-          element={
-            <ErrorBoundary>
-              <Pokedex />
-            </ErrorBoundary>
-          }
-        />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Profile" element={<Profile />} />
-        <Route path="/pokemon/:name" element={<PokemonProfile />} />
-      </Routes>
+      <div id="root">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route
+              exact
+              path="/"
+              element={
+                <ErrorBoundary>
+                  <Pokedex />
+                </ErrorBoundary>
+              }
+            />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/Profile" element={<Profile />} />
+            <Route path="/pokemon/:name" element={<PokemonProfile />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   )
 }
