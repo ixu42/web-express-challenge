@@ -8,6 +8,8 @@ import './App.css';
 import PokemonProfile from './pages/pokemon_profile';
 import './index.css'
 import Footer from './components/footer';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import ErrorBoundary from './ErrorBoundary';
 
 function App() {
@@ -17,7 +19,6 @@ function App() {
         <Navbar />
         <main>
           <Routes>
-            {/* Wrap the element inside ErrorBoundary */}
             <Route
               exact
               path="/"
@@ -30,6 +31,8 @@ function App() {
             <Route path="/Login" element={<Login />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/pokemon/:name" element={<PokemonProfile />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
           </Routes>
         </main>
         <Footer />
