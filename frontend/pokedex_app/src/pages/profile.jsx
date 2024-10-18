@@ -42,10 +42,10 @@ const Profile = () => {
         <main>
             <section className="w-full overflow-hidden dark:bg-gray-900">
                 <div className="flex flex-col">
-                    <img src={background} alt="pokemon in the background" className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem]"/>
+                    <img src={background} alt="pokemon in the background" className="w-full xl:h-[36rem] lg:h-[32rem] md:h-[28rem] sm:h-[24rem] xs:h-[20rem]"/>
                     <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
                         <img src={testData.profile_pic} alt="User Profile"
-                                className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-700 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]" />
+                                className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]" />
                         <h1
                             className="w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-mono">
                             {testData.username}</h1>
