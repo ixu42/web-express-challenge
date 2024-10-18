@@ -1,24 +1,24 @@
 import React from "react";
-import {Nav, NavLink, NavMenu} from "./NavbarElements"
+import {NavLink} from "react-router-dom"
 
 const Navbar = () => {
 	return (
 		<>
-			<Nav>
-				<NavMenu>
-					<NavLink to="/Profile" activeStyle>
+			<nav className="h-16 bg-rose-900 text-center">
+				<div className="font-sans text-zinc-950 text-3xl py-4 flex justify-evenly">
+          			<NavLink to="/Profile">
 						My Profile
 					</NavLink>
-					<NavLink to="/Pokedex" activeStyle>
+					<NavLink to="/">
 						Pokedex
 					</NavLink>
-					<NavLink to="/Login" activeStyle>
-						Log in / Sign-up
+					<NavLink to="/Login">
+						Login | Signup
 					</NavLink>
-				</NavMenu>
-			</Nav>
+				</div>
+			</nav>
 		</>
-	)
-}
+	);
+};
 
 export default Navbar
