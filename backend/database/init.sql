@@ -3,7 +3,7 @@
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
     password VARCHAR(100) NOT NULL,  -- Encrypted password
     role VARCHAR(20) DEFAULT 'user',  -- 'guest', 'user', 'admin'
     created_at TIMESTAMP DEFAULT NOW(),
