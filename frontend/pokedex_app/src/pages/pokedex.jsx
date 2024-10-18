@@ -11,7 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 10; // Number of Pokémon per page
+  const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
@@ -22,13 +22,15 @@ const Pokedex = () => {
     setLoading(true);
     console.log("offset:", offset);
     try {
-      const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
+      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offset}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
-      if (newPokemonList.length < limit) {
+      if (newPokemonList.length > limit) {
+        setPokemonList(prevList => [...prevList, ...newPokemonList.slice(0, limit)]);
+      } else {
         setMorePokemon(false);
+        setPokemonList((prevList) => [...prevList, ...newPokemonList]);
       }
-      setPokemonList((prevList) => [...prevList, ...newPokemonList]);
     } catch (error) {
       console.error("Error fetching Pokemon:", error);
     } finally {
@@ -60,7 +62,7 @@ const Pokedex = () => {
         const newMatchingList = await response.json();
         console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
         if (newMatchingList.length > limit) {
-          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]); 
+          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]);
         } else {
           setMorePokemon(false);
           setMatchingList(prevList => [...prevList, ...newMatchingList]);
