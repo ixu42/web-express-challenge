@@ -52,6 +52,75 @@ app.get('/api/auth/check', (req, res) => {
   }
 });
 
+// Function to fetch the full list of Pokémon from the external API
+const fetchPokemonList = async () => {
+  try {
+    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000');
+    return response.data.results;
+  } catch (error) {
+    console.error('Error fetching Pokémon:', error);
+    throw error;
+  }
+};
+
+// Shuffle Function
+const shuffleArray = (array) => {
+  let currentIndex = array.length, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+};
+
+// Fetch shuffled Pokémon with pagination
+app.get('/api/pokemon/shuffle', async (req, res) => {
+  const limit = parseInt(req.query.limit) || 20 // Number of Pokémon per page
+  const offset = parseInt(req.query.offset) || 0 // Offset for pagination
+  console.log("/api/pokemon/shuffle, limit:", limit, "offset:", offset)
+
+  try {
+    // Fetch and shuffle the Pokémon list on every request
+    const pokemonList = await fetchPokemonList();
+    const shuffledPokemonList = shuffleArray(pokemonList); // Shuffle every time
+
+    // Paginate the shuffled list
+    const paginatedResults = shuffledPokemonList.slice(offset, offset + limit);
+
+    // Fetch detailed information for each Pokémon to get the ID and image
+    const detailedResults = await Promise.all(
+      paginatedResults.map(async (pokemon) => {
+        const pokemonData = await axios.get(pokemon.url);
+        const pokemonId = pokemonData.data.id;
+
+        let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`;
+        let isImageValid = await isValidUrl(imageUrl);
+        if (!isImageValid) {
+          imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+        }
+
+        return {
+          ...pokemon,
+          id: pokemonId,
+          image: isImageValid ? imageUrl : defaultPokemonImgUrl
+        };
+      })
+    );
+
+    res.json(detailedResults);
+  } catch (error) {
+    console.error('Error fetching shuffled Pokémon:', error);
+    res.status(500).json({ error: 'Error fetching shuffled Pokémon.' });
+  }
+});
+
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'
 
