@@ -55,6 +55,14 @@ app.get('/api/auth/check', (req, res) => {
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'
 
+const sortPokemonList = (pokemonList, sort) => {
+  return pokemonList.sort((a, b) => {
+    if (sort === 'A-Z') return a.name.localeCompare(b.name);
+    if (sort === 'Z-A') return b.name.localeCompare(a.name);
+    return 0; // Default: no sorting
+  });
+};
+
 // Base URL endpoint
 app.get('/api', (req, res) => {
   res.json({
@@ -83,13 +91,14 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
   const { query } = req.params
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  console.log("query:", query, "limit:", limit, "offset:", offset)
+  const sort = req.query.sort || 'id'
+  console.log("query:", query, "limit:", limit, "offset:", offset, "sort", sort)
 
   try {
     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
     const pokemonList = response.data.results
 
-    let matchingPokemon;
+    let matchingPokemon = sortPokemonList(pokemonList, sort);;
     if (!query || query.trim() === "") {
       matchingPokemon = pokemonList
     } else {
@@ -171,8 +180,11 @@ app.get('/api/pokemon', async (req, res) => {
   console.log("/api/pokemon requested:", "limit =", limit, "offset =", offset, "sortorder=", sort)
 
   try {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
-    let pokemonList = response.data.results
+    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10000`)
+    const pokemonList = response.data.results;
+
+    // Sort the Pokémon list based on the sort parameter
+    const sortedPokemonList = sortPokemonList(pokemonList, sort);
 
     //console.log("sortedPokemonList:", sortedPokemonList)
     // Fetch detailed information for each Pokémon to get the ID and image
@@ -198,7 +210,6 @@ app.get('/api/pokemon', async (req, res) => {
     })
   )
 
-    console.log("detailedPokemonList:", detailedPokemonList)
     res.json(detailedPokemonList)
   } catch (err) {
     console.error('Error in fetching Pokémon:', err.message);

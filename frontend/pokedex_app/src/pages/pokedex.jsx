@@ -11,6 +11,7 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
   const [sortOrder, setSortOrder] = useState('id');
+  const [sortSearchOrder, setSortSearchOrder] = useState('id');
 
   const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
@@ -113,11 +114,11 @@ const Pokedex = () => {
 
   useEffect(() => {
 	fetchPokemonList(); // Fetch pokemonList in non-search mode
-  }, [sortOrder, offset]); // Run when offset changes
+  }, [sortOrder, offset]); // Run when sordOrder or offset changes
 
   useEffect(() => {
 	searchPokemon(searchTerm); // Fetch matchingList in search mode
-  }, [offsetForSearching]); // Run when offsetForSearching changes
+  }, [sortSearchOrder, offsetForSearching]); // Run when offsetForSearching changes
 
   return (
 	<div>
@@ -136,48 +137,67 @@ const Pokedex = () => {
 		</div>
 
 		{/* Sorting Options */}
-		<div  className="sort-container flex justify-end mr-8 sm:mr-12 md:mr-16">
+		<div className="sort-container flex justify-end mr-8 sm:mr-12 md:mr-16">
 		  <label htmlFor="sortOrder">Sort by:</label>
 		  <select
 			id="sortOrder"
 			value={sortOrder}
-			onChange={(e) => setSortOrder(e.target.value)} // Update sort order on change
+			onChange={(e) => {
+				setSortOrder(e.target.value);
+				setSortSearchOrder(e.target.value)
+				setOffset(0);
+				setOffsetForSearching(0);
+			}} // Update sort order on change
 		  >
-			<option value="id">id</option>
+			<option value="id">ID</option>
 			<option value="A-Z">A-Z</option>
 			<option value="Z-A">Z-A</option>
 		  </select>
 		</div>
 
-		{/* List of Pokémon when not searching */}
-		{!searchTerm && (
-			<ul>
-			{pokemonList.map((pokemon) => (
-				<li key={pokemon.name} className="pokemon-item">
-				<a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-			  </li>
-			))}
-		  </ul>
-		)}
+        {/* List of Pokémon when not searching */}
+        {!searchTerm && (
+          <ul className="pokemon-list">
+            {pokemonList.map((pokemon) => (
+              <li key={pokemon.name} className="pokemon-item">
+                <a href={`/pokemon/${pokemon.name}`}>
+                  <img
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                  <p>{pokemon.name}</p>
+                  <p>ID: {pokemon.id}</p>
+                </a>
+              </li>
+            ))}
+        </ul>
+        )}
 
-		{/* Matching Pokémon list when searching */}
-		{searchTerm && (
-			<>
-			{matchingList && matchingList.length > 0 ? (
-				<ul>
-				{matchingList.map((pokemon) => (
-					<li key={pokemon.name} className="pokemon-item">
-					<a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-				  </li>
-				))}
-			  </ul>
-			) : (
-				<p class="text-center text-lg font-semibold text-gray-600">
-					No Pokémon matched your search!
-				</p>
-			)}
-			</>
-		)}
+        {/* Matching Pokémon list when searching */}
+        {searchTerm && (
+          <>
+            {matchingList && matchingList.length > 0 ? (
+              <ul className="pokemon-list">
+                {matchingList.map((pokemon) => (
+                  <li key={pokemon.name} className="pokemon-item">
+                    <a href={`/pokemon/${pokemon.name}`}>
+                      <img
+                        src={pokemon.image}
+                        alt={pokemon.name}
+                        className="pokemon-image"
+                      />
+                     <div>{pokemon.name}</div>
+					 <div>ID: {pokemon.id}</div>
+					</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p align='center'>No Pokémon matched your search</p>
+            )}
+          </>
+        )}
 
 		{/* Load more button (placed before the list for testing purpose)*/}
 		{morePokemon && (
