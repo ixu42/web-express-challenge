@@ -1,23 +1,51 @@
-  header {
-	display: flex;
+header {
+  display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-  }
+}
 
-  .logo {
+/* Ensure the body and root take full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Root container, ensuring full height and column layout */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Main content should expand to take up available space */
+main {
+  flex: 1; /* This allows the main content to grow and take remaining height */
+  padding: 0; /* Optional: Add padding around the main content */
+}
+
+footer {
+  background-color: #f8f9fa;
+  padding: 10px 0;
+  text-align: center;
+  margin-top: auto; /* Ensures the footer is pushed to the bottom */
+  width: 100%;      /* Makes sure the footer spans the full width of the page */
+}
+
+.logo {
 	margin: 0 2rem 0 0;
-  }
+}
 
-  .search-container {
+.search-container {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 	gap: 10px;
-  }
+}
 
-  .search-box {
+.search-box {
 	width: 30%;
 	height: 50px;
 	font-size: 1.5em;
@@ -26,32 +54,33 @@
 	border-radius: 5px;
 	margin: 40px 0;
 	text-align: center;
-  }
+}
 
-  .pokemon-item {
+.pokemon-item {
 	float: left;
 	margin: 10px;
-  }
-  .pokemon-item a {
+}
+
+.pokemon-item a {
 	color: #000;
 	text-decoration: none;
 	font-size: 16px;
 	transition: color 0.3s ease;
 	text-transform: capitalize;
-  }
+}
 
-  .pokemon-item a:hover {
+.pokemon-item a:hover {
 	color: #3B4CCA;
-  }
+}
 
-  ul {
+ul {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 	gap: 5px;
 	list-style: none;
-  }
+}
 
-  .pokemon-details {
+.pokemon-details {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -61,13 +90,13 @@
 	padding: 20px;
 	color: #000;
 	text-transform: capitalize;
-  }
+}
 
-  .pokemon-details img {
+.pokemon-details img {
 	width: 100px;
 	height: 100px;
-  }
+}
 
-  .pokemon-details p {
+.pokemon-details p {
 	margin: 5px;
-  }
+}
