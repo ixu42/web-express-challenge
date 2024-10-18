@@ -3,11 +3,19 @@ const axios = require('axios')
 const { Pool } = require('pg')
 const session = require('express-session')
 const { registerUser, loginUser, logoutUser, isAuthenticated } = require('./userController')
+const pokemonRoutes = require("./routes/pokemonRoutes");
+const userRoutes = require("./routes/userRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const { handleError } = require("./middlewares/errorMiddleware");
 
 const port = 3000
 const app = express()
 
 app.use(express.json())
+
+app.use("/api/pokemon", pokemonRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(session({
   secret: 'yourSecretKey', // Replace with your own secret key
@@ -185,7 +193,7 @@ app.get('/api/pokemon', async (req, res) => {
 })
 
 // Details of a Pokémon by name
-app.get('/api/pokemon/:name?', isAuthenticated, async (req, res) => {
+app.get('/api/pokemon/:name?', async (req, res) => {
   const { name } = req.params
   console.log("name:", name)
   try {
@@ -218,6 +226,9 @@ app.get('/api/pokemon/:name?', isAuthenticated, async (req, res) => {
     }
   }
 })
+
+//middleware
+app.use(handleError);
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)

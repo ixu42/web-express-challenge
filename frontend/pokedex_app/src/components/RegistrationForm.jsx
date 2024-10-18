@@ -21,7 +21,6 @@ const RegistrationForm = (props) => {
 			password: password,
 			email: email
 		}
-
 		fetch("/api/register", {
 			method: "POST",
 			headers: {
