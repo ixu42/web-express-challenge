@@ -23,7 +23,7 @@ const Profile = () => {
         {
             return (
                 <section className="text-lg">
-                    <textarea spellCheck="true" name="new_bio" onChange={updateBio} className="bg-gray-300 resize" cols={60} defaultValue={bio} maxLength={3000} rows={2} type="text"/>
+                    <textarea spellCheck="true" name="new_bio" onChange={updateBio} className="bg-gray-300 resize" cols={60} defaultValue={bio} maxLength={250} rows={2} type="text"/>
                 </section>
             )
         }
