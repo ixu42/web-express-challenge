@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import logo from '../../img/logo.png';
+import './pokedex.css';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
@@ -10,7 +11,8 @@ const Pokedex = () => {
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
 
-  const limit = 8; // Number of Pokémon per page
+  const limit = 10; // Number of Pokémon per page
+  const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
 
@@ -18,8 +20,8 @@ const Pokedex = () => {
   const fetchPokemonList = async () => {
     console.log("fetchPokemonList() called");
     setLoading(true);
+    console.log("offset:", offset);
     try {
-      console.log("offset:", offset);
       const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
@@ -37,12 +39,26 @@ const Pokedex = () => {
   // Function to search for Pokemon
   const searchPokemon = async (query) => {
     console.log("searchPokemon() called");
+
+    // Cancel the previous fetch request if it exists
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create a new AbortController instance
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setLoading(true);
+    console.log("offsetForSearching:", offsetForSearching);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`);
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`, {
+        signal: abortController.signal, // Pass the signal to the fetch request
+      });
+
       if (response.ok) {
         const newMatchingList = await response.json();
-        console.log("newMatchingList:", newMatchingList)
+        console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
         if (newMatchingList.length < limit) {
           setMorePokemon(false);
         }
@@ -52,7 +68,9 @@ const Pokedex = () => {
         setMorePokemon(false);
       }
     } catch (error) {
-      console.error("Error searching Pokémon:", error);
+      if (error.name !== 'AbortError') {
+        console.error("Error searching Pokémon:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -69,9 +87,12 @@ const Pokedex = () => {
 
   const updateList = (userInput) => {
     console.log("updateList() called, userInput:", userInput);
+
     setSearchTerm(userInput);
     setOffset(0);
+    console.log("offset:", offset);
     setOffsetForSearching(0);
+    console.log("offsetForSearching:", offsetForSearching);
     setMorePokemon(true);
     setPokemonList([]);
     setMatchingList([]);
@@ -107,7 +128,45 @@ const Pokedex = () => {
             onChange={(e) => updateList(e.target.value)}
           />
         </div>
-
+        {/* List of Pokémon when not searching */}
+        {!searchTerm && (
+          <ul className="pokemon-list">
+            {pokemonList.map((pokemon) => (
+              <li key={pokemon.name} className="pokemon-item">
+                <a href={`/pokemon/${pokemon.name}`}>
+                  <img 
+                    src={pokemon.image}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                  <p>{pokemon.name}</p>
+                </a>
+              </li>
+            ))}
+        </ul>
+        )}
+        {/* Matching Pokémon list when searching */}
+        {searchTerm && (
+          <>
+            {matchingList && matchingList.length > 0 ? (
+              <ul className="pokemon-list">
+                {matchingList.map((pokemon) => (
+                  <li key={pokemon.name} className="pokemon-item">
+                    <a href={`/pokemon/${pokemon.name}`}>
+                      <img 
+                        src={pokemon.image}
+                        alt={pokemon.name}
+                        className="pokemon-image"
+                      />
+                    {pokemon.name}</a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p align='center'>No Pokémon matched your search</p>
+            )}
+          </>
+        )}
         {/* Load more button (placed before the list for testing purpose)*/}
         {morePokemon && (
           <button
@@ -118,34 +177,6 @@ const Pokedex = () => {
           >
             {loading ? "Loading..." : "Load More Pokémon"}
           </button>
-        )}
-
-        {/* List of Pokémon when not searching */}
-        {!searchTerm && (
-          <ul>
-            {pokemonList.map((pokemon) => (
-              <li key={pokemon.name} className="pokemon-item">
-                <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {/* Matching Pokémon list when searching */}
-        {searchTerm && (
-          <>
-            {matchingList && matchingList.length > 0 ? (
-              <ul>
-                {matchingList.map((pokemon) => (
-                  <li key={pokemon.name} className="pokemon-item">
-                    <a href={`/pokemon/${pokemon.name}`}>{pokemon.name}</a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p align='center'>No Pokémon matched your search</p>
-            )}
-          </>
         )}
       </main>
     </div>

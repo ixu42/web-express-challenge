@@ -8,17 +8,25 @@ import './App.css';
 import PokemonProfile from './pages/pokemon_profile';
 import './index.css'
 import Footer from './components/footer';
-
+import ErrorBoundary from './ErrorBoundary';
 
 function App() {
-
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route exact path="/" element={<Pokedex/>}/>
-        <Route path="/Login" element={<Login />}/>
-        <Route path="/Profile" element={<Profile/>}/>
+        {/* Wrap the element inside ErrorBoundary */}
+        <Route
+          exact
+          path="/"
+          element={
+            <ErrorBoundary>
+              <Pokedex />
+            </ErrorBoundary>
+          }
+        />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Profile" element={<Profile />} />
         <Route path="/pokemon/:name" element={<PokemonProfile />} />
       </Routes>
       <Footer />

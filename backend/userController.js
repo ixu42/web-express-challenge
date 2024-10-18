@@ -11,22 +11,30 @@ const pool = new Pool({
     port: 5432,
   })
 
+const isAuthenticated = (req, res, next) => {
+  if (req.session.user) {
+    return next() // Pass control to the next handler
+  }
+  res.status(401).send('Unauthorized') // If not logged in, respond with 401
+};
+
 // Register a new user
 const registerUser = async (req, res) => {
   const { username, password } = req.body
 
   if (!username || !password) {
-    return res.status(400).send('Username and password are required')
+    return res.status(400).json({msg: 'Username and password are required'})
   }
 
   try {
     const hash = await bcrypt.hash(password, saltRounds)
+    console.log(username, password)
     const query = 'INSERT INTO users (username, password) VALUES ($1, $2)'
     await pool.query(query, [username, hash])
-    res.status(201).send('User registered')
+    res.status(201).json({msg: 'User registered'})
   } catch (error) {
     console.error(error)
-    res.status(500).send('Error registering user')
+    res.status(500).json({error: 'Error registering user'})
   }
 }
 
@@ -50,7 +58,8 @@ const loginUser = async (req, res) => {
     const match = await bcrypt.compare(password, user.password)
 
     if (match) {
-      // TODO: Implement session management
+      // Save user in session
+      req.session.user = { id: user.id, username: user.username }
       res.send('Login successful')
     } else {
       res.status(401).send('Invalid username or password')
@@ -61,4 +70,16 @@ const loginUser = async (req, res) => {
   }
 }
 
-module.exports = { registerUser, loginUser }
+// Logout user
+const logoutUser = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send('Error logging out')
+    }
+    res.clearCookie('connect.sid')
+    res.send('Logged out successfully')
+  });
+};
+
+
+module.exports = { registerUser, loginUser, logoutUser, isAuthenticated }
