@@ -43,6 +43,15 @@ app.post('/api/register', registerUser)
 app.post('/api/login', loginUser)
 app.post('/api/logout', logoutUser)
 
+// Check if the user is logged in
+app.get('/api/auth/check', (req, res) => {
+  if (req.session.user) {
+    res.json({ loggedIn: true, user: req.session.user });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'
 
