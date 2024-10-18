@@ -33,7 +33,7 @@ const registerUser = async (req, res) => {
     await pool.query(query, [username, hash, email])
     res.status(201).json({msg: 'User registered'})
   } catch (error) {
-    console.error(error);
+    console.error(error)
     if (error.code === '23505') {
       return res.status(409).json({ error: 'Username or email already taken' }); // 409 Conflict
     }
