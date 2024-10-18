@@ -133,6 +133,20 @@ const Pokedex = () => {
             onChange={(e) => updateList(e.target.value)}
           />
         </div>
+        {/* Add a Shuffle Button */}
+        <button
+          onClick={() => {
+            setOffset(0); // Reset offset to 0
+            setPokemonList([]); // Reset the Pokémon list
+            setMorePokemon(true); // Allow for more Pokémon to load
+            fetchShuffledPokemon(); // Fetch the shuffled Pokémon list
+          }}
+          disabled={loading}
+          className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+            ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+        >
+          {loading ? "Loading..." : "Shuffle"}
+        </button>
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
           <ul className="pokemon-list">
