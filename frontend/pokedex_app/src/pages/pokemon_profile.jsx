@@ -31,17 +31,19 @@ const PokemonProfile = () => {
 
 	return (
 		<div className="pokemon-details">
-		<h1 className="font-pokemon text-zinc-700 text-6xl py-5 flex justify-evenly">{pokemonInfo.name }</h1>
+		<h1 className="font-pokemon text-[#E03C31] text-6xl py-5 flex justify-evenly">{pokemonInfo.name }</h1>
 		{/* Display the Pokémon's image */}
 		<img
 			src={pokemonInfo.image}
 			alt={`${pokemonInfo.name} sprite`}
 			style={{ width: '150px', height: '150px' }} // Adjust size as needed
 		/>
-		<p>Height: {pokemonInfo.height}</p>
-		<p>Weight: {pokemonInfo.weight}</p>
-		<p> Type: {pokemonInfo.types[0].type.name}
-		{pokemonInfo.types[1]?.type.name && `, ${pokemonInfo.types[1].type.name}`}</p>
+		<div className="info-section">
+			<p>Height: {pokemonInfo.height}</p>
+			<p>Weight: {pokemonInfo.weight}</p>
+			<p> Type: {pokemonInfo.types[0].type.name}
+			{pokemonInfo.types[1]?.type.name && `, ${pokemonInfo.types[1].type.name}`}</p>
+		</div>
 		<div className="stats-section">
 		<h2>Stats</h2>
 		{pokemonInfo.stats.map((stats, index) => (
