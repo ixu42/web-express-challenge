@@ -13,23 +13,27 @@ import ErrorBoundary from './ErrorBoundary';
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        {/* Wrap the element inside ErrorBoundary */}
-        <Route
-          exact
-          path="/"
-          element={
-            <ErrorBoundary>
-              <Pokedex />
-            </ErrorBoundary>
-          }
-        />
-        <Route path="/Login" element={<Login />} />
-        <Route path="/Profile" element={<Profile />} />
-        <Route path="/pokemon/:name" element={<PokemonProfile />} />
-      </Routes>
-      <Footer />
+      <div id="root">
+        <Navbar />
+        <main>
+          <Routes>
+            {/* Wrap the element inside ErrorBoundary */}
+            <Route
+              exact
+              path="/"
+              element={
+                <ErrorBoundary>
+                  <Pokedex />
+                </ErrorBoundary>
+              }
+            />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/Profile" element={<Profile />} />
+            <Route path="/pokemon/:name" element={<PokemonProfile />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   )
 }

@@ -1,28 +1,37 @@
-  header {
-	display: flex;
+header {
+  display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
-  }
+}
 
-/* footer {
-  text-align: center;
-  background-color: #f1f1f1;
+/* Ensure the body and root take full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Root container, ensuring full height and column layout */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full viewport height */
+}
+
+/* Main content should expand to take up available space */
+main {
+  flex: 1; /* This allows the main content to grow and take remaining height */
+  padding: 0; /* Optional: Add padding around the main content */
+}
+
+footer {
+  background-color: #f8f9fa;
   padding: 10px 0;
-  font-size: 0.9rem;
-  color: #555;
-  border-top: 1px solid #ccc;
+  text-align: center;
+  margin-top: auto; /* Ensures the footer is pushed to the bottom */
+  width: 100%;      /* Makes sure the footer spans the full width of the page */
 }
-
-footer a {
-  color: #007BFF;
-  text-decoration: none;
-  margin: 0 5px;
-}
-
-footer a:hover {
-  text-decoration: underline;
-} */
 
 .logo {
 	margin: 0 2rem 0 0;
