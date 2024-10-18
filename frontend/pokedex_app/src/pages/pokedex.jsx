@@ -52,17 +52,20 @@ const Pokedex = () => {
     setLoading(true);
     console.log("offsetForSearching:", offsetForSearching);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit}&offset=${offsetForSearching}`, {
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetForSearching}`, {
         signal: abortController.signal, // Pass the signal to the fetch request
       });
 
       if (response.ok) {
         const newMatchingList = await response.json();
         console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
-        if (newMatchingList.length < limit) {
+        if (newMatchingList.length > limit) {
+          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]); 
+        } else {
           setMorePokemon(false);
+          setMatchingList(prevList => [...prevList, ...newMatchingList]);
         }
-        setMatchingList(prevList => [...prevList, ...newMatchingList])
+        // setMatchingList(prevList => [...prevList, ...newMatchingList])
       } else {
         setMatchingList([]);
         setMorePokemon(false);
