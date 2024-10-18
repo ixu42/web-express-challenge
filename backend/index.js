@@ -1,11 +1,24 @@
 const express = require('express')
 const axios = require('axios')
 const { Pool } = require('pg')
-
-const { registerUser, loginUser } = require('./userController')
+const session = require('express-session')
+const { registerUser, loginUser, logoutUser, isAuthenticated } = require('./userController')
 
 const port = 3000
 const app = express()
+
+app.use(express.json())
+
+app.use(session({
+  secret: 'yourSecretKey', // Replace with your own secret key
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60, // Session duration (1 hour)
+    secure: false, // Set to true if using HTTPS
+    httpOnly: true // Prevents JavaScript access to the cookie
+  }
+}))
 
 app.use(express.json())
 
@@ -20,6 +33,7 @@ const pool = new Pool({
 
 app.post('/api/register', registerUser)
 app.post('/api/login', loginUser)
+app.post('/api/logout', logoutUser)
 
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'
@@ -64,7 +78,7 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
     } else {
       matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
       if (matchingPokemon.length === 0) {
-        return res.status(404).json({ 'error': 'No matching Pokémon found.' })
+        return res.json([])
       }
     }
 
@@ -171,7 +185,7 @@ app.get('/api/pokemon', async (req, res) => {
 })
 
 // Details of a Pokémon by name
-app.get('/api/pokemon/:name?', async (req, res) => {
+app.get('/api/pokemon/:name?', isAuthenticated, async (req, res) => {
   const { name } = req.params
   console.log("name:", name)
   try {
