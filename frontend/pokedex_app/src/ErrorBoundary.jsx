@@ -12,16 +12,27 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
+    // Log the error to an error reporting service
     console.error("ErrorBoundary caught an error", error, errorInfo);
   }
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      return (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <img 
+            src="../img/pikachu.png"
+            alt="Sad Pikachu"
+            className="w-40 h-40 mb-4" 
+          />
+          <h1 className="text-xl leading-7 text-center mb-4 font-poppins">
+            Oops, something went wrong.<br />
+            We're on it, and hopefully we will get it fixed ASAP! 🛠️💖<br />
+            Thank you for your patience! 🙏✨
+          </h1>
+        </div>
+      );
     }
-
     return this.props.children; 
   }
 }
