@@ -1,16 +1,19 @@
 ## Overview
+
 A brief description of the API and example responses.
 
 ## Base URL
+
 https://localhost.com:3000/api
 
 ## Endpoints
 
 ### 1. Get a list of Pokémon, given limit and offset
+
 - **Endpoint**: `/api/pokemon`
 - **Method**: `GET`
-- **Description**: Fetches the details of a list of Pokémon. 
-Limit: Number of Pokémon per page; offset: How many Pokémon to skip
+- **Description**: Fetches the details of a list of Pokémon.
+  Limit: Number of Pokémon per page; offset: How many Pokémon to skip
 - **Response**:
   - **200 OK**
     ```json
@@ -32,6 +35,7 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
     ```
 
 ### 2. Get Pokémon by Name
+
 - **Endpoint**: `/api/pokemon/:name?`
 - **Method**: `GET`
 - **Description**: Fetches the details of a Pokémon by its name.
@@ -64,6 +68,7 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
     ```
 
 ### 3. Get Pokémon by Type
+
 - **Endpoint**: `/api/pokemon/type/:type?`
 - **Method**: `GET`
 - **Description**: Fetches the details of a list of Pokémon by its type.
@@ -80,7 +85,7 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
       {
         "name": "charmeleon",
         "url": "https://pokeapi.co/api/v2/pokemon/5/"
-      },   
+      },
       ...
     ]
     ```
@@ -92,6 +97,7 @@ Limit: Number of Pokémon per page; offset: How many Pokémon to skip
     ```
 
 ### 4. Get a list of Pokémon by query
+
 - **Endpoint**: `/api/pokemon/search/:query?`
 - **Method**: `GET`
 - **Description**: Fetches a list of Pokémon based on a substring match.
@@ -145,14 +151,15 @@ index.js
 
 ## API Endpoints
 
-### 1. Liked Pokémon
+### Pokemon routes
+
+#### 1. Like a Pokémon
 
 - **Endpoint**: `/api/pokemon/liked`
 - **Method**: POST
 - **Expected Request Body**:
   ```json
   {
-    "user_id": 1,
     "pokemon_id": 1,
     "pokemon_name": "pikachu"
   }
@@ -165,21 +172,78 @@ index.js
   }
   ```
 
-### 2. Get Liked Pokémon by User
+#### 2. Unlike a pokemon
 
-- **Endpoint**: `/api/user/:id/liked_pokemons`
-- **Method**: GET
-- **Request Params**: `id`
+- **Endpoint**: `/api/pokemon/unlike/:pokemon_id`
+- **Method**: DELETE
 - **Response**:
   ```json
-  [
-    { "user_id": 1, "pokemon_id": 1, "pokemon_name": "pikachu" },
-    { "user_id": 1, "pokemon_id": 2, "pokemon_name": "bulbasaur" },
-    { "user_id": 1, "pokemon_id": 3, "pokemon_name": "charizard" }
-  ]
+  {
+    "user_id": 1,
+    "pokemon_id": 1
+  }
   ```
 
-### 3. Get Profiles
+#### 3. Dislike a Pokémon
+
+- **Endpoint**: `/api/pokemon/disliked`
+- **Method**: POST
+- **Expected Request Body**:
+  ```json
+  {
+    "pokemon_id": 1,
+    "pokemon_name": "pikachu"
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "user_id": 1,
+    "pokemon_id": 1
+  }
+  ```
+
+#### 2. Undislike a pokemon
+
+- **Endpoint**: `/api/pokemon/undislike/:pokemon_id`
+- **Method**: DELETE
+- **Response**:
+  ```json
+  {
+    "user_id": 1,
+    "pokemon_id": 1
+  }
+  ```
+
+### User routes
+
+#### 1. Get Liked Pokémon by User
+
+- **Endpoint**: `/api/user/liked_pokemons`
+- **Method**: GET
+- **Response**:
+
+  ```json
+  {
+    "user_id": 1,
+    "liked_pokemons": ["pikachu", "bulbasaur"]
+  }
+  ```
+
+#### 2. Get Disliked Pokémon by User
+
+- **Endpoint**: `/api/user/liked_pokemons`
+- **Method**: GET
+- **Response**:
+  ```json
+  {
+    "user_id": 1,
+    "liked_pokemons": ["pikachu", "bulbasaur"]
+  }
+  ```
+### Profile routes
+
+#### 1. Get Profiles
 
 - **Endpoint**: `/api/profile/`
 - **Method**: GET
@@ -187,8 +251,18 @@ index.js
   ```json
   [{}]
   ```
+#### 2. Search Profiles
 
-### 4. Get Profile by ID
+- **Endpoint**: `/api/profile/search`
+  **
+- **Method**: GET
+- **Req query**: name
+- **Response**:
+  ```json
+  [{}]
+  ```
+
+#### 3. Get Profile by ID
 
 - **Endpoint**: `/api/profile/:id`
 - **Method**: GET
@@ -196,45 +270,26 @@ index.js
   ```json
   {}
   ```
+#### 4. Get my Profile
 
-### 5. Create Profile
-
-- **Endpoint**: `/api/profile/create`
-- **Method**: POST
-- **Request Body (Form Data)**:
-  ```json
-  {
-    "user_id": 2,
-    "name": "lorem",
-    "bio": "lorem ipsum",
-    "profile_pic": "xxx"
-  }
-  ```
+- **Endpoint**: `/api/profile/me`
+- **Method**: GET
 - **Response**:
   ```json
-  {
-    "id": 10,
-    "user_id": 2,
-    "name": "lorem",
-    "bio": "lorem ipsum",
-    "profile_pic": "xxx",
-    "created_at": "2024-10-17T16:17:08.085Z",
-    "updated_at": "2024-10-17T16:17:08.085Z"
-  }
+  {}
   ```
 
-### 6. Update Profile by ID
+#### 5. Update my profile
 
-- **Endpoint**: `/api/profile/update/:id`
+- **Endpoint**: `/api/profile/me/update`
 - **Method**: PUT
-- **Request Params**: `id`
 - **Request Body (Form Data)**:
   ```json
   {
     "user_id": 2,
     "name": "lorem",
     "bio": "lorem ipsum",
-    "profile_pic": "xxx"
+    "profile_pic": "binary"
   }
   ```
 - **Response**:
@@ -244,17 +299,16 @@ index.js
     "user_id": 2,
     "name": "lorem",
     "bio": "lorem ipsum",
-    "profile_pic": "xxx",
+    "profile_pic": "binary",
     "created_at": "2024-10-17T16:17:08.085Z",
     "updated_at": "2024-10-17T16:17:08.085Z"
   }
   ```
 
-### 7. Update Profile Name by ID
+#### 6. Update my Profile Name
 
-- **Endpoint**: `/api/profile/update/:id/name`
+- **Endpoint**: `/api/profile/me/update/name`
 - **Method**: PATCH
-- **Request Params**: `id`
 - **Request Body**:
   ```json
   { "name": "new name" }
@@ -266,17 +320,16 @@ index.js
     "user_id": 2,
     "name": "new name",
     "bio": "lorem ipsum",
-    "profile_pic": "xxx",
+    "profile_pic": "binary",
     "created_at": "2024-10-17T16:17:08.085Z",
     "updated_at": "2024-10-17T16:17:08.085Z"
   }
   ```
 
-### 8. Update Profile Bio by ID
+#### 7. Update my Profile Bio
 
-- **Endpoint**: `/api/profile/update/:id/bio`
+- **Endpoint**: `/api/profile/me/update/bio`
 - **Method**: PATCH
-- **Request Params**: `id`
 - **Request Body**:
   ```json
   { "bio": "new bio" }
@@ -288,20 +341,19 @@ index.js
     "user_id": 2,
     "name": "new name",
     "bio": "new bio",
-    "profile_pic": "xxx",
+    "profile_pic": "binary",
     "created_at": "2024-10-17T16:17:08.085Z",
     "updated_at": "2024-10-17T16:17:08.085Z"
   }
   ```
 
-### 9. Update Profile Picture by ID
+#### 8. Update my Profile Picture
 
-- **Endpoint**: `/api/profile/update/:id/profile_pic`
+- **Endpoint**: `/api/profile/me/update/profile_pic`
 - **Method**: PATCH
-- **Request Params**: `id`
 - **Request Body**:
   ```json
-  { "profile_pic": "new_pic_url" }
+  { "profile_pic": "binary" }
   ```
 - **Response**:
   ```json
@@ -310,7 +362,7 @@ index.js
     "user_id": 2,
     "name": "new name",
     "bio": "new bio",
-    "profile_pic": "new_pic_url",
+    "profile_pic": "binary",
     "created_at": "2024-10-17T16:17:08.085Z",
     "updated_at": "2024-10-17T16:17:08.085Z"
   }

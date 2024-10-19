@@ -85,11 +85,14 @@ ul {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 30%;
+	width: 40%;
+	max-width: 450px;
 	margin: 20px auto;
 	padding: 20px;
 	color: #000;
 	text-transform: capitalize;
+	border-radius: 8px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .pokemon-details img {
@@ -99,4 +102,29 @@ ul {
 
 .pokemon-details p {
 	margin: 5px;
-}
+  }
+
+	.info-section {
+	background-color: #f2f9bc;
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	margin: 10px 0;
+	width: 100%;
+	text-transform: capitalize;
+	}
+
+	.info-section h2 {
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	}
+
+	.stats-section {
+		background-color: #a6b1db;
+		padding: 15px;
+		border-radius: 8px;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		margin: 10px 0;
+		width: 100%;
+		text-transform: capitalize;
+	}

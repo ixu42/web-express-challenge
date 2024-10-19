@@ -21,7 +21,7 @@ const getLikedPokemonsByUserId = async (userId) => {
   if (result.rows.length === 0) {
     throw new NotFoundError("User not found");
   }
-  return result.rows; // Return the array of liked Pokémon
+  return result.rows[0]; // Return the array of liked Pokémon
 };
 
 const getDislikedPokemonsByUserId = async (userId) => {

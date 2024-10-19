@@ -16,23 +16,23 @@ const isAuthenticated = (req, res, next) => {
   if (req.session.user) {
     return next(); // Pass control to the next handler
   }
-  res.status(401).send("Unauthorized"); // If not logged in, respond with 401
-};
+  res.status(401).send('Unauthorized') // If not logged in, respond with 401
+}
 
 // Register a new user // added return id and creating profile
 const registerUser = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body
 
-  if (!username || !password) {
-    return res.status(400).json({ msg: "Username and password are required" });
+  if (!username || !password || !email) {
+    return res.status(400).json({msg: 'Username, password and email are required'})
   }
 
   try {
     const hash = await bcrypt.hash(password, saltRounds);
     console.log(username, password);
     const query =
-      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id";
-    const result = await pool.query(query, [username, hash]);
+      "INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING id";
+    const result = await pool.query(query, [username, hash, email]);
     const userId = result.rows[0].id;
     const profile = {
       user_id: userId,
@@ -46,8 +46,11 @@ const registerUser = async (req, res) => {
       msg: "User registered",
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error registering user" });
+    console.error(error)
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'Username or email already taken' }); // 409 Conflict
+    }
+    res.status(500).json({ error: 'Error registering user' })
   }
 };
 
@@ -89,8 +92,8 @@ const logoutUser = (req, res) => {
     if (err) {
       return res.status(500).send("Error logging out");
     }
-    res.clearCookie("connect.sid");
-    res.send("Logged out successfully");
+    res.clearCookie('connect.sid')
+    res.send('Logged out successfully')
   });
 };
 

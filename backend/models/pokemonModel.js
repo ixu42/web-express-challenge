@@ -58,7 +58,7 @@ const likedPokemon = async (user_id, pokemon_id, name) => {
 
 const unlikePokemon = async (user_id, pokemon_id) => {
   const text =
-    "DELETE FROM liked_pokemons WHERE user_id = $1 AND pokemon_id = $2 RETURNING user_id, pokemon_id";
+    "DELETE FROM user_pokemons WHERE user_id = $1 AND pokemon_id = $2 AND relationship = 'like' RETURNING user_id, pokemon_id";
   const values = [user_id, pokemon_id];
   const result = await db.query(text, values);
   if (result.rows.length === 0) {
@@ -78,7 +78,7 @@ const dislikedPokemon = async (user_id, pokemon_id, name) => {
 
 const undislikePokemon = async (user_id, pokemon_id) => {
   const text =
-    "DELETE FROM disliked_pokemons WHERE user_id = $1 AND pokemon_id = $2 RETURNING user_id, pokemon_id";
+    "DELETE FROM user_pokemons WHERE user_id = $1 AND pokemon_id = $2 AND relationship = 'dislike' RETURNING user_id, pokemon_id";
   const values = [user_id, pokemon_id];
   const result = await db.query(text, values);
   if (result.rows.length === 0) {
