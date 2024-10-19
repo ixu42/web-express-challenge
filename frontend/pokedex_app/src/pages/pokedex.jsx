@@ -183,7 +183,14 @@ const Pokedex = () => {
                 ))}
               </ul>
             ) : (
-              <p align='center'>No Pokémon matched your search</p>
+              <div className="flex flex-col items-center mt-8">
+                <p className="text-center text-xl text-gray-600 font-semibold">
+                  No Pokémon matched your search! 🤔
+                </p>
+                <p className="text-center text-md text-gray-500 mt-2">
+                  Try a different name or spelling! 🌟
+                </p>
+              </div>
             )}
           </>
         )}
