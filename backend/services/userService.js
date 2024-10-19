@@ -1,21 +1,4 @@
-//const bcrypt = require('bcrypt');
 const userModel = require('../models/userModel');
-
-const registerUser = async ({ username, email, password }) => {
- // const salt = await bcrypt.genSalt(10);
- // const hashedPassword = await bcrypt.hash(password, salt);
-  try {
-    console.log('registerUser');
-    await userModel.isEmailTaken(email);
-    await userModel.isUsernameTaken(username);
-    const user = await userModel.createUser(username, email, password);
-    console.log('register successfull:', user);
-    return user;
-  } catch (error) {
-    console.log('error registration:', error.message);
-    throw error;
-  }
-};
 
 const getLikedPokemonsByUserId = async (user_id) => {
   try {
@@ -29,8 +12,33 @@ const getLikedPokemonsByUserId = async (user_id) => {
   }
 };
 
+const getDislikedPokemonsByUserId = async (user_id) => {
+  try {
+    console.log('getDislikedPokemons');
+    const pokemons = await userModel.getDislikedPokemonsByUserId(user_id);
+    console.log('getDislikedPokemons successfull:', pokemons);
+    return pokemons;
+  } catch (error) {
+    console.log('error getDislikedPokemons:', error.message);
+    throw error;
+  }
+}
+
+const searchUsers = async (username) => {
+  try {
+    console.log('searchUsers');
+    const users = await userModel.searchUsers(username);
+    console.log('searchUsers successfull:', users);
+    return users;
+  } catch (error) {
+    console.log('error searchUsers:', error.message);
+    throw error;
+  }
+}
+
 
 module.exports = {
-  registerUser,
   getLikedPokemonsByUserId,
+  getDislikedPokemonsByUserId,
+  searchUsers,
 };

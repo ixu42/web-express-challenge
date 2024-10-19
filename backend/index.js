@@ -13,9 +13,6 @@ const app = express()
 
 app.use(express.json())
 
-app.use("/api/pokemon", pokemonRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/profile", profileRoutes);
 
 app.use(session({
   secret: 'yourSecretKey', // Replace with your own secret key
@@ -28,16 +25,18 @@ app.use(session({
   }
 }))
 
-app.use(express.json())
-
 // PostgreSQL connection configuration
 const pool = new Pool({
-    user: 'youruser',
-    host: 'localhost',
-    database: 'pokemon-db',
-    password: 'yourpassword',
-    port: 5432,
-  })
+  user: 'youruser',
+  host: 'localhost',
+  database: 'pokemon-db',
+  password: 'yourpassword',
+  port: 5432,
+})
+
+app.use("/api/pokemon", pokemonRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.post('/api/register', registerUser)
 app.post('/api/login', loginUser)
