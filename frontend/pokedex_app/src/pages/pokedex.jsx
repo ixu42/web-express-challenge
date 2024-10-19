@@ -4,14 +4,18 @@ import './pokedex.css';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [morePokemon, setMorePokemon] = useState(true);
   const [matchingList, setMatchingList] = useState([]);
+  const [offset, setOffset] = useState(0);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  // a boolean to indicate if "Shuffle" and "Load More Pokémon" buttons should be rendered
+  const [morePokemon, setMorePokemon] = useState(true);
+  // a boolean to indicate if the fetch in fetchPokemonList() / searchPokemon() is completed
+  const [loading, setLoading] = useState(false);
+  // a boolean to indicate if the fetch in fetchPokemonList() is completed
+  const [isFetching, setIsFetching] = useState(false);
 
-  const limit = 50; // Number of Pokémon per page
+  const limit = 10; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
@@ -19,7 +23,6 @@ const Pokedex = () => {
   // Function to fetch Pokemon list (non-search)
   const fetchPokemonList = async (offsetValue = 0, shouldShuffle = false) => {
     console.log("fetchPokemonList() called");
-    setLoading(true);
     console.log("offset:", offsetValue, "shouldShuffle:", shouldShuffle);
     try {
       const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&shuffle=${shouldShuffle}`);
@@ -33,8 +36,6 @@ const Pokedex = () => {
       }
     } catch (error) {
       console.error("Error fetching Pokemon:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -51,7 +52,6 @@ const Pokedex = () => {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    setLoading(true);
     console.log("offsetForSearching:", offsetValue);
     try {
       const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}`, {
@@ -75,12 +75,10 @@ const Pokedex = () => {
       if (error.name !== 'AbortError') {
         console.error("Error searching Pokémon:", error);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
-  const updateList = (userInput) => {
+  const updateList = async (userInput) => {
     console.log("updateList() called, userInput:", userInput);
 
     setSearchTerm(userInput);
@@ -90,9 +88,9 @@ const Pokedex = () => {
     setPokemonList([]);
     setMatchingList([]);
     if (userInput === "") {
-      fetchPokemonList(0, false);
+      await fetchPokemonList(0, false);
     } else {
-      searchPokemon(userInput, 0);
+      await searchPokemon(userInput, 0);
     }
   };
 
@@ -101,18 +99,22 @@ const Pokedex = () => {
     setOffset(0);
     setPokemonList([]);
     setMorePokemon(true);
-    fetchPokemonList(0, true); // Request a reshuffle
+    setIsFetching(true);
+    await fetchPokemonList(0, true); // Request a reshuffle
+    setIsFetching(false);
   };
 
-  const loadMorePokemon = () => {
+  const loadMorePokemon = async () => {
     console.log("loadMorePokemon");
+    setLoading(true);
     if (searchTerm === "") {
       setOffset((prevOffset) => prevOffset + limit);
-      fetchPokemonList(offset + limit);
+      await fetchPokemonList(offset + limit);
     } else {
       setOffsetForSearching((prevOffset) => prevOffset + limit);
-      searchPokemon(searchTerm, offsetForSearching + limit)
+      await searchPokemon(searchTerm, offsetForSearching + limit)
     }
+    setLoading(false);
   };
 
   // useEffect to call fetchPokemonList initially
@@ -136,14 +138,16 @@ const Pokedex = () => {
           />
         </div>
         {/* Add a Shuffle Button */}
-        <button
-          onClick={shuffle}
-          disabled={loading}
-          className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-            ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
-        >
-          {loading ? "Loading..." : "Shuffle"}
-        </button>
+        {morePokemon && (
+          <button
+            onClick={shuffle}
+            disabled={isFetching}
+            className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+              ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+          >
+            {isFetching ? "Loading..." : "Shuffle"}
+          </button>
+        )}
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
           <ul className="pokemon-list">
