@@ -308,6 +308,7 @@ app.get('/api/pokemon/type/:type?', async (req, res) => {
 })
 
 let pokemonList = null;
+
 // Divide the data into chunks (pages) and send the appropriate chunk based on the client's request
 app.get('/api/pokemon', async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
@@ -327,9 +328,6 @@ app.get('/api/pokemon', async (req, res) => {
 
     // Paginate the shuffled list
     const paginatedResults = pokemonList.slice(offset, offset + limit);
-
-    // const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
-    // let pokemonList = response.data.results
 
     // Fetch detailed information for each Pokémon to get the ID and image
     const detailedResults = await Promise.all(
