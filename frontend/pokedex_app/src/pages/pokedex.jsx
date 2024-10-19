@@ -119,7 +119,7 @@ const Pokedex = () => {
 
   // useEffect to call fetchPokemonList initially
   useEffect(() => {
-    fetchPokemonList(0, false); // Fetch the initial Pokémon list
+    fetchPokemonList(0, true); // Fetch the initial Pokémon list (shuffled)
   }, []);
 
   return (
@@ -138,16 +138,14 @@ const Pokedex = () => {
           />
         </div>
         {/* Add a Shuffle Button */}
-        {morePokemon && (
-          <button
-            onClick={shuffle}
-            disabled={isFetching}
-            className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-              ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
-          >
-            {isFetching ? "Loading..." : "Shuffle"}
-          </button>
-        )}
+        <button
+          onClick={shuffle}
+          disabled={isFetching}
+          className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+            ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+        >
+          {isFetching ? "Loading..." : "Shuffle"}
+        </button>
         {/* List of Pokémon when not searching */}
         {!searchTerm && (
           <ul className="pokemon-list">
