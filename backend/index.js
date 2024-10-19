@@ -52,6 +52,77 @@ app.get('/api/auth/check', (req, res) => {
   }
 });
 
+// // Function to fetch the full list of Pokémon from the external API
+// const fetchPokemonList = async () => {
+//   try {
+//     const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000');
+//     return response.data.results;
+//   } catch (error) {
+//     console.error('Error fetching Pokémon:', error);
+//     throw error;
+//   }
+// };
+
+// // Shuffle Function
+// const shuffleArray = (array) => {
+//   let currentIndex = array.length, randomIndex;
+
+//   // While there remain elements to shuffle...
+//   while (currentIndex !== 0) {
+//     // Pick a remaining element...
+//     randomIndex = Math.floor(Math.random() * currentIndex);
+//     currentIndex--;
+
+//     // And swap it with the current element.
+//     [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+//   }
+
+//   return array;
+// };
+
+// // Fetch shuffled Pokémon with pagination
+// app.get('/api/pokemon/shuffle', async (req, res) => {
+//   const limit = parseInt(req.query.limit) || 20 // Number of Pokémon per page
+//   const offset = parseInt(req.query.offset) || 0 // Offset for pagination
+//   console.log("/api/pokemon/shuffle, limit:", limit, "offset:", offset)
+
+//   try {
+//     // Fetch and shuffle the Pokémon list on every request
+//     const pokemonList = await fetchPokemonList();
+//     const shuffledPokemonList = shuffleArray(pokemonList); // Shuffle every time
+
+//     // Paginate the shuffled list
+//     const paginatedResults = shuffledPokemonList.slice(offset, offset + limit);
+
+//     // Fetch detailed information for each Pokémon to get the ID and image
+//     const detailedResults = await Promise.all(
+//       paginatedResults.map(async (pokemon) => {
+//         const pokemonData = await axios.get(pokemon.url);
+//         const pokemonId = pokemonData.data.id;
+
+//         let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`;
+//         let isImageValid = await isValidUrl(imageUrl);
+//         if (!isImageValid) {
+//           imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+//         }
+
+//         return {
+//           ...pokemon,
+//           id: pokemonId,
+//           image: isImageValid ? imageUrl : defaultPokemonImgUrl
+//         };
+//       })
+//     );
+
+//     res.json(detailedResults);
+//   } catch (error) {
+//     console.error('Error fetching shuffled Pokémon:', error);
+//     res.status(500).json({ error: 'Error fetching shuffled Pokémon.' });
+//   }
+// });
+
+// let shuffledPokemonCache = null; // Cache to store the shuffled list
+
 // Function to fetch the full list of Pokémon from the external API
 const fetchPokemonList = async () => {
   try {
@@ -81,45 +152,49 @@ const shuffleArray = (array) => {
 };
 
 // Fetch shuffled Pokémon with pagination
-app.get('/api/pokemon/shuffle', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 20 // Number of Pokémon per page
-  const offset = parseInt(req.query.offset) || 0 // Offset for pagination
-  console.log("/api/pokemon/shuffle, limit:", limit, "offset:", offset)
+// app.get('/api/pokemon/shuffle', async (req, res) => {
+//   const limit = parseInt(req.query.limit) || 10; // Number of Pokémon per page
+//   const offset = parseInt(req.query.offset) || 0; // Offset for pagination
+//   const shuffle = req.query.shuffle === 'true'; // Check if shuffle is requested
+//   console.log("/api/pokemon/shuffle, limit:", limit, "offset:", offset, "shuffle:", shuffle)
 
-  try {
-    // Fetch and shuffle the Pokémon list on every request
-    const pokemonList = await fetchPokemonList();
-    const shuffledPokemonList = shuffleArray(pokemonList); // Shuffle every time
+//   try {
+//     // If shuffle is requested or there's no cached shuffled list, reshuffle
+//     if (shuffle || !shuffledPokemonCache) {
+//       const pokemonList = await fetchPokemonList();
+//       shuffledPokemonCache = shuffleArray(pokemonList);
+//     }
 
-    // Paginate the shuffled list
-    const paginatedResults = shuffledPokemonList.slice(offset, offset + limit);
+//     // Paginate the shuffled list
+//     const paginatedResults = shuffledPokemonCache.slice(offset, offset + limit);
 
-    // Fetch detailed information for each Pokémon to get the ID and image
-    const detailedResults = await Promise.all(
-      paginatedResults.map(async (pokemon) => {
-        const pokemonData = await axios.get(pokemon.url);
-        const pokemonId = pokemonData.data.id;
+//     // Fetch detailed information for each Pokémon to get the ID and image
+//     const detailedResults = await Promise.all(
+//       paginatedResults.map(async (pokemon) => {
+//         const pokemonData = await axios.get(pokemon.url);
+//         const pokemonId = pokemonData.data.id;
 
-        let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`;
-        let isImageValid = await isValidUrl(imageUrl);
-        if (!isImageValid) {
-          imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
-        }
+//         let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`;
+//         let isImageValid = await isValidUrl(imageUrl);
+//         if (!isImageValid) {
+//           imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`;
+//         }
 
-        return {
-          ...pokemon,
-          id: pokemonId,
-          image: isImageValid ? imageUrl : defaultPokemonImgUrl
-        };
-      })
-    );
+//         return {
+//           ...pokemon,
+//           id: pokemonId,
+//           image: isImageValid ? imageUrl : defaultPokemonImgUrl
+//         };
+//       })
+//     );
 
-    res.json(detailedResults);
-  } catch (error) {
-    console.error('Error fetching shuffled Pokémon:', error);
-    res.status(500).json({ error: 'Error fetching shuffled Pokémon.' });
-  }
-});
+//     res.json(detailedResults);
+//   } catch (error) {
+//     console.error('Error fetching shuffled Pokémon:', error);
+//     res.status(500).json({ error: 'Error fetching shuffled Pokémon.' });
+//   }
+// });
+
 
 // If a fetched pokemon img is invalid, fall back to default img
 const defaultPokemonImgUrl = '../img/default_pokemon.png'
@@ -232,19 +307,33 @@ app.get('/api/pokemon/type/:type?', async (req, res) => {
   }
 })
 
+let pokemonList = null;
 // Divide the data into chunks (pages) and send the appropriate chunk based on the client's request
 app.get('/api/pokemon', async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  console.log("/api/pokemon requested:", "limit =", limit, "offset =", offset)
+  const shuffle = req.query.shuffle === 'true'; // Check if shuffle is requested
+  console.log("/api/pokemon, limit:", limit, "offset:", offset, "shuffle:", shuffle)
   
   try {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
-    let pokemonList = response.data.results
+    if (offset === 0) {
+      pokemonList = await fetchPokemonList();
+    }
+  
+    // If shuffle is requested or there's no cached shuffled list, reshuffle
+    if (shuffle) {
+      pokemonList = shuffleArray(pokemonList);
+    }
+
+    // Paginate the shuffled list
+    const paginatedResults = pokemonList.slice(offset, offset + limit);
+
+    // const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`)
+    // let pokemonList = response.data.results
 
     // Fetch detailed information for each Pokémon to get the ID and image
-    pokemonList = await Promise.all(
-    pokemonList.map(async (pokemon) => {
+    const detailedResults = await Promise.all(
+    paginatedResults.map(async (pokemon) => {
       // Fetch detailed data for each Pokemon
       const pokemonData = await axios.get(pokemon.url)
       const pokemonId = pokemonData.data.id
@@ -264,7 +353,7 @@ app.get('/api/pokemon', async (req, res) => {
     })
   )
 
-    res.json(pokemonList)
+    res.json(detailedResults)
   } catch (err) {
     res.status(500).json({ 'error': 'Error fetching Pokémon data' })
   }

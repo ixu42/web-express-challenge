@@ -10,19 +10,20 @@ const Pokedex = () => {
   const [morePokemon, setMorePokemon] = useState(true);
   const [matchingList, setMatchingList] = useState([]);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
+  // const [offsetForShuffling, setOffsetForShuffling] = useState(0);
 
-  const limit = 20; // Number of Pokémon per page
+  const limit = 50; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
 
   // Function to fetch Pokemon list (non-search)
-  const fetchPokemonList = async () => {
+  const fetchPokemonList = async (offsetValue = 0, shouldShuffle = false) => {
     console.log("fetchPokemonList() called");
     setLoading(true);
-    console.log("offset:", offset);
+    console.log("offset:", offsetValue, "shouldShuffle:", shouldShuffle);
     try {
-      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offset}`);
+      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&shuffle=${shouldShuffle}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
       if (newPokemonList.length > limit) {
@@ -85,6 +86,7 @@ const Pokedex = () => {
     console.log("loadMorePokemon");
     if (searchTerm === "") {
       setOffset((prevOffset) => prevOffset + limit);
+      fetchPokemonList(offset + limit);
     } else {
       setOffsetForSearching((prevOffset) => prevOffset + limit);
     }
@@ -95,14 +97,12 @@ const Pokedex = () => {
 
     setSearchTerm(userInput);
     setOffset(0);
-    console.log("offset:", offset);
     setOffsetForSearching(0);
-    console.log("offsetForSearching:", offsetForSearching);
     setMorePokemon(true);
     setPokemonList([]);
     setMatchingList([]);
     if (userInput === "") {
-      fetchPokemonList();
+      fetchPokemonList(0, false);
     } else {
       if (offsetForSearching === 0) {
         searchPokemon(userInput);
@@ -110,13 +110,25 @@ const Pokedex = () => {
     }
   };
 
+  // useEffect to call fetchPokemonList initially
   useEffect(() => {
-    fetchPokemonList(); // Fetch pokemonList in non-search mode
-  }, [offset]); // Run when offset changes
+    fetchPokemonList(0, false); // Fetch the initial Pokémon list
+  }, []);
+
+  // useEffect(() => {
+  //   fetchPokemonList(offset); // Fetch pokemonList in non-search mode
+  // }, [offset]); // Run when offset changes
 
   useEffect(() => {
     searchPokemon(searchTerm); // Fetch matchingList in search mode
   }, [offsetForSearching]); // Run when offsetForSearching changes
+  
+  const shuffle = async () => {
+    setOffset(0);
+    setPokemonList([]);
+    setMorePokemon(true);
+    fetchPokemonList(0, true); // Request a reshuffle
+  };
 
   return (
     <div>
@@ -135,12 +147,7 @@ const Pokedex = () => {
         </div>
         {/* Add a Shuffle Button */}
         <button
-          onClick={() => {
-            setOffset(0); // Reset offset to 0
-            setPokemonList([]); // Reset the Pokémon list
-            setMorePokemon(true); // Allow for more Pokémon to load
-            fetchShuffledPokemon(); // Fetch the shuffled Pokémon list
-          }}
+          onClick={shuffle}
           disabled={loading}
           className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
             ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
