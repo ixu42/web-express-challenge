@@ -138,29 +138,26 @@ app.get('/api/pokemon/search/:query?', async (req, res) => {
   console.log("query:", query, "limit:", limit, "offset:", offset, "sort", sort)
 
   try {
-    // const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
-    // const pokemonList = response.data.results
-
     if (offset === 0) {
+      // Fetch a full pokemon list
       pokemonList = await fetchPokemonList();
-    }
 
-    let matchingPokemon;
-    
-    if (!query || query.trim() === "") {
-      matchingPokemon = pokemonList
-    } else {
-      matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
-      if (matchingPokemon.length === 0) {
-        return res.json([])
+      // Get a list of matching pokemon
+      if (!query || query.trim() === "") {
+      } else {
+        pokemonList = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
+        if (pokemonList.length === 0) {
+          return res.json([])
+        }
+      }
+
+      // Sort the list, if requested
+      if (sort !== "") {
+        pokemonList = sortPokemonList(pokemonList, sort);
       }
     }
 
-    if (sort !== "") {
-      matchingPokemon = sortPokemonList(matchingPokemon, sort);
-    }
-
-    let paginatedResults = matchingPokemon.slice(offset, offset + limit);
+    let paginatedResults = pokemonList.slice(offset, offset + limit);
     // Fetch detailed information for each Pokémon to get the ID and image
     paginatedResults = await Promise.all(
       paginatedResults.map(async (pokemon) => {
@@ -237,19 +234,18 @@ app.get('/api/pokemon', async (req, res) => {
   try {
     if (offset === 0) {
       pokemonList = await fetchPokemonList();
-    }
-  
-    // If shuffle is requested or there's no cached shuffled list, reshuffle
-    if (shuffle) {
-      pokemonList = shuffleArray(pokemonList);
+
+      // If shuffle is requested or there's no cached shuffled list, reshuffle
+      if (shuffle) {
+        pokemonList = shuffleArray(pokemonList);
+      }
+
+      // Sort the Pokémon list based on the sort parameter
+      if (sort !== "") {
+        pokemonList = sortPokemonList(pokemonList, sort);
+      }
     }
 
-    // Sort the Pokémon list based on the sort parameter
-    if (sort !== "") {
-      pokemonList = sortPokemonList(pokemonList, sort);
-    }
-
-    // Paginate the shuffled list
     const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
 
     // Fetch detailed information for each Pokémon to get the ID and image
