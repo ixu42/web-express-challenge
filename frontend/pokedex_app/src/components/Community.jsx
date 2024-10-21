@@ -4,22 +4,20 @@ import { useState, useEffect } from "react";
 
 const Community = () => {
 
-/* 	fetch("/api/profiles")
-	.then((response) => console.log(response)) */
-	const [users, setUsers] = useState(testProfiles);
+	const [userList, setUserList] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	let totalPages;
 
-	if (users.users.length <= usersPerPage)
+	if (userList.length <= usersPerPage)
 	{
 		totalPages = 1;
 	}
 	else
 	{
-		totalPages = Math.floor(users.users.length / usersPerPage)
+		totalPages = Math.floor(userList.length / usersPerPage)
 	}
 
 	const [currentPage, setCurrentPage] = useState(totalPages);
@@ -27,8 +25,11 @@ const Community = () => {
 	useEffect(() => {
 		const fetchUsers = async () => {
 			setLoading(true);
-			setUsers(testProfiles);
-			setLoading(false);
+			fetch("/api/profile")
+			.then((response) => response.json())
+			.then((data) => (setUserList(data)))
+			.then(setLoading(false))
+			.catch((error) => alert("Error fetching user list"))			
 		};
 		fetchUsers();
 	}, [])
@@ -58,7 +59,7 @@ const Community = () => {
 		return (
 			<ul className="grid grid-cols-4">
 				{currentPageUsers.map((user => (
-					<li className="p-5 text-center text-3xl" key={user.username}>{user.username}<br/><br/> <img src={user.profile_pic}/> </li>
+					<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> <img src={user.profile_pic}/> </li>
 				)))
 				}
 			</ul>
@@ -118,9 +119,9 @@ const Community = () => {
 				<h1 className="text-rose-900 font-pokemon text-center text-7xl my-10">Our community</h1>
 				<SearchUser/>
 				<div className="">
-					<UsersOverview loading={loading} users={users.users} usersPerPage={usersPerPage} currentPage={currentPage}/>
+					<UsersOverview loading={loading} users={userList} usersPerPage={usersPerPage} currentPage={currentPage}/>
 				</div>
-				<Pagination currentPage={currentPage} length={users.users.length} usersPerPage={usersPerPage}/>
+				<Pagination currentPage={currentPage} length={userList.length} usersPerPage={usersPerPage}/>
 			</section>
 		</main>
 	)
