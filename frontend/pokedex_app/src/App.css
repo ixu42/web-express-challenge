@@ -56,15 +56,6 @@ footer {
 	text-align: center;
 }
 
-.pokemon-list {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center; /* Align items to the start */
-	padding: 10px; /* Adjust padding to fit your layout */
-	list-style-type: none;
-	margin: 0;
-  }
-
   .pokemon-item {
 	background-color: #fff; /* Card background */
 	border: 1px solid #ccc; /* Card border */
@@ -123,27 +114,4 @@ ul {
 }
 
 
-	.info-section {
-	background-color: #f2f9bc;
-	padding: 15px;
-	border-radius: 8px;
-	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-	margin: 10px 0;
-	width: 100%;
-	text-transform: capitalize;
-	}
 
-	.info-section h2 {
-	font-size: 1.5rem;
-	margin-bottom: 10px;
-	}
-
-	.stats-section {
-		background-color: #a6b1db;
-		padding: 15px;
-		border-radius: 8px;
-		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-		margin: 10px 0;
-		width: 100%;
-		text-transform: capitalize;
-	}
