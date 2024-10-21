@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../img/logo.png';
 import './pokedex.css';
 
@@ -13,7 +13,10 @@ const Pokedex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [sortOrder, setSortOrder] = useState("ID-asc");
+  // const [hasProcessedLocationState, setHasProcessedLocationState] = useState(false); // New local state
+  const [isNavigatedBack, setIsNavigatedBack] = useState(false); // Track navigation status
 
+  const navigate = useNavigate();
   const location = useLocation();
 
   const limit = 20; // Number of Pokémon per page
@@ -54,7 +57,7 @@ const Pokedex = () => {
 
     console.log("offsetForSearching:", offsetValue);
     try {
-      const response = await fetcpokemonListh(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
         signal: abortController.signal, // Pass the signal to the fetch request
       });
 
@@ -142,18 +145,46 @@ const searchPokemon = async (userInput) => {
   //   fetchPokemonList(0, false, "ID-asc"); // Fetch the initial Pokémon list, sort by ID (ascending)
   // }, []);
 
-  // Use the passed state (if available) to restore the Pokémon list
   useEffect(() => {
     console.log("useEffect() for passed state");
-    if (location.state?.pokemonList) {
-      console.log("location.state?.pokemonList exists")
-      setPokemonList(location.state.pokemonList);
+
+    const initialOffset = location.state?.offset || 0; // Default to 0 if offset doesn't exist
+    setOffset(initialOffset); // Set the offset for pagination
+    console.log("location.state?.offset:", location.state?.offset);
+    console.log("initialOffset:", initialOffset);
+
+    // Check if navigating back from the profile page
+    if (location.state?.from === 'profile') {
+      console.log("Navigating back from profile page");
+      if (!location.state.searchTerm) {
+        console.log("non search mode")
+        setPokemonList(location.state.pokemonList); // Use the passed Pokemon list
+      } else {
+        console.log("search mode")
+        setMatchingList(location.state.matchingList);
+        setOffsetForSearching(location.state.offsetForSearching);
+        setSearchTerm(location.state.searchTerm);
+      }
     } else {
-      console.log("location.state?.pokemonList does not exist")
-      // Fetch the Pokémon list if there's no state passed
-      fetchPokemonList(0, false, "ID-asc");
+      console.log("Fetching default Pokemon list");
+      fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the new Pokemon list
     }
-  }, [location.state]);
+
+    // Clear location.state on page reload
+    const handleBeforeUnload = (event) => {
+      // Clear location state before unloading the page
+      if (location.state?.from) {
+        navigate('/', { replace: true, state: {} }); // Replace the current state with an empty object
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // cleanup function to ensure that the event listener is removed when the component unmounts
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [location.state, navigate]);
 
   return (
     <div>
@@ -166,9 +197,9 @@ const searchPokemon = async (userInput) => {
         <Shuffle isFetching={isFetching} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
-          <PokemonList pokemonList={pokemonList} />
+          <PokemonList pokemonList={pokemonList} offset={offset} />
         ) : (
-          <SearchResults matchingList={matchingList} />
+          <SearchResults matchingList={matchingList} offset={offsetForSearching} searchTerm={searchTerm}/>
         )}
         {morePokemon && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon}/>)}
       </main>
@@ -222,13 +253,16 @@ const Shuffle = ({ isFetching, onShuffle }) => (
 );
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList }) => (
+const PokemonList = ({ pokemonList, offset }) => (
   <ul className="pokemon-list">
     {pokemonList.map(pokemon => (
       <li key={pokemon.name} className="pokemon-item">
         <Link 
           to={`/pokemon/${pokemon.name}`}
-          state={{ pokemonList }}
+          state={{ 
+            pokemonList,    // Pass the current Pokémon list
+            offset          // Pass the current offset
+          }}
         >
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
           <p>{pokemon.name}</p>
@@ -245,16 +279,28 @@ const PokemonList = ({ pokemonList }) => (
 );
 
 // Search Results component
-const SearchResults = ({ matchingList }) => (
+const SearchResults = ({ matchingList, offset, searchTerm }) => (
   matchingList && matchingList.length > 0 ? (
     <ul className="pokemon-list">
       {matchingList.map(pokemon => (
         <li key={pokemon.name} className="pokemon-item">
-          <a href={`/pokemon/${pokemon.name}`}>
+          <Link 
+            to={`/pokemon/${pokemon.name}`}
+            state={{ 
+              matchingList,
+              offset,
+              searchTerm
+            }}
+          >
+            <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+            <p>{pokemon.name}</p>
+            <p>ID: {pokemon.id}</p>
+          </Link>
+          {/* <a href={`/pokemon/${pokemon.name}`}>
             <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
             {pokemon.name}
             <p>ID: {pokemon.id}</p>
-          </a>
+          </a> */}
         </li>
       ))}
     </ul>

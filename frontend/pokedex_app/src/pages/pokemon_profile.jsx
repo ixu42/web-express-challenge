@@ -13,8 +13,11 @@ const PokemonProfile = () => {
 
   // Access the passed state (pokemonList) from location.state
   const pokemonList = location.state?.pokemonList || [];
+  const offset = location.state?.offset || 0;
+  const matchingList = location.state?.matchingList || [];
+  const offsetForSearching = location.state?.offsetForSearching || 0;
+  const searchTerm = location.state?.searchTerm || "";
   console.log("pokemon profile page | location.state", location.state);
-  console.log("pokemon profile page | pokemonList", pokemonList)
 
 	useEffect(() => {
 	const fetchPokemonInfo = async () => {
@@ -34,6 +37,23 @@ const PokemonProfile = () => {
 
 	fetchPokemonInfo();
 	}, [name]);
+  
+  // Function to handle "Back to Pokedex" button click
+  const handleBackToPokedex = () => {
+    console.log("handleBackToPokedex() called")
+    navigate('/', {
+      state: { 
+        from: 'profile',
+        pokemonList: pokemonList,
+        offset: offset,
+        matchingList: pokemonList,
+        offsetForSearching: offsetForSearching,
+        searchTerm: searchTerm
+      },
+    });
+  };
+
+  // PASS DATA IF USER CLICKED BROUSER'S BACK BUTTON?
 
 	if (loading) return <div>Loading...</div>;
 	if (error) return <div>{error}</div>;
@@ -105,7 +125,7 @@ const PokemonProfile = () => {
       <div className="flex justify-center">
         {/* Back to Pokedex Button */}
         <button
-            onClick={() => navigate('/', { state: { pokemonList } })}
+            onClick={handleBackToPokedex}
             className="px-6 py-3 my-4 font-semibold text-black bg-gray-300 hover:bg-gray-400 rounded-lg shadow-md transition-transform transform hover:scale-110 duration-300"
           >
             Back to Pokedex
