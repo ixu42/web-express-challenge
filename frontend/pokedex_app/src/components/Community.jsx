@@ -9,6 +9,7 @@ const Community = () => {
 	const [users, setUsers] = useState(testProfiles);
 	const [loading, setLoading] = useState(false);
 	const [usersPerPage, setUsersPerPage] = useState(8);
+	const [searchQuery, setSearchQuery] = useState("");
 
 	let totalPages;
 
@@ -35,10 +36,7 @@ const Community = () => {
 	const UsersOverview = ({loading, users, usersPerPage, currentPage}) => {
 
 		let shownUsersStart;
-
-		console.log('current page - user rendering', currentPage)
-		console.log("Users per page: ", usersPerPage)
-		
+	
 		if (currentPage == 1)
 		{
 			shownUsersStart = 0
@@ -46,16 +44,12 @@ const Community = () => {
 		else
 		{
 			shownUsersStart = (currentPage - 1) * usersPerPage
-			console.log("Calculating users for current page other than first")
 		}
 
 		let shownUsersEnd = (currentPage * usersPerPage)
 
-		console.log('Shown users start and end', shownUsersStart, shownUsersEnd)
 
 		const  currentPageUsers = users.slice(shownUsersStart, shownUsersEnd)
-
-		console.log('Current page users:', currentPageUsers)
 
 		if (loading === true)
 		{
@@ -71,6 +65,21 @@ const Community = () => {
 		)
 	}
 
+	const handleSearch = () => {
+		
+	}
+
+	const SearchUser = () => {
+		
+		return (
+			<div className="flex justify-center">
+				<h2 className="mx-4 font-mono text-rose-950">Search users by name: </h2>
+				<input className="bg-rose-200 content-center" type="text"></input>
+			</div>
+		)
+	}
+
+
 	const Pagination = ({usersPerPage, length, currentPage}) => {
 
 		const paginationNumbers = [];
@@ -82,9 +91,7 @@ const Community = () => {
 
 		const handlePagination = ({pageNumber}) => {
 
-			//console.log("Page num: ", pageNumber)
 			setCurrentPage(pageNumber)
-			//console.log("Current page: ", currentPage)
 		}
 
 		return (
@@ -109,7 +116,7 @@ const Community = () => {
 		<main>
 			<section>
 				<h1 className="text-rose-900 font-pokemon text-center text-7xl my-10">Our community</h1>
-				
+				<SearchUser/>
 				<div className="">
 					<UsersOverview loading={loading} users={users.users} usersPerPage={usersPerPage} currentPage={currentPage}/>
 				</div>
