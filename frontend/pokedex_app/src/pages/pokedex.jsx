@@ -216,8 +216,8 @@ const PokemonList = ({ pokemonList }) => (
       <li key={pokemon.name} className="pokemon-item">
         <a href={`/pokemon/${pokemon.name}`}>
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
-          <p>{pokemon.name}</p>
-          <p>ID: {pokemon.id}</p>
+          <p className="font-semibold text-lg">{pokemon.name}</p>
+          <p className="text-gray-500">ID: {pokemon.id}</p>
         </a>
       </li>
     ))}

@@ -56,22 +56,64 @@ footer {
 	text-align: center;
 }
 
-.pokemon-item {
-	float: left;
-	margin: 10px;
-}
+.pokemon-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center; /* Align items to the start */
+	padding: 10px; /* Adjust padding to fit your layout */
+	list-style-type: none;
+	margin: 0;
+  }
 
-.pokemon-item a {
+  .pokemon-item {
+	background-color: #fff; /* Card background */
+	border: 1px solid #ccc; /* Card border */
+	border-radius: 10px; /* Rounded corners */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+	margin: 5px; /* Reduced margin for less space between items */
+	width: calc(15% - 10px); /* Adjusted width for larger items */
+	display: flex; /* Use flexbox to manage internal layout */
+	flex-direction: column; /* Stack content vertically */
+	align-items: center; /* Center items */
+	padding: 10px; /* Add some padding inside the boxes */
+	transition: transform 0.3s; /* Optional: Add a hover effect */
+  }
+
+  .pokemon-item:hover {
+	transform: scale(1.05); /* Optional: Scale up on hover */
+  }
+
+  .pokemon-item a {
 	color: #000;
 	text-decoration: none;
-	font-size: 16px;
-	transition: color 0.3s ease;
-	text-transform: capitalize;
-}
+	text-align: center; /* Center text */
+  }
 
-.pokemon-item a:hover {
-	color: #3B4CCA;
-}
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+	.pokemon-item {
+	  width: calc(20% - 10px); /* 5 items per row */
+	}
+  }
+
+  @media (max-width: 900px) {
+	.pokemon-item {
+	  width: calc(25% - 10px); /* 4 items per row */
+	}
+  }
+
+  @media (max-width: 600px) {
+	.pokemon-item {
+	  width: calc(50% - 10px); /* 2 items per row */
+	}
+  }
+
+  @media (max-width: 400px) {
+	.pokemon-item {
+	  width: calc(100% - 10px); /* 1 item per row */
+	}
+  }
+
 
 ul {
 	display: grid;
