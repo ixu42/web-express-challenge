@@ -53,7 +53,7 @@ const LoginForm = (props) => {
 
 	return (
 		<section className="">
-			<header className="font-pokemon w-28 mx-auto mb-5 font-bold text-pink-950 text-5xl">Login</header>
+			<header className="w-28 mx-auto mb-5 font-bold text-pink-950 text-5xl">Login</header>
 			<form onSubmit={loginAttempt}>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="username">Username:</label>
@@ -69,7 +69,7 @@ const LoginForm = (props) => {
 						<input id="show-password" type="checkbox" value={pwordVisibility} onChange={() => setPwordVisibility((previous) => !previous)}/>
 					</div>
 				</div>
-			<button className="w-full text-2xl font-pokemon bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded" type="submit">Log in</button>
+			<button className="w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded" type="submit">Log in</button>
 			</form>
 		</section>
 	)

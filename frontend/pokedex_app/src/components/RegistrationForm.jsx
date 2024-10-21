@@ -35,7 +35,7 @@ const RegistrationForm = (props) => {
 			if (response.status === 201)
 			{
 				alert("Successfully registered!")
-				
+
 			}
 			else if (response.status === 400)
 			{
@@ -57,9 +57,9 @@ const RegistrationForm = (props) => {
 	}
 
 	return (
-		
+
 		<section className="border-t-4 border-pink-700">
-			<header className="pt-4 font-pokemon w-full text-center font-bold text-pink-950 text-2xl">Don't have an account yet?<br/>Register here</header>
+			<header className="pt-4 w-full text-center font-bold text-pink-950 text-2xl">Don't have an account yet?<br/>Register here</header>
 			<form onSubmit={attemptRegistration}>
 				<div>
 					<label className="block mb-2 text-black" htmlFor="register-email">Email address:</label>
@@ -79,7 +79,7 @@ const RegistrationForm = (props) => {
 					<label htmlFor="show-password-register">Show password? </label>
 					<input id="show-password-register" type="checkbox" value={pwordVisibility} onChange={() => setPwordVisibility((previous) => !previous)}/>
 				</div>
-			<button className="font-pokemon w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded" type="submit">Register</button>
+			<button className="w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded" type="submit">Register</button>
 			</form>
 		</section>
 	)

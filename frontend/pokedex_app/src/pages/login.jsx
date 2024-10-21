@@ -1,5 +1,4 @@
 import React from "react";
-import background from "../assets/8k.jpg"
 import LoginForm from "../components/LoginForm.jsx"
 import RegistrationForm from "../components/RegistrationForm.jsx"
 
