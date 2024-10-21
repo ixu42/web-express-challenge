@@ -9,6 +9,9 @@ const RegistrationForm = (props) => {
 	const [pwordVisibility, setPwordVisibility] = useState(false);
 
 
+	/* const createProfile = () => {
+		fetch("/api/profile/create")
+	} */
 
 	const handleUsername = (event) => {
 		setUsername(event.target.value)
@@ -32,6 +35,7 @@ const RegistrationForm = (props) => {
 			if (response.status === 201)
 			{
 				alert("Successfully registered!")
+				
 			}
 			else if (response.status === 400)
 			{
