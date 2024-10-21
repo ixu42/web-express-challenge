@@ -1,6 +1,4 @@
 const express = require('express')
-const axios = require('axios')
-const { Pool } = require('pg')
 const session = require('express-session')
 const { registerUser, loginUser, logoutUser, isAuthenticated } = require('./userController')
 const pokemonRoutes = require("./routes/pokemonRoutes");
@@ -26,17 +24,18 @@ app.use(session({
 }))
 
 // PostgreSQL connection configuration
-const pool = new Pool({
-  user: 'youruser',
-  host: 'localhost',
-  database: 'pokemon-db',
-  password: 'yourpassword',
-  port: 5432,
-})
 
 app.use("/api/pokemon", pokemonRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/profile", profileRoutes);
+
+
+// Base URL endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'Hello from internal API'
+  })
+})
 
 app.post('/api/register', registerUser)
 app.post('/api/login', loginUser)
@@ -50,206 +49,6 @@ app.get('/api/auth/check', (req, res) => {
     res.json({ loggedIn: false });
   }
 });
-
-// If a fetched pokemon img is invalid, fall back to default img
-const defaultPokemonImgUrl = '../img/default_pokemon.png'
-
-const sortPokemonList = (pokemonList, sort) => {
-  return pokemonList.sort((a, b) => {
-    if (sort === 'A-Z') return a.name.localeCompare(b.name);
-    if (sort === 'Z-A') return b.name.localeCompare(a.name);
-    return 0; // Default: no sorting
-  });
-};
-
-// Base URL endpoint
-app.get('/api', (req, res) => {
-  res.json({
-    message: 'This is internal API',
-    version: '1.0.0',
-    endpoints: {
-      getPokemon: '/api/pokemon',
-      getPokemonByName: '/api/pokemon/:name',
-      getPokemonByType: '/api/pokemon/type/:type'
-    }
-  })
-})
-
-const isValidUrl = async (url) => {
-  try {
-    const response = await axios.head(url) // Use HEAD to check URL without downloading
-    return response.status === 200 // Only return true if the response status is 200 OK
-  } catch (error) {
-    // console.error(`Invalid URL: ${url}`, error.message)
-    return false
-  }
-}
-
-// Fetch a list of Pokémon based on a substring match
-app.get('/api/pokemon/search/:query?', async (req, res) => {
-  const { query } = req.params
-  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
-  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  const sort = req.query.sort || 'id'
-  console.log("query:", query, "limit:", limit, "offset:", offset, "sort", sort)
-
-  try {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=10000')
-    const pokemonList = response.data.results
-
-    let matchingPokemon = sortPokemonList(pokemonList, sort);;
-    if (!query || query.trim() === "") {
-      matchingPokemon = pokemonList
-    } else {
-      matchingPokemon = pokemonList.filter(pokemon => pokemon.name.includes(query.toLowerCase()))
-      if (matchingPokemon.length === 0) {
-        return res.json([])
-      }
-    }
-
-    let paginatedResults = matchingPokemon.slice(offset, offset + limit);
-    // Fetch detailed information for each Pokémon to get the ID and image
-    paginatedResults = await Promise.all(
-      paginatedResults.map(async (pokemon) => {
-        // Fetch detailed data for each Pokemon
-        const pokemonData = await axios.get(pokemon.url)
-        const pokemonId = pokemonData.data.id
-
-        let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
-        let isImageValid = await isValidUrl(imageUrl)
-        if (!isImageValid) {
-          imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
-        }
-        isImageValid = await isValidUrl(imageUrl)
-
-        return {
-          ...pokemon,
-          id: pokemonId,
-          image: isImageValid ? imageUrl : defaultPokemonImgUrl
-        }
-      })
-    )
-
-    res.json(paginatedResults)
-  } catch (err) {
-    console.error(err)
-    if (err.response) {
-      // The request was made and the server responded with a status code
-      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
-    } else {
-      // Something happened in setting up the request that triggered an error
-      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.' })
-    }
-  }
-})
-
-// A list of Pokémon by type
-app.get('/api/pokemon/type/:type?', async (req, res) => {
-  const { type } = req.params
-  console.log("type:", type)
-  try {
-    if (!type || type.trim() === "") {
-      return res.status(404).json({ 'error': 'Type not provided.' })
-    }
-    const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
-
-  // Extract a list of Pokémon of a given type
-  const typePokemon = response.data.pokemon.map(p => ({
-    name: p.pokemon.name,
-    url: p.pokemon.url
-  }))
-
-  res.json(typePokemon)
-
-  } catch (err) {
-    console.error(err)
-    if (err.response) {
-      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
-    } else {
-      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
-    }
-  }
-})
-
-// Divide the data into chunks (pages) and send the appropriate chunk based on the client's request
-app.get('/api/pokemon', async (req, res) => {
-  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
-  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  const sort = req.query.sort || 'id'
-  console.log("/api/pokemon requested:", "limit =", limit, "offset =", offset, "sortorder=", sort)
-
-  try {
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10000`)
-    const pokemonList = response.data.results;
-
-    // Sort the Pokémon list based on the sort parameter
-    const sortedPokemonList = sortPokemonList(pokemonList, sort);
-
-    //console.log("sortedPokemonList:", sortedPokemonList)
-    // Fetch detailed information for each Pokémon to get the ID and image
-    const paginatedPokemonList = sortedPokemonList.slice(offset, offset + limit);
-    let detailedPokemonList = await Promise.all(
-      paginatedPokemonList.map(async (pokemon) => {
-        // Fetch detailed data for each Pokemon
-        const pokemonData = await axios.get(pokemon.url)
-        const pokemonId = pokemonData.data.id
-
-      let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
-      let isImageValid = await isValidUrl(imageUrl)
-      if (!isImageValid) {
-        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
-      }
-      isImageValid = await isValidUrl(imageUrl)
-
-      return {
-        ...pokemon,
-        id: pokemonId,
-        image: isImageValid ? imageUrl : defaultPokemonImgUrl
-      }
-    })
-  )
-
-    res.json(detailedPokemonList)
-  } catch (err) {
-    console.error('Error in fetching Pokémon:', err.message);
-    res.status(500).json({ 'error': 'Error fetching Pokémon data' })
-  }
-})
-
-// Details of a Pokémon by name
-app.get('/api/pokemon/:name?', async (req, res) => {
-  const { name } = req.params
-  console.log("name:", name)
-  try {
-    if (!name || name.trim() === "") {
-      return res.status(404).json({ 'error': 'Name not provided.' })
-    }
-    const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`)
-    const pokemonData = response.data
-    const pokemonId = pokemonData.id
-
-    let imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${pokemonId}.svg`
-      let isImageValid = await isValidUrl(imageUrl)
-      if (!isImageValid) {
-        imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`
-      }
-      isImageValid = await isValidUrl(imageUrl)
-
-    const pokemonWithValidImage = {
-      ...pokemonData,
-      image: isImageValid ? imageUrl : defaultPokemonImgUrl
-    }
-
-    res.json(pokemonWithValidImage)
-  } catch (err) {
-    console.error(err)
-    if (err.response) {
-      res.status(err.response.status).json({ 'error': 'Pokémon not found.' })
-    } else {
-      res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.'})
-    }
-  }
-})
 
 //middleware
 app.use(handleError);
