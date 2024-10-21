@@ -50,9 +50,9 @@ const insertDislikedPokemon = async (user_id, pokemon_id) => {
 const likedPokemon = async (user_id, pokemon_id, name) => {
   await insertPokemon(pokemon_id, name);
   const result = await insertLikedPokemon(user_id, pokemon_id);
-  if (result.rows.length === 0) {
+/*   if (result.rows.length === 0) {
     throw new ValidationError("Pokemon already liked");
-  }
+  } */
   return result.rows[0];
 };
 
@@ -61,18 +61,18 @@ const unlikePokemon = async (user_id, pokemon_id) => {
     "DELETE FROM user_pokemons WHERE user_id = $1 AND pokemon_id = $2 AND relationship = 'like' RETURNING user_id, pokemon_id";
   const values = [user_id, pokemon_id];
   const result = await db.query(text, values);
-  if (result.rows.length === 0) {
+/*   if (result.rows.length === 0) {
     throw new ValidationError("Pokemon already unliked");
-  }
+  } */
   return result.rows[0];
 };
 
 const dislikedPokemon = async (user_id, pokemon_id, name) => {
   await insertPokemon(pokemon_id, name);
   const result = await insertDislikedPokemon(user_id, pokemon_id);
-  if (result.rows.length === 0) {
+/*   if (result.rows.length === 0) {
     throw new ValidationError("Pokemon already disliked");
-  }
+  } */
   return result.rows[0];
 };
 
@@ -81,9 +81,9 @@ const undislikePokemon = async (user_id, pokemon_id) => {
     "DELETE FROM user_pokemons WHERE user_id = $1 AND pokemon_id = $2 AND relationship = 'dislike' RETURNING user_id, pokemon_id";
   const values = [user_id, pokemon_id];
   const result = await db.query(text, values);
-  if (result.rows.length === 0) {
+/*   if (result.rows.length === 0) {
     throw new ValidationError("Pokemon already undisliked");
-  }
+  } */
   return result.rows[0];
 };
 

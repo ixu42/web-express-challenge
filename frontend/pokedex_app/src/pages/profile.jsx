@@ -2,12 +2,25 @@ import React from "react";
 import testData from '../assets/profile_placeholder.json';
 import background from "../assets/profile_bg.png"
 import UserLikedPokemon from "../components/UserLikedPokemon"
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '../AuthContext';
 
 const Profile = () => {
 
     const [editingBio, setEditingBio] = useState(false);
     const [bio, setBio] = useState(testData.bio)
+
+    const { isAuthenticated , user, loading} = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    console.log("isAuthenticated:", isAuthenticated);
+    useEffect(() => {
+        if (!isAuthenticated && !loading) {
+          navigate('/login');  // Redirect to login if not authenticated
+        }
+      }, [isAuthenticated, navigate]);
 
     const updateBio = (event) => {
         setBio(event.target.value)
