@@ -34,33 +34,62 @@ const PokemonProfile = () => {
 	if (error) return <div>{error}</div>;
 
 	const handleLike = async () => {
-		if (!like) {
-			setLike(true);
-			setDislike(false);
 		try {
-			const response = await fetch(`/api/pokemon/liked`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json', // Define the content type
-				},
-				body: JSON.stringify({
-					pokemon_id: pokemonInfo.id,  // Send the appropriate data
-					pokemon_name: pokemonInfo.name,
-				}),
-			});
-		if (!response.ok) {
-			throw new Error('Failed to like Pokémon');
+			if (like) {
+				// If already liked, unlike the Pokémon
+				const unlikeResponse = await fetch(`/api/pokemon/unlike/${pokemonInfo.id}`, {
+				  method: 'DELETE',
+				});
+				if (!unlikeResponse.ok) {
+				  throw new Error('Failed to unlike Pokémon');
+				}
+				setLike(false);  // Update state to reflect unliking
+			  } else {
+				setLike(true);
+				setDislike(false);
+				const response = await fetch(`/api/pokemon/liked`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json', // Define the content type
+					},
+					body: JSON.stringify({
+						pokemon_id: pokemonInfo.id,  // Send the appropriate data
+						pokemon_name: pokemonInfo.name,
+					}),
+				});
+				if (!response.ok) {
+					throw new Error('Failed to like Pokémon');
+					}
+
+				if (dislike) {
+					const undislikeResponse = await fetch(`/api/pokemon/undislike/${pokemonInfo.id}`, {
+						method: 'DELETE',
+				});
+				if (!undislikeResponse.ok) {
+					throw new Error('Failed to undislike Pokémon');
+				}
+				setDislike(false);
+				}
 			}
-		}catch(error){
+		} catch(error){
 			console.error('Error in liking pokemons:', error);
 		}
-	}}
+	}
 
 	const handleDislike = async () => {
-		if (!dislike) {
-			setLike(false);
-			setDislike(true);
 		try {
+			if (dislike) {
+				// If already disliked, undis    like the Pokémon
+				const undislikeResponse = await fetch(`/api/pokemon/undislike/${pokemonInfo.id}`, {
+				  method: 'DELETE',
+				});
+				if (!undislikeResponse.ok) {
+				  throw new Error('Failed to undislike Pokémon');
+				}
+				setDislike(false);  // Update state to reflect unliking
+			  } else {
+				setLike(false);
+				setDislike(true);
 			const response = await fetch(`/api/pokemon/disliked`, {
 				method: 'POST',
 				headers: {
@@ -71,13 +100,24 @@ const PokemonProfile = () => {
 					pokemon_name: pokemonInfo.name,
 				}),
 			});
-		if (!response.ok) {
-			throw new Error('Failed to dislike Pokémon');
+			if (!response.ok) {
+				throw new Error('Failed to dislike Pokémon');
+				}
+
+			if (like) {
+				const undislikeResponse = await fetch(`/api/pokemon/unlike/${pokemonInfo.id}`, {
+					method: 'DELETE',
+			});
+			if (!undislikeResponse.ok) {
+				throw new Error('Failed to unlike Pokémon');
 			}
+			setLike(false);
+			}
+		}
 		}catch(error){
 			console.error('Error in disliking pokemons:', error);
 		}
-	}}
+	}
 
 	return (
 		<div className="pokemon-details">
@@ -131,20 +171,23 @@ const PokemonProfile = () => {
 
 			{/* Like and Dislike Buttons */}
 			<div className="flex flex-row items-center space-x-20">
-				{/* Like Button */}
-				<button
-					onClick={handleLike}
-					className="flex items-center justify-center w-16 h-16 rounded-full bg-pink-400 text-white shadow-lg transition-transform transform hover:scale-105">
-					<HeartIcon className="w-8 h-8" />
-				</button>
+			{/* Like Button */}
+			<button
+				className={`flex items-center justify-center w-16 h-16 rounded-full ${like ? 'bg-pink-500' : 'bg-gray-400'} text-white shadow-lg transition-transform transform hover:scale-105`}
+				onClick={handleLike}
+			>
+				<HeartIcon className="w-8 h-8" />
+			</button>
 
-				{/* Dislike Button */}
-				<button
-					onClick={handleDislike}
-					className="flex items-center justify-center w-16 h-16 rounded-full bg-red-500 text-white shadow-lg transition-transform transform hover:scale-105">
-					<HandThumbDownIcon className="w-8 h-8" />
-				</button>
+			{/* Dislike Button */}
+			<button
+				className={`flex items-center justify-center w-16 h-16 rounded-full ${dislike ? 'bg-red-600' : 'bg-gray-400'} text-white shadow-lg transition-transform transform hover:scale-105`}
+				onClick={handleDislike}
+			>
+				<HandThumbDownIcon className="w-8 h-8" />
+			</button>
 			</div>
+
 		</div>
 		/* Add more fields as needed */
 	);
