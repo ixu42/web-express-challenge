@@ -1,11 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../controllers/userController')
+const userController = require("../controllers/userController");
+const { isAuthenticated } = require("../userController");
 
-// Route for fetching and storing Pokémon data
-router.post('/register', userController.registerUser);
-//router.post('/login', userController.loginUser);
-router.get("/:id/liked_pokemons", userController.getLikedPokemonsByUserId);
-
+router.get(
+  "/liked_pokemons",
+  isAuthenticated,
+  userController.getLikedPokemonsByUserId
+);
+router.get(
+  "/disliked_pokemons",
+  isAuthenticated,
+  userController.getDislikedPokemonsByUserId
+);
+router.get("/search", isAuthenticated, userController.searchUsers);
 
 module.exports = router;

@@ -4,41 +4,41 @@ import './pokedex.css';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [morePokemon, setMorePokemon] = useState(true);
   const [matchingList, setMatchingList] = useState([]);
+  const [offset, setOffset] = useState(0);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [morePokemon, setMorePokemon] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [sortOrder, setSortOrder] = useState("ID-asc");
 
-  const limit = 10; // Number of Pokémon per page
+  const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
 
   console.log("rendering Pokedex...");
 
   // Function to fetch Pokemon list (non-search)
-  const fetchPokemonList = async () => {
-    console.log("fetchPokemonList() called");
-    setLoading(true);
-    console.log("offset:", offset);
+  const fetchPokemonList = async (offsetValue=0, shouldShuffle=false, sortOrder="") => {
+    console.log("fetchPokemonList() called, offset:", offsetValue, "shouldShuffle:", shouldShuffle);
     try {
-      const response = await fetch(`/api/pokemon?limit=${limit}&offset=${offset}`);
+      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}&shuffle=${shouldShuffle}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
-      if (newPokemonList.length < limit) {
+      if (newPokemonList.length > limit) {
+        setPokemonList((prevList) => [...prevList, ...newPokemonList.slice(0, limit)]);
+      } else {
         setMorePokemon(false);
+        setPokemonList((prevList) => [...prevList, ...newPokemonList]);
       }
-      setPokemonList((prevList) => [...prevList, ...newPokemonList]);
     } catch (error) {
       console.error("Error fetching Pokemon:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Function to search for Pokemon
-  const searchPokemon = async (query) => {
-    console.log("searchPokemon() called");
+  // Function to fetch Pokemon list (search)
+  const fetchMatchingList = async (query, offsetValue=0, sortOrder="") => {
+    console.log("fetchMatchingList() called");
 
     // Cancel the previous fetch request if it exists
     if (abortControllerRef.current) {
@@ -49,23 +49,21 @@ const Pokedex = () => {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    setLoading(true);
-    console.log("offsetForSearching:", offsetForSearching);
+    console.log("offsetForSearching:", offsetValue);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetForSearching}`, {
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
         signal: abortController.signal, // Pass the signal to the fetch request
       });
 
       if (response.ok) {
         const newMatchingList = await response.json();
-        console.log("searchTerm:", query, "| newMatchingLis:", newMatchingList)
+        console.log("searchTerm:", query, "| newMatchingList:", newMatchingList)
         if (newMatchingList.length > limit) {
-          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]); 
+          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]);
         } else {
           setMorePokemon(false);
           setMatchingList(prevList => [...prevList, ...newMatchingList]);
         }
-        // setMatchingList(prevList => [...prevList, ...newMatchingList])
       } else {
         setMatchingList([]);
         setMorePokemon(false);
@@ -74,47 +72,72 @@ const Pokedex = () => {
       if (error.name !== 'AbortError') {
         console.error("Error searching Pokémon:", error);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
-  const loadMorePokemon = () => {
-    console.log("loadMorePokemon");
-    if (searchTerm === "") {
-      setOffset((prevOffset) => prevOffset + limit);
-    } else {
-      setOffsetForSearching((prevOffset) => prevOffset + limit);
-    }
-  };
-
-  const updateList = (userInput) => {
-    console.log("updateList() called, userInput:", userInput);
+const searchPokemon = async (userInput) => {
+    console.log("searchPokemon() called, userInput:", userInput);
 
     setSearchTerm(userInput);
+    setSortOrder("ID-asc");
     setOffset(0);
-    console.log("offset:", offset);
     setOffsetForSearching(0);
-    console.log("offsetForSearching:", offsetForSearching);
-    setMorePokemon(true);
     setPokemonList([]);
     setMatchingList([]);
+    setMorePokemon(true);
     if (userInput === "") {
-      fetchPokemonList();
+      await fetchPokemonList(0, false, "ID-asc");
     } else {
-      if (offsetForSearching === 0) {
-        searchPokemon(userInput);
-      }
+      await fetchMatchingList(userInput, 0, "ID-asc");
     }
   };
 
-  useEffect(() => {
-    fetchPokemonList(); // Fetch pokemonList in non-search mode
-  }, [offset]); // Run when offset changes
+  const sortPokemon = async (sortOrderValue) => {
+    console.log("sortPokemon() called", "sort by:", sortOrderValue);
 
+    setSortOrder(sortOrderValue);
+    setOffset(0);
+    setOffsetForSearching(0);
+    setPokemonList([]);
+    setMatchingList([]);
+    setMorePokemon(true);
+    if (searchTerm === "") {
+      await fetchPokemonList(0, false, sortOrderValue);
+    } else {
+      await fetchMatchingList(searchTerm, 0, sortOrderValue);
+    }
+  };
+
+  const shufflePokemon = async () => {
+    console.log("shufflePokemon() called");
+    setSearchTerm("");
+    setSortOrder("random");
+    setOffset(0);
+    setPokemonList([]);
+    setMorePokemon(true);
+    setIsFetching(true);
+    await fetchPokemonList(0, true, ""); // Request a reshuffle
+    setIsFetching(false);
+  };
+
+  const loadMorePokemon = async () => {
+    console.log("loadMorePokemon() called");
+    setIsLoading(true);
+    if (searchTerm === "") {
+      setOffset((prevOffset) => prevOffset + limit);
+      await fetchPokemonList(offset + limit, false, sortOrder);
+    } else {
+      setOffsetForSearching((prevOffset) => prevOffset + limit);
+      await fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
+    }
+    setIsLoading(false);
+  };
+
+  // useEffect to call fetchPokemonList initially
   useEffect(() => {
-    searchPokemon(searchTerm); // Fetch matchingList in search mode
-  }, [offsetForSearching]); // Run when offsetForSearching changes
+    console.log("useEffect() called");
+    fetchPokemonList(0, false, "ID-asc"); // Fetch the initial Pokémon list, sort by ID (ascending)
+  }, []);
 
   return (
     <div>
@@ -122,68 +145,117 @@ const Pokedex = () => {
         <img alt="react logo" className="logo" src={logo} />
       </header>
       <main>
-        <div className="search-container">
-          <input
-            className="search-box"
-            type="text"
-            placeholder="Search..."
-            value={searchTerm} // Set input value to the search term
-            onChange={(e) => updateList(e.target.value)}
-          />
-        </div>
-        {/* List of Pokémon when not searching */}
-        {!searchTerm && (
-          <ul className="pokemon-list">
-            {pokemonList.map((pokemon) => (
-              <li key={pokemon.name} className="pokemon-item">
-                <a href={`/pokemon/${pokemon.name}`}>
-                  <img 
-                    src={pokemon.image}
-                    alt={pokemon.name}
-                    className="pokemon-image"
-                  />
-                  <p>{pokemon.name}</p>
-                </a>
-              </li>
-            ))}
-        </ul>
+        <Search searchTerm={searchTerm} onSearch={searchPokemon} />
+        <Sort sortOrder={sortOrder} onSort={sortPokemon} />
+        <Shuffle isFetching={isFetching} onShuffle={shufflePokemon} />
+        {/* Pokémon List or Search Results */}
+        {!searchTerm ? (
+          <PokemonList pokemonList={pokemonList} />
+        ) : (
+          <SearchResults matchingList={matchingList} />
         )}
-        {/* Matching Pokémon list when searching */}
-        {searchTerm && (
-          <>
-            {matchingList && matchingList.length > 0 ? (
-              <ul className="pokemon-list">
-                {matchingList.map((pokemon) => (
-                  <li key={pokemon.name} className="pokemon-item">
-                    <a href={`/pokemon/${pokemon.name}`}>
-                      <img 
-                        src={pokemon.image}
-                        alt={pokemon.name}
-                        className="pokemon-image"
-                      />
-                    {pokemon.name}</a>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p align='center'>No Pokémon matched your search</p>
-            )}
-          </>
-        )}
-        {/* Load more button (placed before the list for testing purpose)*/}
-        {morePokemon && (
-          <button
-            onClick={loadMorePokemon}
-            disabled={loading}
-            className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-              ${loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
-          >
-            {loading ? "Loading..." : "Load More Pokémon"}
-          </button>
-        )}
+        {morePokemon && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon}/>)}
       </main>
     </div>
   );
 };
+
+// Search bar
+const Search = ({ searchTerm, onSearch }) => (
+  <div className="search-container">
+    <input
+      className="search-box"
+      type="text"
+      placeholder="Search..."
+      value={searchTerm} // Set input value to the search term
+      onChange={(e) => onSearch(e.target.value)}
+    />
+  </div>
+);
+
+// Sort options
+const Sort = ({ sortOrder, onSort }) => (
+  <div className="sort-container flex justify-end mr-8 sm:mr-12 md:mr-16">
+    <label htmlFor="sortOrder"className="text-lg font-bold mr-2 text-green-600">
+      Sort by:
+    </label>
+    <select
+      id="sortOrder"
+      value={sortOrder}
+      onChange={(e) => {onSort(e.target.value)}} // Update sort order on change
+    >
+    <option value="ID-asc">ID (Ascending)</option>
+    <option value="ID-desc">ID (Descending)</option>
+    <option value="A-Z">A-Z</option>
+    <option value="Z-A">Z-A</option>
+    <option value="random" disabled>Random</option> 
+    </select>
+  </div>
+);
+
+// Shuffle button
+const Shuffle = ({ isFetching, onShuffle }) => (
+  <button
+    onClick={onShuffle}
+    disabled={isFetching}
+    className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+      ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+  >
+    {isFetching ? "Loading..." : "Shuffle"}
+  </button>
+);
+
+// Pokémon List component (non-search)
+const PokemonList = ({ pokemonList }) => (
+  <ul className="pokemon-list">
+    {pokemonList.map(pokemon => (
+      <li key={pokemon.name} className="pokemon-item">
+        <a href={`/pokemon/${pokemon.name}`}>
+          <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+          <p>{pokemon.name}</p>
+          <p>ID: {pokemon.id}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+);
+
+// Search Results component
+const SearchResults = ({ matchingList }) => (
+  matchingList && matchingList.length > 0 ? (
+    <ul className="pokemon-list">
+      {matchingList.map(pokemon => (
+        <li key={pokemon.name} className="pokemon-item">
+          <a href={`/pokemon/${pokemon.name}`}>
+            <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+            {pokemon.name}
+            <p>ID: {pokemon.id}</p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <div className="flex flex-col items-center mt-8">
+      <p className="text-center text-xl text-gray-600 font-semibold">
+        No Pokémon matched your search! 🤔
+      </p>
+      <p className="text-center text-md text-gray-500 mt-2">
+        Try a different name or spelling! 🌟
+      </p>
+    </div>
+  )
+);
+
+// Load more button
+const LoadMore = ({ isLoading, onLoadMore }) => (
+    <button
+      onClick={onLoadMore}
+      disabled={isLoading}
+      className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
+        ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+    >
+      {isLoading ? "Loading..." : "Load More Pokémon"}
+    </button>
+);
 
 export default Pokedex;

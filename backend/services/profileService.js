@@ -3,6 +3,7 @@ const userModel = require("../models/profileModel");
 const createProfile = async ({ user_id, name, bio, profile_pic }) => {
   try {
     console.log("creating profile");
+    console.log(user_id, name, bio, profile_pic);
     const profile = await userModel.createProfile(user_id, name, bio, profile_pic);
     console.log("creating profile successful:", profile);
     return profile;
@@ -15,6 +16,7 @@ const createProfile = async ({ user_id, name, bio, profile_pic }) => {
 const updateProfile = async ({ id, name, bio, profile_pic }) => {
   try {
     console.log("updating profile");
+    console.log(id, name, bio, profile_pic);
     const profile = await userModel.updateProfile(id, name, bio, profile_pic);
     console.log("updating profile successful:", profile);
     return profile;
@@ -27,6 +29,7 @@ const updateProfile = async ({ id, name, bio, profile_pic }) => {
 const updateProfilePic = async ({ id, profile_pic }) => {
   try {
     console.log("updating profile pic");
+    console.log(id, profile_pic);
     const profile = await userModel.updateProfilePic(id, profile_pic);
     console.log("updating profile pic successful:", profile);
     return profile;
@@ -39,6 +42,7 @@ const updateProfilePic = async ({ id, profile_pic }) => {
 const updateBio = async ({ id, bio }) => {
   try {
     console.log("updating bio");
+    console.log(id, bio);
     const profile = await userModel.updateBio(id, bio);
     console.log("updating bio successful:", profile);
     return profile;
@@ -51,6 +55,7 @@ const updateBio = async ({ id, bio }) => {
 const updateName = async ({ id, name }) => {
   try {
     console.log("updating name");
+    console.log(id, name);
     const profile = await userModel.updateName(id, name);
     console.log("updating name successful:", profile);
     return profile;
@@ -63,6 +68,7 @@ const updateName = async ({ id, name }) => {
 const getProfileById = async (id) => {
   try {
     console.log("fetching profile");
+    console.log(id);
     const profile = await userModel.getProfileById(id);
     console.log("fetching profile successful:", profile);
     return profile;
@@ -84,6 +90,19 @@ const getProfiles = async () => {
   }
 };
 
+const searchProfiles = async (name) => {
+  try {
+    console.log("searching profiles");
+    console.log(name);
+    const profiles = await userModel.searchProfiles(name);
+    console.log("searching profiles successful:", profiles);
+    return profiles;
+  } catch (error) {
+    console.log("error searching profiles:", error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   createProfile,
   updateProfile,
@@ -92,4 +111,5 @@ module.exports = {
   updateName,
   getProfiles,
   getProfileById,
+  searchProfiles,
 };

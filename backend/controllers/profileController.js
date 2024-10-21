@@ -1,13 +1,13 @@
-const { get } = require("../routes/userRoutes");
 const profileService = require("../services/profileService");
 
-const createProfile = async (req, res, next) => {
+/* const createProfile = async (req, res, next) => {
   try {
-    const { user_id, name, bio } = req.body;
+    const { id } = req.session.user;
+    const { name, bio } = req.body;
     const profile_pic = req.file ? req.file.buffer : null; // Access the uploaded file buffer
-    console.log(user_id, name, bio, profile_pic);
+    console.log(id, name, bio, profile_pic);
     const profile = await profileService.createProfile({
-      user_id,
+      id,
       name,
       bio,
       profile_pic,
@@ -16,14 +16,13 @@ const createProfile = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}; */
 
 const updateProfile = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.session.user;
     const { name, bio } = req.body;
     const profile_pic = req.file ? req.file.buffer : null; // Access the uploaded file buffer
-    console.log(id, name, bio, profile_pic);
     const profile = await profileService.updateProfile({
       id,
       name,
@@ -38,9 +37,8 @@ const updateProfile = async (req, res, next) => {
 
 const updateProfilePic = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.session.user;
     const { profile_pic } = req.body;
-    console.log(id, profile_pic);
     const profile = await profileService.updateProfilePic({
       id,
       profile_pic,
@@ -53,9 +51,8 @@ const updateProfilePic = async (req, res, next) => {
 
 const updateBio = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.session.user;
     const { bio } = req.body;
-    console.log(id, bio);
     const profile = await profileService.updateBio({ id, bio });
     res.status(200).json(profile);
   } catch (error) {
@@ -65,16 +62,16 @@ const updateBio = async (req, res, next) => {
 
 const updateName = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.session.user;
     const { name } = req.body;
-    console.log(id, name);
+    const profile = await profileService.updateName({ id, name });
     res.status(200).json(profile);
   } catch (error) {
     next(error);
   }
 };
 
-const fetchProfiles = async (req, res, next) => {
+const getProfiles = async (req, res, next) => {
   try {
     const profiles = await profileService.getProfiles();
     res.json(profiles);
@@ -93,13 +90,34 @@ const getProfileById = async (req, res, next) => {
   }
 };
 
+const getMyProfile = async (req, res, next) => {
+  try {
+    const { id } = req.session.user;
+    const profile = await profileService.getProfileById(id);
+    res.json(profile);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const searchProfiles = async (req, res, next) => {
+  try {
+    const { name } = req.query;
+    const profiles = await profileService.searchProfiles(name);
+    res.json(profiles);
+  } catch (error) {
+    next(error);
+  }
+}
+
 
 module.exports = {
-  createProfile,
   updateProfile,
   updateProfilePic,
   updateBio,
   updateName,
-  fetchProfiles,
+  getProfiles,
   getProfileById,
+  getMyProfile,
+  searchProfiles,
 };
