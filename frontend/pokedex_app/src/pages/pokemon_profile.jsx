@@ -133,14 +133,14 @@ const PokemonProfile = () => {
 			{/* Height */}
 			<p className="font-semibold">Height:</p>
 			<div className="flex items-baseline">
-				<span className="min-w-[25px]">{pokemonInfo.height * 10}</span>
+				<span className="min-w-[25px]">{(pokemonInfo.height * 10).toFixed(2)}</span>
 				<span className="ml-1">cm</span>
 			</div>
 
 			{/* Weight */}
 			<p className="font-semibold">Weight:</p>
 			<div className="flex items-baseline">
-				<span className="min-w-[25px]">{pokemonInfo.weight * 0.1}</span>
+				<span className="min-w-[25px]">{(pokemonInfo.weight * 0.1).toFixed(2)}</span>
 				<span className="ml-1">kg</span>
 			</div>
 
