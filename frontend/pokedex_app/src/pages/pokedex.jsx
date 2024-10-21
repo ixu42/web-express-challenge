@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../img/logo.png';
 import './pokedex.css';
 
@@ -12,6 +13,8 @@ const Pokedex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [sortOrder, setSortOrder] = useState("ID-asc");
+
+  const location = useLocation();
 
   const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
@@ -51,7 +54,7 @@ const Pokedex = () => {
 
     console.log("offsetForSearching:", offsetValue);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
+      const response = await fetcpokemonListh(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
         signal: abortController.signal, // Pass the signal to the fetch request
       });
 
@@ -134,10 +137,23 @@ const searchPokemon = async (userInput) => {
   };
 
   // useEffect to call fetchPokemonList initially
+  // useEffect(() => {
+  //   console.log("useEffect() called");
+  //   fetchPokemonList(0, false, "ID-asc"); // Fetch the initial Pokémon list, sort by ID (ascending)
+  // }, []);
+
+  // Use the passed state (if available) to restore the Pokémon list
   useEffect(() => {
-    console.log("useEffect() called");
-    fetchPokemonList(0, false, "ID-asc"); // Fetch the initial Pokémon list, sort by ID (ascending)
-  }, []);
+    console.log("useEffect() for passed state");
+    if (location.state?.pokemonList) {
+      console.log("location.state?.pokemonList exists")
+      setPokemonList(location.state.pokemonList);
+    } else {
+      console.log("location.state?.pokemonList does not exist")
+      // Fetch the Pokémon list if there's no state passed
+      fetchPokemonList(0, false, "ID-asc");
+    }
+  }, [location.state]);
 
   return (
     <div>
@@ -210,11 +226,19 @@ const PokemonList = ({ pokemonList }) => (
   <ul className="pokemon-list">
     {pokemonList.map(pokemon => (
       <li key={pokemon.name} className="pokemon-item">
-        <a href={`/pokemon/${pokemon.name}`}>
+        <Link 
+          to={`/pokemon/${pokemon.name}`}
+          state={{ pokemonList }}
+        >
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
           <p>{pokemon.name}</p>
           <p>ID: {pokemon.id}</p>
-        </a>
+        </Link>
+        {/* <a href={`/pokemon/${pokemon.name}`}>
+          <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+          <p>{pokemon.name}</p>
+          <p>ID: {pokemon.id}</p>
+        </a> */}
       </li>
     ))}
   </ul>

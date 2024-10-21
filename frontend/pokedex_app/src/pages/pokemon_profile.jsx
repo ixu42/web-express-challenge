@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { HandThumbDownIcon, HeartIcon } from '@heroicons/react/24/solid';
-
 
 const PokemonProfile = () => {
 	const { name } = useParams(); // Get the Pokémon name from the URL
 	const [pokemonInfo, setPokemonInfo] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Access the passed state (pokemonList) from location.state
+  const pokemonList = location.state?.pokemonList || [];
+  console.log("pokemon profile page | location.state", location.state);
+  console.log("pokemon profile page | pokemonList", pokemonList)
 
 	useEffect(() => {
 	const fetchPokemonInfo = async () => {
@@ -93,8 +100,15 @@ const PokemonProfile = () => {
 					<HandThumbDownIcon className="w-8 h-8" />
 				</button>
 			</div>
+
+      {/* Back to Pokedex Button */}
+      <button
+        onClick={() => navigate('/', { state: { pokemonList } })}
+        className="px-6 py-3 my-4 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-md transition-all"
+      >
+        Back to Pokedex
+      </button>
 		</div>
-		/* Add more fields as needed */
 	);
 };
 
