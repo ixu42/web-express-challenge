@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import logo from '../../img/logo.png';
 import './pokedex.css';
+import { RefreshCw } from 'lucide-react';
 
 const Pokedex = () => {
   const [pokemonList, setPokemonList] = useState([]);
@@ -188,21 +189,23 @@ const Sort = ({ sortOrder, onSort }) => (
     <option value="ID-desc">ID (Descending)</option>
     <option value="A-Z">A-Z</option>
     <option value="Z-A">Z-A</option>
-    <option value="random" disabled>Random</option> 
+    <option value="random" disabled>Random</option>
     </select>
   </div>
 );
 
 // Shuffle button
 const Shuffle = ({ isFetching, onShuffle }) => (
+  <div className="w-full flex justify-center">
   <button
     onClick={onShuffle}
     disabled={isFetching}
-    className={`block mx-auto my-12 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-      ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+    className="inline-flex items-center justify-center space-x-1 bg-sky-400 hover:bg-sky-500 text-white font-medium text-sm py-1.5 px-3 rounded transition-colors duration-300"
   >
-    {isFetching ? "Loading..." : "Shuffle"}
+    <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
+    <span>{isFetching ? "Loading..." : "Surprise Me!"}</span>
   </button>
+</div>
 );
 
 // Pokémon List component (non-search)
