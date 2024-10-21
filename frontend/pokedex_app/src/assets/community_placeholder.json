@@ -48,6 +48,55 @@
 	"liked_pokemons": [
 		"pikachu"
 	]
+		},
+		{
+			"username":	"Jane Doe 2",
+	"bio": "Hi! My name is Jane! I was created only for testing purpoposes",
+	"profile_pic": "https://www.shutterstock.com/shutterstock/photos/2500022355/display_1500/stock-photo-young-latin-woman-in-casual-clothing-in-the-street-looking-at-camera-during-early-morning-2500022355.jpg",
+	"created_at": "1999-01-08 04:05:06",
+	"liked_pokemons": [
+		"ivysaur", "raticate", "flareon", "eevee", "cubone", "seel", "krabby", "kingler", "mankey", "rhydon", "staryu"
+	]
+		},
+		{
+
+			"username":	"Ash Ketchum 2",
+	"bio": "Hi! My name is Ash! Gotta catch'em all!",
+	"profile_pic": "https://www.shutterstock.com/shutterstock/photos/2500022355/display_1500/stock-photo-young-latin-woman-in-casual-clothing-in-the-street-looking-at-camera-during-early-morning-2500022355.jpg",
+	"created_at": "1999-01-08 04:05:06",
+	"liked_pokemons": [
+		"pikachu"
+	]
+		},
+		{
+
+			"username":	"Brock 2",
+	"bio": "Hi! My name is Ash! Gotta catch'em all!",
+	"profile_pic": "https://www.shutterstock.com/shutterstock/photos/2500022355/display_1500/stock-photo-young-latin-woman-in-casual-clothing-in-the-street-looking-at-camera-during-early-morning-2500022355.jpg",
+	"created_at": "1999-01-08 04:05:06",
+	"liked_pokemons": [
+		"pikachu"
+	]
+		},
+		{
+
+			"username":	"Jessie 2",
+	"bio": "Hi! My name is Ash! Gotta catch'em all!",
+	"profile_pic": "https://www.shutterstock.com/shutterstock/photos/2500022355/display_1500/stock-photo-young-latin-woman-in-casual-clothing-in-the-street-looking-at-camera-during-early-morning-2500022355.jpg",
+	"created_at": "1999-01-08 04:05:06",
+	"liked_pokemons": [
+		"pikachu"
+	]
+		},
+		{
+
+			"username":	"James 2",
+	"bio": "Hi! My name is Ash! Gotta catch'em all!",
+	"profile_pic": "https://www.shutterstock.com/shutterstock/photos/2500022355/display_1500/stock-photo-young-latin-woman-in-casual-clothing-in-the-street-looking-at-camera-during-early-morning-2500022355.jpg",
+	"created_at": "1999-01-08 04:05:06",
+	"liked_pokemons": [
+		"pikachu"
+	]
 		}
 	]
 }
