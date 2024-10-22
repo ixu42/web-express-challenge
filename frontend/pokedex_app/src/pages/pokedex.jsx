@@ -212,7 +212,8 @@ const Pokedex = () => {
     };
   }, [location.state, navigate]);
 
-  const searchProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching };
+  const pokemonListProps = { pokemonList, offset, searchTerm, morePokemon, isFetching }
+  const searchResultsProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching };
 
   return (
     <div>
@@ -225,9 +226,9 @@ const Pokedex = () => {
         <Shuffle isShuffling={isShuffling} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
-          <PokemonList pokemonList={pokemonList} offset={offset} searchTerm={searchTerm} morePokemon={morePokemon} />
+          <PokemonList {...pokemonListProps} />
         ) : (
-          <SearchResults {...searchProps} />
+          <SearchResults {...searchResultsProps} />
         )}
         {morePokemon && matchingList && matchingList.length > 0 && !isTyping && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
       </main>
@@ -284,7 +285,7 @@ const Shuffle = ({ isShuffling, onShuffle }) => (
 );
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
+const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -306,19 +307,27 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
   };
 
   return (
-    <ul className="pokemon-list">
-      {pokemonList.map(pokemon => (
-        <li key={pokemon.name} className="pokemon-item">
-          <button
-            onClick={() => handlePokemonClick(pokemon)}
-          >
-            <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
-            <p className="font-semibold text-lg">{pokemon.name}</p>
-            <p className="text-gray-500">ID: {pokemon.id}</p>
-          </button>
-        </li>
-      ))}
-    </ul>
+    <div>
+      {isFetching ? (
+        <div className="flex justify-center mt-8">
+          <p className="text-center text-2xl text-gray-600">Loading Pokémon... 🐾</p>
+        </div>
+      ) : (
+        <ul className="pokemon-list">
+          {pokemonList.map(pokemon => (
+            <li key={pokemon.name} className="pokemon-item">
+              <button
+                onClick={() => handlePokemonClick(pokemon)}
+              >
+                <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+                <p className="font-semibold text-lg">{pokemon.name}</p>
+                <p className="text-gray-500">ID: {pokemon.id}</p>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   )
 };
 
@@ -348,7 +357,7 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
     <div>
       {isFetching ? (
         <div className="flex justify-center mt-8">
-          <p className="text-center text-lg text-gray-600">Searching for Pokémon... 🔍</p>
+          <p className="text-center text-2xl text-gray-600">Searching for Pokémon... 🔍</p>
         </div>
       ) : (
         // Display search results or "No Pokémon" message only after search completes
@@ -369,10 +378,10 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
         ) : (
           !isTyping && (
             <div className="flex flex-col items-center mt-8">
-              <p className="text-center text-xl text-gray-600 font-semibold">
+              <p className="text-center text-2xl text-gray-600 font-semibold">
                 No Pokémon matched your search! 🤔
               </p>
-              <p className="text-center text-md text-gray-500 mt-2">
+              <p className="text-center text-xl text-gray-500 mt-2">
                 Try a different name or spelling! 🌟
               </p>
             </div>
