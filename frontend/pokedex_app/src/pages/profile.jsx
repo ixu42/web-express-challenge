@@ -11,13 +11,14 @@ const Profile = () => {
     const [bio, setBio] = useState("Loading...")
     const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
 
+    const fetchProfile = () => {
+        fetch("/api/profile/me")
+        .then((response) => response.json())
+        .then((data) => (setOwnData(data)))
+        .catch((error) => alert("Error fetching user list"))			
+    };
+
     useEffect(() => {
-		const fetchProfile = () => {
-			fetch("/api/profile/me")
-			.then((response) => response.json())
-			.then((data) => (setOwnData(data)))
-			.catch((error) => alert("Error fetching user list"))			
-		};
 		fetchProfile();
 	}, [])
 
@@ -37,7 +38,7 @@ const Profile = () => {
         {
             return (
                 <section className="text-lg">
-                    <textarea spellCheck="true" name="new_bio" onChange={updateBio} className="bg-gray-300 resize" cols={60} defaultValue={bio} maxLength={250} rows={2} type="text"/>
+                    <textarea spellCheck="true" name="new_bio" onChange={updateBio} className="bg-gray-300 resize" cols={60} defaultValue={ownData.bio} maxLength={250} rows={2} type="text"/>
                 </section>
             )
         }
@@ -64,7 +65,20 @@ const Profile = () => {
 
     const handleBioSaving = (event) => {
         setEditingBio(false);
-        //we would send the new bio data to the server here
+        const newBio = {bio: bio}
+        fetch("api/profile/me/update/bio", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBio)
+        })
+        .then(fetchProfile())
+        .catch((error) => alert("Error updating bio"))
+    }
+
+    const handleNewProfilePic = (event) => {
+
     }
 
 	return (
@@ -85,7 +99,10 @@ const Profile = () => {
                                 <button type="button" className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Change profile picture</button>
                                 <button type="button" onClick={handleBioSaving} className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Save bio changes</button>
                                 <button type="button" onClick={handleBioEditing} className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Edit bio</button>
-                                <button type="button" className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Upload new picture</button>
+                                <form action="/api/profile/me/update/profile_pic">
+                                    <input className="text-white" type="file"></input>
+                                    <button method="post" type="submit" className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded">Upload new picture</button>
+                                </form>
                             </div>
                     </div>
                     </div>
