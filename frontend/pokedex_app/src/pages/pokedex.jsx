@@ -14,7 +14,7 @@ const Pokedex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [sortOrder, setSortOrder] = useState("ID-asc");
-  
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -152,7 +152,7 @@ const searchPokemon = async (userInput) => {
     const savedScrollPosition = location.state?.scrollPosition || 0;
     window.scrollTo(0, savedScrollPosition);
   }, [location.state]);
-  
+
   useEffect(() => {
     console.log("useEffect() for passed state");
 
@@ -208,7 +208,7 @@ const searchPokemon = async (userInput) => {
   return (
     <div>
       <header>
-        <img alt="react logo" className="logo" src={logo} />
+        <img alt="pokeball logo" className="logo" src={logo} />
       </header>
       <main>
         <Search searchTerm={searchTerm} onSearch={searchPokemon} />
@@ -285,7 +285,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
 
     // Navigate to the Pokemon profile page, passing the current state
     navigate(`/pokemon/${pokemon.name}`, {
-      state: { 
+      state: {
         from: 'pokedex',
         offset: offset,
         pokemonList: pokemonList,
@@ -300,13 +300,13 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
     <ul className="pokemon-list">
     {pokemonList.map(pokemon => (
       <li key={pokemon.name} className="pokemon-item">
-        <button 
+        <button
           onClick={() => handlePokemonClick(pokemon)}
         >
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
-          <p>{pokemon.name}</p>
-          <p>ID: {pokemon.id}</p>
-        </button>
+          <p className="font-semibold text-lg">{pokemon.name}</p>
+          <p className="text-gray-500">ID: {pokemon.id}</p>
+        </a>
       </li>
     ))}
   </ul>
@@ -324,7 +324,7 @@ const SearchResults = ({ matchingList, offset, searchTerm, morePokemon }) => {
 
     // Navigate to the Pokemon profile page, passing the current state
     navigate(`/pokemon/${pokemon.name}`, {
-      state: { 
+      state: {
         from: 'pokedex',
         offsetForSearching: offset,
         matchingList: matchingList,
@@ -340,7 +340,7 @@ const SearchResults = ({ matchingList, offset, searchTerm, morePokemon }) => {
       <ul className="pokemon-list">
         {matchingList.map(pokemon => (
           <li key={pokemon.name} className="pokemon-item">
-            <button 
+            <button
               onClick={() => handlePokemonClick(pokemon)}
             >
               <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
