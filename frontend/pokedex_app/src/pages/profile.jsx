@@ -1,5 +1,4 @@
 import React from "react";
-import testData from "../assets/profile_placeholder.json";
 import background from "../assets/profile_bg.png";
 import UserLikedPokemon from "../components/UserLikedPokemon";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -15,77 +14,87 @@ const Profile = () => {
     const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
     const [likedPokemons, setLikedPokemons] = useState({user_id: -1, liked_pokemons: []})
     const [dislikedPokemons, setDislikedPokemons] = useState({user_id: -1, disliked_pokemons: []})
+    const { isAuthenticated, user, loading } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const fileInputRef = useRef();
 
     const fetchProfile = () => {
         fetch("/api/profile/me")
         .then((response) => response.json())
         .then((data) => (setOwnData(data)))
-        .catch((error) => alert("Error fetching user list"))			
+        .then(fetchLikedPokemon())
+        .then(fetchDislikedPokemon())
+        .catch((error) => alert("Error fetching user list"))
     };
 
     const fetchLikedPokemon = () => {
-        fetch("api/user/liked_pokemons")
+        if (ownData.user_id != undefined)
+        {
+        fetch(`api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setLikedPokemons(data)))
         .then(() => {console.log('Liked pokemons: ', likedPokemons)})
         .catch((error) => alert("Error fetching liked pokemons' list"))
+        }
     }
 
     const fetchDislikedPokemon = () => {
-        fetch("api/user/disliked_pokemons")
+        if (ownData.user_id != undefined)
+        {
+        fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setDislikedPokemons(data)))
         .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
         .catch((error) => alert("Error fetching disliked pokemons' list"))
+        }
     }
 
-    const updateBio = (event) => {
+    useEffect(() => {
+        if (!isAuthenticated && !loading) {
+        navigate("/login"); // Redirect to login if not authenticated
+        } else {
+        fetchProfile();
+        //fetchLikedPokemon();
+        //fetchDislikedPokemon();
+        }
+    }, [isAuthenticated, navigate, loading]);
+
+      const updateBio = (event) => {
         setBio(event.target.value)
     }
 
+    console.log('Liked pokemon: ', likedPokemons)
 
-  const { isAuthenticated, user, loading } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const fileInputRef = useRef();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+    const handleSubmit = async (event) => {
+        event.preventDefault(); // Prevent the default form submission
 
-    const formData = new FormData();
-    const file = fileInputRef.current.files[0]; // Get the file from the input
-    if (file) {
-      formData.append("profile_pic", file); // Append the file to FormData
-      console.log("form data: ", formData);
+        const formData = new FormData();
+        const file = fileInputRef.current.files[0]; // Get the file from the input
+        if (file) {
+        formData.append("profile_pic", file); // Append the file to FormData
+        console.log("form data: ", formData);
 
-      try {
-        const response = await fetch("/api/profile/me/update/profile_pic", {
-          method: "POST",
-          body: formData,
-        });
+        try {
+            const response = await fetch("/api/profile/me/update/profile_pic", {
+            method: "POST",
+            body: formData,
+            });
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+            if (!response.ok) {
+            throw new Error("Network response was not ok");
+            }
+
+            // Handle success, e.g., update the UI or show a message
+            alert("Profile picture uploaded successfully!");
+        } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            alert("Error uploading profile picture");
         }
+        }
+    };
 
-        // Handle success, e.g., update the UI or show a message
-        alert("Profile picture uploaded successfully!");
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-        alert("Error uploading profile picture");
-      }
-    }
-  };
 
-  console.log("isAuthenticated:", isAuthenticated);
-  useEffect(() => {
-    if (!isAuthenticated && !loading) {
-      navigate("/login"); // Redirect to login if not authenticated
-    } else {
-      fetchProfile();
-      fetchLikedPokemon();
-      fetchDislikedPokemon();
-    }
-  }, [isAuthenticated, navigate, loading]);
 
   console.log("own data: ", ownData);
 
@@ -115,30 +124,25 @@ const Profile = () => {
 
   const RenderProfilePic = () => {
     console.log("rendering profile pic");
-    return (
-      <img
-        src={defaultProfilePic}
-        alt="User Profile"
-        className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-      />
-    );
-   /*  if (ownData.profile_pic === null) {
-      return (
+    if (ownData.profile_pic === null) {
+        return (
+          <img
+            src={defaultProfilePic}
+            alt="User Profile"
+            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+          />
+    )
+    }
+    else
+    {
+        return (
         <img
-          src={defaultProfilePic}
-          alt="User Profile"
-          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+            src={defaultProfilePic}
+            alt="User Profile"
+            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
         />
-      );
-    } else {
-      return (
-        <img
-          src={ownData.profile_pic}
-          alt="User Profile"
-          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-        />
-      );
-    } */
+        );
+    }
   };
 
   const handleBioEditing = (event) => {
@@ -219,11 +223,11 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 text-white border-pink-950">
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 text-white border-pink-950">
           Pokemon that I like:
         </h1>
-        <UserLikedPokemon likedPokemon={testData.liked_pokemons} />
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
+        <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl y-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
         <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
       </section>
     </main>

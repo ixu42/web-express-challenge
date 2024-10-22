@@ -31,7 +31,9 @@
 	text-align: center; /* Center text */
   }
 
-  .pokemon-item img {
+  .pokemon-image {
+	display: block;
+	margin: auto;
 	width: 100px; /* Set a fixed width */
 	height: 100px; /* Set a fixed height */
 	object-fit: contain; /* Ensure the whole image is visible without cropping */
