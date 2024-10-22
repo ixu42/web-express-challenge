@@ -1,6 +1,6 @@
 import React from "react";
-import testProfiles from '../assets/community_placeholder.json';
-import { useState, useEffect, useRef } from "react";
+import testProfiles from "../assets/community_placeholder.json";
+import { useState, useEffect } from "react";
 
 const Community = () => {
 
@@ -12,16 +12,13 @@ const Community = () => {
 	const [searchFieldStatus, setSearchFieldStatus] = useState(null)
 	let totalPages;
 
-	if (userList.length <= usersPerPage)
-	{
-		totalPages = 1;
-	}
-	else
-	{
-		totalPages = Math.floor(userList.length / usersPerPage)
-	}
+  if (userList.length <= usersPerPage) {
+    totalPages = 1;
+  } else {
+    totalPages = Math.floor(userList.length / usersPerPage);
+  }
 
-	const [currentPage, setCurrentPage] = useState(totalPages);
+  const [currentPage, setCurrentPage] = useState(totalPages);
 
 	const fetchUsers = async () => {
 		setLoading(true);
@@ -60,18 +57,14 @@ const Community = () => {
 		}
 	}, [searchQuery, filteredUsers])
 
-	const UsersOverview = ({loading, users, usersPerPage, currentPage}) => {
+  const UsersOverview = ({ loading, users, usersPerPage, currentPage }) => {
+    let shownUsersStart;
 
-		let shownUsersStart;
-	
-		if (currentPage == 1)
-		{
-			shownUsersStart = 0
-		}
-		else
-		{
-			shownUsersStart = (currentPage - 1) * usersPerPage
-		}
+    if (currentPage == 1) {
+      shownUsersStart = 0;
+    } else {
+      shownUsersStart = (currentPage - 1) * usersPerPage;
+    }
 
 		let shownUsersEnd = (currentPage * usersPerPage)
 
@@ -108,20 +101,16 @@ const Community = () => {
 		)
 	} */
 
+  const Pagination = ({ usersPerPage, length, currentPage }) => {
+    const paginationNumbers = [];
 
-	const Pagination = ({usersPerPage, length, currentPage}) => {
+    for (let i = 1; i <= Math.ceil(length / usersPerPage); i++) {
+      paginationNumbers.push(i);
+    }
 
-		const paginationNumbers = [];
-
-		for (let i = 1; i <= Math.ceil(length / usersPerPage); i++)
-		{
-			paginationNumbers.push(i);
-		}
-
-		const handlePagination = ({pageNumber}) => {
-
-			setCurrentPage(pageNumber)
-		}
+    const handlePagination = ({ pageNumber }) => {
+      setCurrentPage(pageNumber);
+    };
 
 		return (
 			<div className='text-4xl items-center flex justify-center m-10'>
