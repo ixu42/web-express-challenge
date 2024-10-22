@@ -306,7 +306,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
           <p className="font-semibold text-lg">{pokemon.name}</p>
           <p className="text-gray-500">ID: {pokemon.id}</p>
-        </a>
+        </button>
       </li>
     ))}
   </ul>
