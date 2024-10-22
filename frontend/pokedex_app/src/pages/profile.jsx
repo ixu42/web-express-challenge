@@ -1,5 +1,4 @@
 import React from "react";
-import testData from "../assets/profile_placeholder.json";
 import background from "../assets/profile_bg.png";
 import UserLikedPokemon from "../components/UserLikedPokemon";
 import { useState, useContext, useEffect, useRef } from "react";
@@ -15,6 +14,9 @@ const Profile = () => {
     const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
     const [likedPokemons, setLikedPokemons] = useState({user_id: -1, liked_pokemons: []})
     const [dislikedPokemons, setDislikedPokemons] = useState({user_id: -1, disliked_pokemons: []})
+    const { isAuthenticated, user, loading } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const fileInputRef = useRef();
 
     const fetchProfile = () => {
         fetch("/api/profile/me")
@@ -26,68 +28,73 @@ const Profile = () => {
     };
 
     const fetchLikedPokemon = () => {
-        fetch("api/user/liked_pokemons")
+        if (ownData.user_id != undefined)
+        {
+        fetch(`api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setLikedPokemons(data)))
         .then(() => {console.log('Liked pokemons: ', likedPokemons)})
         .catch((error) => alert("Error fetching liked pokemons' list"))
+        }
     }
 
     const fetchDislikedPokemon = () => {
-        fetch("api/user/disliked_pokemons")
+        if (ownData.user_id != undefined)
+        {
+        fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setDislikedPokemons(data)))
         .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
         .catch((error) => alert("Error fetching disliked pokemons' list"))
+        }
     }
 
-    const updateBio = (event) => {
+    useEffect(() => {
+        if (!isAuthenticated && !loading) {
+        navigate("/login"); // Redirect to login if not authenticated
+        } else {
+        fetchProfile();
+        //fetchLikedPokemon();
+        //fetchDislikedPokemon();
+        }
+    }, [isAuthenticated, navigate, loading]);
+
+      const updateBio = (event) => {
         setBio(event.target.value)
     }
 
+    console.log('Liked pokemon: ', likedPokemons)
+    
 
-  const { isAuthenticated, user, loading } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const fileInputRef = useRef();
+    const handleSubmit = async (event) => {
+        event.preventDefault(); // Prevent the default form submission
 
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+        const formData = new FormData();
+        const file = fileInputRef.current.files[0]; // Get the file from the input
+        if (file) {
+        formData.append("profile_pic", file); // Append the file to FormData
+        console.log("form data: ", formData);
 
-    const formData = new FormData();
-    const file = fileInputRef.current.files[0]; // Get the file from the input
-    if (file) {
-      formData.append("profile_pic", file); // Append the file to FormData
-      console.log("form data: ", formData);
+        try {
+            const response = await fetch("/api/profile/me/update/profile_pic", {
+            method: "POST",
+            body: formData,
+            });
 
-      try {
-        const response = await fetch("/api/profile/me/update/profile_pic", {
-          method: "POST",
-          body: formData,
-        });
+            if (!response.ok) {
+            throw new Error("Network response was not ok");
+            }
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+            // Handle success, e.g., update the UI or show a message
+            alert("Profile picture uploaded successfully!");
+        } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            alert("Error uploading profile picture");
         }
+        }
+    };
 
-        // Handle success, e.g., update the UI or show a message
-        alert("Profile picture uploaded successfully!");
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-        alert("Error uploading profile picture");
-      }
-    }
-  };
-
-  console.log("isAuthenticated:", isAuthenticated);
-  useEffect(() => {
-    if (!isAuthenticated && !loading) {
-      navigate("/login"); // Redirect to login if not authenticated
-    } else {
-      fetchProfile();
-      //fetchLikedPokemon();
-      //fetchDislikedPokemon();
-    }
-  }, [isAuthenticated, navigate, loading]);
+  
 
   console.log("own data: ", ownData);
 
