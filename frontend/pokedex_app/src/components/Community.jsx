@@ -1,5 +1,4 @@
 import React from "react";
-import testProfiles from "../assets/community_placeholder.json";
 import { useState, useEffect } from "react";
 
 const Community = () => {
@@ -9,16 +8,18 @@ const Community = () => {
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredUsers, setFilteredUsers] = useState([])
-	const [searchFieldStatus, setSearchFieldStatus] = useState(null)
 	let totalPages;
 
-  if (userList.length <= usersPerPage) {
-    totalPages = 1;
-  } else {
-    totalPages = Math.floor(userList.length / usersPerPage);
-  }
+	if (userList.length <= usersPerPage)
+	{
+		totalPages = 1;
+	}
+	else
+	{
+		totalPages = Math.floor(userList.length / usersPerPage)
+	}
 
-  const [currentPage, setCurrentPage] = useState(totalPages);
+	const [currentPage, setCurrentPage] = useState(totalPages);
 
 	const fetchUsers = async () => {
 		setLoading(true);
@@ -52,19 +53,25 @@ const Community = () => {
 		}
 		else
 		{
+			console.log("in use effect:" ,searchQuery)
 			filterUsers(searchQuery)
+			console.log("Filtered users:", filteredUsers)
 			setUserList(filteredUsers)
 		}
 	}, [searchQuery, filteredUsers])
 
-  const UsersOverview = ({ loading, users, usersPerPage, currentPage }) => {
-    let shownUsersStart;
+	const UsersOverview = ({loading, users, usersPerPage, currentPage}) => {
 
-    if (currentPage == 1) {
-      shownUsersStart = 0;
-    } else {
-      shownUsersStart = (currentPage - 1) * usersPerPage;
-    }
+		let shownUsersStart;
+	
+		if (currentPage == 1)
+		{
+			shownUsersStart = 0
+		}
+		else
+		{
+			shownUsersStart = (currentPage - 1) * usersPerPage
+		}
 
 		let shownUsersEnd = (currentPage * usersPerPage)
 
@@ -88,29 +95,20 @@ const Community = () => {
 	const handleSearch = (event) => {
 		setSearchQuery(event)
 	}
-/* 
-	const SearchUser = ({query, changeHandler}) => {
-		
-		return (
-			<div className="flex justify-center">
-				<h2 className="mx-4 font-mono text-rose-950">Search users by name: </h2>
-				<form>
-					<input value={query} onChange={changeHandler} className="bg-rose-200 content-center" type="text"/>
-				</form>
-			</div>
-		)
-	} */
 
-  const Pagination = ({ usersPerPage, length, currentPage }) => {
-    const paginationNumbers = [];
+	const Pagination = ({usersPerPage, length, currentPage}) => {
 
-    for (let i = 1; i <= Math.ceil(length / usersPerPage); i++) {
-      paginationNumbers.push(i);
-    }
+		const paginationNumbers = [];
 
-    const handlePagination = ({ pageNumber }) => {
-      setCurrentPage(pageNumber);
-    };
+		for (let i = 1; i <= Math.ceil(length / usersPerPage); i++)
+		{
+			paginationNumbers.push(i);
+		}
+
+		const handlePagination = ({pageNumber}) => {
+
+			setCurrentPage(pageNumber)
+		}
 
 		return (
 			<div className='text-4xl items-center flex justify-center m-10'>
