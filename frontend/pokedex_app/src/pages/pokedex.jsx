@@ -10,13 +10,12 @@ const Pokedex = () => {
   const [offset, setOffset] = useState(0);
   const [offsetForSearching, setOffsetForSearching] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortOrder, setSortOrder] = useState("ID-asc");
   const [morePokemon, setMorePokemon] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isShuffling, setIsShuffling] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [sortOrder, setSortOrder] = useState("ID-asc");
   const [isTyping, setIsTyping] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -97,16 +96,18 @@ const Pokedex = () => {
     setMatchingList([]);
     setMorePokemon(true);
 
-    setIsSearching(true);
     typingTimeoutRef.current = setTimeout(async () => {
       setIsTyping(false); // User has stopped typing
+      setIsFetching(true); // Actual search starts
+
       if (userInput === "") {
         await fetchPokemonList(0, false, "ID-asc");
       } else {
         await fetchMatchingList(userInput, 0, "ID-asc");
       }
+      setIsFetching(false); // Search completes
+  
     }, 300); // 300ms delay before performing the search
-    setIsSearching(false);
   };
 
   const sortPokemon = async (sortOrderValue) => {
@@ -132,9 +133,9 @@ const Pokedex = () => {
     setOffset(0);
     setPokemonList([]);
     setMorePokemon(true);
-    setIsFetching(true);
+    setIsShuffling(true);
     await fetchPokemonList(0, true, ""); // Request a reshuffle
-    setIsFetching(false);
+    setIsShuffling(false);
   };
 
   const loadMorePokemon = async () => {
@@ -211,6 +212,8 @@ const Pokedex = () => {
     };
   }, [location.state, navigate]);
 
+  const searchProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching };
+
   return (
     <div>
       <header>
@@ -219,12 +222,12 @@ const Pokedex = () => {
       <main>
         <Search searchTerm={searchTerm} onSearch={searchPokemon} />
         <Sort sortOrder={sortOrder} onSort={sortPokemon} />
-        <Shuffle isFetching={isFetching} onShuffle={shufflePokemon} />
+        <Shuffle isShuffling={isShuffling} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
           <PokemonList pokemonList={pokemonList} offset={offset} searchTerm={searchTerm} morePokemon={morePokemon} />
         ) : (
-          <SearchResults matchingList={matchingList} offset={offsetForSearching} searchTerm={searchTerm} morePokemon={morePokemon} isTyping={isTyping} isSearching={isSearching} />
+          <SearchResults {...searchProps} />
         )}
         {morePokemon && matchingList && matchingList.length > 0 && !isTyping && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
       </main>
@@ -266,16 +269,16 @@ const Sort = ({ sortOrder, onSort }) => (
 );
 
 // Shuffle button
-const Shuffle = ({ isFetching, onShuffle }) => (
+const Shuffle = ({ isShuffling, onShuffle }) => (
   <div className="w-full flex justify-center">
     <button
       onClick={onShuffle}
-      disabled={isFetching}
+      disabled={isShuffling}
       className={`inline-flex items-center justify-center space-x-2 px-6 py-3 font-semibold text-white rounded-lg shadow-lg transition-all
-      ${isFetching ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
+      ${isShuffling ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'}`}
     >
-      <RefreshCw size={14} className={isFetching ? "animate-spin" : ""} />
-      <span>{isFetching ? "Loading..." : "Surprise Me!"}</span>
+      <RefreshCw size={14} className={isShuffling ? "animate-spin" : ""} />
+      <span>{isShuffling ? "Loading..." : "Surprise Me!"}</span>
     </button>
   </div>
 );
@@ -320,7 +323,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
 };
 
 // Search Results component
-const SearchResults = ({ matchingList, offset, searchTerm, morePokemon, isTyping, isSearching }) => {
+const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -332,7 +335,7 @@ const SearchResults = ({ matchingList, offset, searchTerm, morePokemon, isTyping
     navigate(`/pokemon/${pokemon.name}`, {
       state: {
         from: 'pokedex',
-        offsetForSearching: offset,
+        offsetForSearching: offsetForSearching,
         matchingList: matchingList,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
@@ -343,7 +346,7 @@ const SearchResults = ({ matchingList, offset, searchTerm, morePokemon, isTyping
 
   return (
     <div>
-      {isSearching ? (
+      {isFetching ? (
         <div className="flex justify-center mt-8">
           <p className="text-center text-lg text-gray-600">Searching for Pokémon... 🔍</p>
         </div>
