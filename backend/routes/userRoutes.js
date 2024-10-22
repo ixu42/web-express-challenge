@@ -13,6 +13,9 @@ router.get(
   isAuthenticated,
   userController.getDislikedPokemonsByUserId
 );
+
+router.get("/:user_id/liked_pokemons", isAuthenticated, userController.getLikedPokemonsByUserId);
+router.get("/:user_id/disliked_pokemons", isAuthenticated, userController.getDislikedPokemonsByUserId);
 router.get("/search", isAuthenticated, userController.searchUsers);
 
 module.exports = router;

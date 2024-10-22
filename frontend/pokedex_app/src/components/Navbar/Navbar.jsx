@@ -1,7 +1,23 @@
-import React from "react";
-import {NavLink} from "react-router-dom"
+import { NavLink } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import AuthContext from "../../AuthContext"; // Update with your actual path
 
 const Navbar = () => {
+	const { isAuthenticated, logout, user } = useContext(AuthContext);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+
+	console.log(isAuthenticated);
+	console.log(user);
+
+	const toggleDropdown = () => {
+	  setDropdownOpen(!dropdownOpen);
+	};
+
+	const handleLogout = () => {
+	  setDropdownOpen(false);
+	  logout();
+	};
+	
 	return (
 		<nav className="h-12 bg-[#1C79C0] shadow-lg"> {/* Pokémon blue background color */}
 		<div className="font-sans text-white text-2xl py-2 flex justify-between items-center px-4 md:px-10">
@@ -42,4 +58,4 @@ const Navbar = () => {
 	  );
 	};
 
-export default Navbar
+export default Navbar;
