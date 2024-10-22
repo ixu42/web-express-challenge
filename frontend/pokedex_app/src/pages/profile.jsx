@@ -3,20 +3,46 @@ import testData from "../assets/profile_placeholder.json";
 import background from "../assets/profile_bg.png";
 import UserLikedPokemon from "../components/UserLikedPokemon";
 import { useState, useContext, useEffect, useRef } from "react";
-import defaultProfilePic from "../assets/no_profile_pic.jpg";
-
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
+import UserDislikedPokemon from "../components/UserDislikedPokemon";
+import defaultProfilePic from "../assets/no_profile_pic.jpg";
 
 const Profile = () => {
-  const [editingBio, setEditingBio] = useState(false);
-  const [bio, setBio] = useState("Loading...");
-  const [ownData, setOwnData] = useState({
-    id: 1,
-    name: "Loading...",
-    bio: "loading...",
-    profile_pic: null,
-  });
+
+    const [editingBio, setEditingBio] = useState(false);
+    const [bio, setBio] = useState("Loading...")
+    const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
+    const [likedPokemons, setLikedPokemons] = useState({user_id: -1, liked_pokemons: []})
+    const [dislikedPokemons, setDislikedPokemons] = useState({user_id: -1, disliked_pokemons: []})
+
+    const fetchProfile = () => {
+        fetch("/api/profile/me")
+        .then((response) => response.json())
+        .then((data) => (setOwnData(data)))
+        .catch((error) => alert("Error fetching user list"))			
+    };
+
+    const fetchLikedPokemon = () => {
+        fetch("api/user/liked_pokemons")
+        .then((response) => response.json())
+        .then((data) => (setLikedPokemons(data)))
+        .then(() => {console.log('Liked pokemons: ', likedPokemons)})
+        .catch((error) => alert("Error fetching liked pokemons' list"))
+    }
+
+    const fetchDislikedPokemon = () => {
+        fetch("api/user/disliked_pokemons")
+        .then((response) => response.json())
+        .then((data) => (setDislikedPokemons(data)))
+        .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
+        .catch((error) => alert("Error fetching disliked pokemons' list"))
+    }
+
+    const updateBio = (event) => {
+        setBio(event.target.value)
+    }
+
 
   const { isAuthenticated, user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -50,36 +76,18 @@ const Profile = () => {
     }
   };
 
-  const fetchProfile = () => {
-    console.log("Fetching profile");
-    fetch("/api/profile/me")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("data: ", data);
-        setOwnData(data);
-      })
-      .catch((error) => alert("Error fetching user list"));
-  };
-
   console.log("isAuthenticated:", isAuthenticated);
   useEffect(() => {
     if (!isAuthenticated && !loading) {
       navigate("/login"); // Redirect to login if not authenticated
     } else {
       fetchProfile();
+      fetchLikedPokemon();
+      fetchDislikedPokemon();
     }
   }, [isAuthenticated, navigate, loading]);
 
-  //   useEffect(() => {
-  //     console.log("Fetching profile");
-  //     fetchProfile();
-  //   }, []);
-
   console.log("own data: ", ownData);
-
-  const updateBio = (event) => {
-    setBio(event.target.value);
-  };
 
   const handleBio = () => {
     console.log("Handling bio");
@@ -137,23 +145,23 @@ const Profile = () => {
     setEditingBio(true);
   };
 
-  const handleBioSaving = (event) => {
-    setEditingBio(false);
-    const newBio = { bio: bio };
-    fetch("api/profile/me/update/bio", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newBio),
-    })
-      .then(fetchProfile())
-      .catch((error) => alert("Error updating bio"));
-  };
+    const handleBioSaving = (event) => {
+        setEditingBio(false);
+        const newBio = {bio: bio}
+        fetch("api/profile/me/update/bio", {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newBio)
+        })
+        .then(fetchProfile())
+        .catch((error) => alert("Error updating bio"))
+    }
 
-  const handleNewProfilePic = (event) => {
-    fetch;
-  };
+    const handleNewProfilePic = (event) => {
+
+    }
 
   return (
     <main>
@@ -215,6 +223,8 @@ const Profile = () => {
           Pokemon that I like:
         </h1>
         <UserLikedPokemon likedPokemon={testData.liked_pokemons} />
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
+        <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
       </section>
     </main>
   );
