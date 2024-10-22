@@ -135,7 +135,7 @@ const searchProfiles = async (name) => {
       : null;
     profile.profile_pic = base64Image;
     console.log("searching profiles successful:", profile);
-    return profiles;
+    return profile;
   } catch (error) {
     console.log("error searching profiles:", error.message);
     throw error;
