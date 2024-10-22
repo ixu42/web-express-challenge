@@ -161,9 +161,12 @@ const searchPokemon = async (userInput) => {
         setPokemonList(location.state.pokemonList); // Use the passed Pokemon list
       } else {
         console.log("search mode")
+        console.log("location.state.matchingList:", location.state.matchingList)
+        console.log("location.state.morePokemon:", location.state.morePokemon)
         setMatchingList(location.state.matchingList);
         setOffsetForSearching(location.state.offsetForSearching);
         setSearchTerm(location.state.searchTerm);
+        setMorePokemon(location.state.morePokemon);
       }
     } else {
       console.log("Fetching default Pokemon list");
@@ -197,9 +200,9 @@ const searchPokemon = async (userInput) => {
         <Shuffle isFetching={isFetching} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
-          <PokemonList pokemonList={pokemonList} offset={offset} />
+          <PokemonList pokemonList={pokemonList} offset={offset} searchTerm={searchTerm} morePokemon={morePokemon}/>
         ) : (
-          <SearchResults matchingList={matchingList} offset={offsetForSearching} searchTerm={searchTerm}/>
+          <SearchResults matchingList={matchingList} offset={offsetForSearching} searchTerm={searchTerm} morePokemon={morePokemon}/>
         )}
         {morePokemon && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon}/>)}
       </main>
@@ -253,7 +256,7 @@ const Shuffle = ({ isFetching, onShuffle }) => (
 );
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList, offset }) => (
+const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => (
   <ul className="pokemon-list">
     {pokemonList.map(pokemon => (
       <li key={pokemon.name} className="pokemon-item">
@@ -261,7 +264,9 @@ const PokemonList = ({ pokemonList, offset }) => (
           to={`/pokemon/${pokemon.name}`}
           state={{ 
             pokemonList,    // Pass the current Pokémon list
-            offset          // Pass the current offset
+            offset,         // Pass the current offset
+            searchTerm,     // Pass the current searchTerm
+            morePokemon     // Pass the current morePokemon flag
           }}
         >
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
@@ -279,7 +284,7 @@ const PokemonList = ({ pokemonList, offset }) => (
 );
 
 // Search Results component
-const SearchResults = ({ matchingList, offset, searchTerm }) => (
+const SearchResults = ({ matchingList, offset, searchTerm, morePokemon }) => (
   matchingList && matchingList.length > 0 ? (
     <ul className="pokemon-list">
       {matchingList.map(pokemon => (
@@ -289,7 +294,8 @@ const SearchResults = ({ matchingList, offset, searchTerm }) => (
             state={{ 
               matchingList,
               offset,
-              searchTerm
+              searchTerm,
+              morePokemon
             }}
           >
             <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />

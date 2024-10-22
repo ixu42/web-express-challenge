@@ -17,6 +17,8 @@ const PokemonProfile = () => {
   const matchingList = location.state?.matchingList || [];
   const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
+  console.log("DEBUG------morePokemon:", location.state?.morePokemon)
+  const morePokemon = location.state?.morePokemon;
   console.log("pokemon profile page | location.state", location.state);
 
 	useEffect(() => {
@@ -46,9 +48,10 @@ const PokemonProfile = () => {
         from: 'profile',
         pokemonList: pokemonList,
         offset: offset,
-        matchingList: pokemonList,
+        matchingList: matchingList,
         offsetForSearching: offsetForSearching,
-        searchTerm: searchTerm
+        searchTerm: searchTerm,
+        morePokemon: morePokemon
       },
     });
   };
