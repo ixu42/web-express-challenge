@@ -20,7 +20,7 @@ const PokemonProfile = () => {
   const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
   const morePokemon = location.state?.morePokemon;
-  console.log("pokemon profile page | location.state", location.state);
+  // console.log("pokemon profile page | location.state", location.state);
 
   useEffect(() => {
     const fetchPokemonInfo = async () => {
@@ -43,7 +43,7 @@ const PokemonProfile = () => {
 
   // Function to handle "Back to Pokedex" button click
   const handleBackToPokedex = () => {
-    console.log("handleBackToPokedex() called")
+    // console.log("handleBackToPokedex() called")
     navigate('/', {
       state: {
         from: 'profile',
