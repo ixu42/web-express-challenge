@@ -230,7 +230,7 @@ const Pokedex = () => {
         ) : (
           <SearchResults {...searchResultsProps} />
         )}
-        {morePokemon && matchingList && matchingList.length > 0 && !isTyping && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
+        {morePokemon && !isFetching && !isTyping && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
       </main>
     </div>
   );
