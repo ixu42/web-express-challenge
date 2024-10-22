@@ -65,6 +65,7 @@ const updateName = async (req, res, next) => {
     const { id } = req.session.user;
     const { name } = req.body;
     const profile = await profileService.updateName({ id, name });
+    req.session.user.username = name;
     res.status(200).json(profile);
   } catch (error) {
     next(error);
