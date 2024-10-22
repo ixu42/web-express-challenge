@@ -2,6 +2,7 @@ import React from "react";
 import testData from '../assets/profile_placeholder.json';
 import background from "../assets/profile_bg.png"
 import UserLikedPokemon from "../components/UserLikedPokemon"
+import UserDislikedPokemon from "../components/UserDislikedPokemon";
 import { useState, useEffect } from "react";
 import defaultProfilePic from "../assets/no_profile_pic.jpg";
 
@@ -10,8 +11,8 @@ const Profile = () => {
     const [editingBio, setEditingBio] = useState(false);
     const [bio, setBio] = useState("Loading...")
     const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
-    const [likedPokemons, setLikedPokemons] = useState({user_id: 0, liked_pokemons: ["No liked pokemon yet"]})
-    const [dislikedPokemons, setDislikedPokemons] = useState({user_id: 0, disliked_pokemons: ["No disliked pokemon yet"]})
+    const [likedPokemons, setLikedPokemons] = useState({user_id: -1, liked_pokemons: []})
+    const [dislikedPokemons, setDislikedPokemons] = useState({user_id: -1, disliked_pokemons: []})
 
     const fetchProfile = () => {
         fetch("/api/profile/me")
@@ -28,21 +29,22 @@ const Profile = () => {
         .catch((error) => alert("Error fetching liked pokemons' list"))
     }
 
-    /* const fetchDislikedPokemon = () => {
+    const fetchDislikedPokemon = () => {
         fetch("api/user/disliked_pokemons")
         .then((response) => response.json())
         .then((data) => (setDislikedPokemons(data)))
         .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
         .catch((error) => alert("Error fetching disliked pokemons' list"))
-    } */
+    }
 
     useEffect(() => {
 		fetchProfile();
         fetchLikedPokemon();
-        //fetchDislikedPokemon();
+        fetchDislikedPokemon();
 	}, [])
 
-    console.log(ownData)
+    console.log('Array in main', likedPokemons)
+    console.log('HERE Array in main - disliked', dislikedPokemons)
 
     const updateBio = (event) => {
         setBio(event.target.value)
@@ -130,7 +132,7 @@ const Profile = () => {
                 <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 text-white border-pink-950">Pokemon that I like:</h1>
                 <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons}/>
                 <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
-                <UserLikedPokemon likedPokemon={dislikedPokemons.disliked_pokemons}/>
+                <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
             </section>
         </main>
     )
