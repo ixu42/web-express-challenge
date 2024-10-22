@@ -10,6 +10,8 @@ const Profile = () => {
     const [editingBio, setEditingBio] = useState(false);
     const [bio, setBio] = useState("Loading...")
     const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
+    const [likedPokemons, setLikedPokemons] = useState({user_id: 0, liked_pokemons: ["No liked pokemon yet"]})
+    const [dislikedPokemons, setDislikedPokemons] = useState({user_id: 0, disliked_pokemons: ["No disliked pokemon yet"]})
 
     const fetchProfile = () => {
         fetch("/api/profile/me")
@@ -18,8 +20,26 @@ const Profile = () => {
         .catch((error) => alert("Error fetching user list"))			
     };
 
+    const fetchLikedPokemon = () => {
+        fetch("api/user/liked_pokemons")
+        .then((response) => response.json())
+        .then((data) => (setLikedPokemons(data)))
+        .then(() => {console.log('Liked pokemons: ', likedPokemons)})
+        .catch((error) => alert("Error fetching liked pokemons' list"))
+    }
+
+    /* const fetchDislikedPokemon = () => {
+        fetch("api/user/disliked_pokemons")
+        .then((response) => response.json())
+        .then((data) => (setDislikedPokemons(data)))
+        .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
+        .catch((error) => alert("Error fetching disliked pokemons' list"))
+    } */
+
     useEffect(() => {
 		fetchProfile();
+        fetchLikedPokemon();
+        //fetchDislikedPokemon();
 	}, [])
 
     console.log(ownData)
@@ -108,7 +128,9 @@ const Profile = () => {
                     </div>
                 </div>
                 <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 text-white border-pink-950">Pokemon that I like:</h1>
-                <UserLikedPokemon likedPokemon={testData.liked_pokemons}/>
+                <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons}/>
+                <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
+                <UserLikedPokemon likedPokemon={dislikedPokemons.disliked_pokemons}/>
             </section>
         </main>
     )

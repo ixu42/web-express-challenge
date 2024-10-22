@@ -1,9 +1,18 @@
 import React from "react";
 import { useState } from "react";
 
-const UserLikedPokemon = (props) => {
+const UserLikedPokemon = ({likedPokemon}) => {
 
-	const likedPokemon = props.likedPokemon
+	if (likedPokemon.length == 0)
+	{
+		return (
+			<section className="justify-center items-center grid columns-3">
+			<p className="grid grid-cols-10 px-4 text-center pb-3 pt-3 list-inside font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-slate-800">
+				No liked pokemon yet
+			</p>
+			</section>
+		)
+	}
 
 	return (
 		<section className="justify-center items-center grid columns-3">
