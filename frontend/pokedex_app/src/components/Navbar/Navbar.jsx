@@ -3,12 +3,12 @@ import {NavLink} from "react-router-dom"
 
 const Navbar = () => {
 	return (
-		<nav className="h-12 bg-yellow-400 shadow-lg"> {/* Adjusted height and background color */}
+		<nav className="h-12 bg-[#1C79C0] shadow-lg"> {/* Pokémon blue background color */}
 		<div className="font-sans text-white text-2xl py-2 flex justify-between items-center px-4 md:px-10">
 			<NavLink
 			  to="/"
 			  className={({ isActive }) =>
-				isActive ? 'text-blue-900 font-bold' : 'hover:text-rose-900 transition duration-300'
+				isActive ? 'text-white font-bold' : 'hover:text-yellow-400 transition duration-300'
 			  }
 			>
 			  Pokedex
@@ -16,7 +16,7 @@ const Navbar = () => {
 			<NavLink
 			  to="/Profile"
 			  className={({ isActive }) =>
-				isActive ? 'text-blue-900 font-bold' : 'hover:text-rose-900 transition duration-300'
+				isActive ? 'text-white font-bold' : 'hover:text-yellow-400 transition duration-300'
 			  }
 			>
 			  My Profile
@@ -24,7 +24,7 @@ const Navbar = () => {
 			<NavLink
 			  to="/Login"
 			  className={({ isActive }) =>
-				isActive ? 'text-blue-900 font-bold' : 'hover:text-rose-900 transition duration-300'
+				isActive ? 'text-white font-bold' : 'hover:text-yellow-400 transition duration-300'
 			  }
 			>
 			  Login | Signup
@@ -32,7 +32,7 @@ const Navbar = () => {
 			<NavLink
 			  to="/Community"
 			  className={({ isActive }) =>
-				isActive ? 'text-blue-900 font-bold' : 'hover:text-rose-900 transition duration-300'
+				isActive ? 'text-white font-bold' : 'hover:text-yellow-400 transition duration-300'
 			  }
 			>
 			  Community
