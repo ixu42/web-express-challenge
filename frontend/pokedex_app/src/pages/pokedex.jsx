@@ -137,6 +137,15 @@ const searchPokemon = async (userInput) => {
     setIsLoading(false);
   };
 
+  const resetAll = () => {
+    setPokemonList([]);
+    setMatchingList([]);
+    setSearchTerm("");
+    setOffset(0);
+    setOffsetForSearching(0);
+    setMorePokemon(true);
+  }
+
   // Effect to restore the scroll position when coming back from profile
   useEffect(() => {
     const savedScrollPosition = location.state?.scrollPosition || 0;
@@ -175,6 +184,7 @@ const searchPokemon = async (userInput) => {
       }, 100);
     } else {
       console.log("Fetching default Pokemon list");
+      resetAll();
       fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the new Pokemon list
     }
 

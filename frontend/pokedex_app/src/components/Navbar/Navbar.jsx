@@ -1,7 +1,7 @@
 import React from "react";
 import {NavLink} from "react-router-dom"
 
-const Navbar = () => {
+const Navbar = ({ handlePokedexClick }) => {
 	return (
 		<>
 			<nav className="h-16 bg-rose-900 text-center">
@@ -9,7 +9,7 @@ const Navbar = () => {
           			<NavLink to="/Profile">
 						My Profile
 					</NavLink>
-					<NavLink to="/">
+					<NavLink to="/" onClick={handlePokedexClick}>
 						Pokedex
 					</NavLink>
 					<NavLink to="/Login">

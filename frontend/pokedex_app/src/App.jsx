@@ -12,11 +12,17 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import ErrorBoundary from './ErrorBoundary';
 
-function App() {
+const App = () => {
+  const [pokedexKey, setPokedexKey] = useState(0); // State to manage the Pokedex key
+
+  const handlePokedexClick = () => {
+    setPokedexKey((prevKey) => prevKey + 1); // Increment key to force re-render
+  };
+
   return (
     <Router>
       <div id="root">
-        <Navbar />
+        <Navbar handlePokedexClick={handlePokedexClick} />
         <main>
           <Routes>
             <Route
@@ -24,7 +30,7 @@ function App() {
               path="/"
               element={
                 <ErrorBoundary>
-                  <Pokedex />
+                  <Pokedex key={pokedexKey} />
                 </ErrorBoundary>
               }
             />
