@@ -20,6 +20,8 @@ const Profile = () => {
         fetch("/api/profile/me")
         .then((response) => response.json())
         .then((data) => (setOwnData(data)))
+        .then(fetchLikedPokemon())
+        .then(fetchDislikedPokemon())
         .catch((error) => alert("Error fetching user list"))			
     };
 
@@ -82,8 +84,8 @@ const Profile = () => {
       navigate("/login"); // Redirect to login if not authenticated
     } else {
       fetchProfile();
-      fetchLikedPokemon();
-      fetchDislikedPokemon();
+      //fetchLikedPokemon();
+      //fetchDislikedPokemon();
     }
   }, [isAuthenticated, navigate, loading]);
 
@@ -115,30 +117,25 @@ const Profile = () => {
 
   const RenderProfilePic = () => {
     console.log("rendering profile pic");
-    return (
-      <img
-        src={defaultProfilePic}
-        alt="User Profile"
-        className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-      />
-    );
-   /*  if (ownData.profile_pic === null) {
-      return (
+    if (ownData.profile_pic === null) {
+        return (
+          <img
+            src={defaultProfilePic}
+            alt="User Profile"
+            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+          />
+    )
+    }
+    else
+    {
+        return (
         <img
-          src={defaultProfilePic}
-          alt="User Profile"
-          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+            src={defaultProfilePic}
+            alt="User Profile"
+            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
         />
-      );
-    } else {
-      return (
-        <img
-          src={ownData.profile_pic}
-          alt="User Profile"
-          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-        />
-      );
-    } */
+        );
+    }
   };
 
   const handleBioEditing = (event) => {
@@ -222,7 +219,7 @@ const Profile = () => {
         <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 text-white border-pink-950">
           Pokemon that I like:
         </h1>
-        <UserLikedPokemon likedPokemon={testData.liked_pokemons} />
+        <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
         <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
         <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
       </section>
