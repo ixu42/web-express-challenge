@@ -7,6 +7,7 @@ const PokemonProfile = () => {
   const [pokemonInfo, setPokemonInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userError, setUserError] = useState(false);
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
 
@@ -31,8 +32,8 @@ const PokemonProfile = () => {
         }
         const data = await response.json();
         setPokemonInfo(data);
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -69,7 +70,7 @@ const PokemonProfile = () => {
           method: 'DELETE',
         });
         if (!unlikeResponse.ok) {
-          throw new Error('Failed to unlike Pokémon');
+          throw new Error('Please log in to like Pokémon');
         }
         setLike(false);  // Update state to reflect unliking
       } else {
@@ -86,7 +87,7 @@ const PokemonProfile = () => {
           }),
         });
         if (!response.ok) {
-          throw new Error('Failed to like Pokémon');
+          throw new Error('Please log in to like Pokémon');
         }
 
         if (dislike) {
@@ -94,20 +95,22 @@ const PokemonProfile = () => {
             method: 'DELETE',
           });
           if (!undislikeResponse.ok) {
-            throw new Error('Failed to undislike Pokémon');
+            setUserError(true);
+            throw new Error('Please log in to like Pokémon');
           }
           setDislike(false);
         }
       }
-    } catch (error) {
-      console.error('Error in liking pokemons:', error);
+    } catch (err) {
+      setUserError(true);
+      alert(err.message);
     }
   }
 
   const handleDislike = async () => {
     try {
       if (dislike) {
-        // If already disliked, undis    like the Pokémon
+        // If already disliked, undislike the Pokémon
         const undislikeResponse = await fetch(`/api/pokemon/undislike/${pokemonInfo.id}`, {
           method: 'DELETE',
         });
@@ -129,7 +132,8 @@ const PokemonProfile = () => {
           }),
         });
         if (!response.ok) {
-          throw new Error('Failed to dislike Pokémon');
+          setUserError(true);
+          throw new Error('Please log in to dislike Pokémon');
         }
 
         if (like) {
@@ -142,11 +146,13 @@ const PokemonProfile = () => {
           setLike(false);
         }
       }
-    } catch (error) {
-      console.error('Error in disliking pokemons:', error);
+    } catch (err) {
+      setUserError(true);
+      alert(err.message);
     }
   }
 
+  console.log(userError);
   return (
     <div>
       <div className="pokemon-details">
@@ -196,12 +202,12 @@ const PokemonProfile = () => {
             ))}
           </div>
         </div>
-
+        
         {/* Like and Dislike Buttons */}
         <div className="flex flex-row items-center space-x-20">
           {/* Like Button */}
           <button
-            className={`flex items-center justify-center w-16 h-16 rounded-full ${like ? 'bg-pink-500' : 'bg-gray-400'} text-white shadow-lg transition-transform transform hover:scale-105`}
+            className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400': (like ? 'bg-pink-500' : 'bg-gray-400')}  text-white shadow-lg transition-transform transform hover:scale-105`}
             onClick={handleLike}
           >
             <HeartIcon className="w-8 h-8" />
