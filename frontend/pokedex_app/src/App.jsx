@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import './App.css';
+import './index.css'
+import ErrorBoundary from './ErrorBoundary';
 import Navbar from "./components/Navbar/Navbar";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Pokedex from "./pages/pokedex";
-import Profile from "./pages/profile";
-import Login from "./pages/login";
-import "./App.css";
-import PokemonProfile from "./pages/pokemon_profile";
-import "./index.css";
-import Footer from "./components/footer";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import ErrorBoundary from "./ErrorBoundary";
-import { AuthProvider } from "./AuthContext"; // Import AuthProvider
+import Footer from './components/footer';
+import Pokedex from './pages/pokedex';
+import Login from './pages/login';
+import Profile from './pages/profile';
+import PokemonProfile from './pages/pokemon_profile';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import Community from "./components/Community";
+import PageNotFound from './pages/pageNotFound';
+import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/Community" element={<Community />} />
+              <Route path="*" element={<PageNotFound />} />
             </Routes>
           </main>
           <Footer />
