@@ -208,7 +208,7 @@ const searchPokemon = async (userInput) => {
   return (
     <div>
       <header>
-        <img alt="pokeball logo" className="logo" src={logo} />
+        <img alt="pokemon logo" className="logo" src={logo} />
       </header>
       <main>
         <Search searchTerm={searchTerm} onSearch={searchPokemon} />

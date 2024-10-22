@@ -24,7 +24,7 @@ const Profile = () => {
         .then((data) => (setOwnData(data)))
         .then(fetchLikedPokemon())
         .then(fetchDislikedPokemon())
-        .catch((error) => alert("Error fetching user list"))			
+        .catch((error) => alert("Error fetching user list"))
     };
 
     const fetchLikedPokemon = () => {
@@ -64,7 +64,7 @@ const Profile = () => {
     }
 
     console.log('Liked pokemon: ', likedPokemons)
-    
+
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -94,7 +94,7 @@ const Profile = () => {
         }
     };
 
-  
+
 
   console.log("own data: ", ownData);
 
@@ -223,11 +223,11 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 text-white border-pink-950">
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 text-white border-pink-950">
           Pokemon that I like:
         </h1>
         <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl font-pokemon py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl y-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
         <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
       </section>
     </main>
