@@ -55,12 +55,10 @@ const Community = () => {
 		}
 		else
 		{
-			console.log("in use effect:" ,searchQuery)
 			filterUsers(searchQuery)
-			console.log("Filtered users:", filteredUsers)
 			setUserList(filteredUsers)
 		}
-	}, [searchQuery])
+	}, [searchQuery, filteredUsers])
 
 	const UsersOverview = ({loading, users, usersPerPage, currentPage}) => {
 
