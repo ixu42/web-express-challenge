@@ -119,11 +119,13 @@ const Pokedex = () => {
     setPokemonList([]);
     setMatchingList([]);
     setMorePokemon(true);
+    setIsFetching(true);
     if (searchTerm === "") {
       await fetchPokemonList(0, false, sortOrderValue);
     } else {
       await fetchMatchingList(searchTerm, 0, sortOrderValue);
     }
+    setIsFetching(false);
   };
 
   const shufflePokemon = async () => {
@@ -134,13 +136,16 @@ const Pokedex = () => {
     setPokemonList([]);
     setMorePokemon(true);
     setIsShuffling(true);
+    setIsFetching(true);
     await fetchPokemonList(0, true, ""); // Request a reshuffle
+    setIsFetching(false);
     setIsShuffling(false);
   };
 
   const loadMorePokemon = async () => {
     console.log("loadMorePokemon() called");
     setIsLoading(true);
+    setIsFetching(true);
     if (searchTerm === "") {
       setOffset((prevOffset) => prevOffset + limit);
       await fetchPokemonList(offset + limit, false, sortOrder);
@@ -148,6 +153,7 @@ const Pokedex = () => {
       setOffsetForSearching((prevOffset) => prevOffset + limit);
       await fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
     }
+    setIsFetching(false);
     setIsLoading(false);
   };
 
@@ -193,7 +199,12 @@ const Pokedex = () => {
     } else {
       console.log("Fetching default Pokemon list");
       resetAll();
-      fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the new Pokemon list
+      const fetchData = async () => {
+          setIsFetching(true);
+          await fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the default Pokemon list
+          setIsFetching(false);
+        }
+      fetchData();
     }
 
     // Clear location.state on page reload
