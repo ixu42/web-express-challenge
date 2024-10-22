@@ -38,7 +38,8 @@ const updateProfile = async (req, res, next) => {
 const updateProfilePic = async (req, res, next) => {
   try {
     const { id } = req.session.user;
-    const { profile_pic } = req.body;
+    // const { profile_pic } = req.body;
+    const profile_pic = req.file.buffer;
     const profile = await profileService.updateProfilePic({
       id,
       profile_pic,

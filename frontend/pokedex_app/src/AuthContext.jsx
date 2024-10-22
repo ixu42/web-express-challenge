@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
+import HolyLoader from "holy-loader";
 
 // Create Context
 const AuthContext = createContext();
@@ -8,6 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null); // To hold user details
   const [loading, setLoading] = useState(true); // New loading state
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -37,15 +40,19 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = async () => {
+    setLoading(true);
     await fetch("/api/logout", { method: "POST", credentials: "include" });
     setIsAuthenticated(false);
     setUser(null);
+    setLoading(false);
+    navigate("/login");
   };
 
   return (
     <AuthContext.Provider
       value={{ isAuthenticated, setIsAuthenticated, logout, user, setUser, loading }}
     >
+      {loading && <HolyLoader />} {/* Render the loader when loading */}
       {children}
     </AuthContext.Provider>
   );
