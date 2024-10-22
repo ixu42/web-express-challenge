@@ -1,5 +1,4 @@
 import React from "react";
-import testProfiles from '../assets/community_placeholder.json';
 import { useState, useEffect } from "react";
 
 const Community = () => {
@@ -8,7 +7,7 @@ const Community = () => {
 	const [loading, setLoading] = useState(false);
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
-
+	const [filteredUsers, setFilteredUsers] = useState([])
 	let totalPages;
 
 	if (userList.length <= usersPerPage)
@@ -22,17 +21,44 @@ const Community = () => {
 
 	const [currentPage, setCurrentPage] = useState(totalPages);
 
+	const fetchUsers = async () => {
+		setLoading(true);
+		fetch("/api/profile")
+		.then((response) => response.json())
+		.then((data) => (setUserList(data)))
+		.then(setLoading(false))
+		.catch((error) => alert("Error fetching user list"))			
+	};
+
 	useEffect(() => {
-		const fetchUsers = async () => {
-			setLoading(true);
-			fetch("/api/profile")
-			.then((response) => response.json())
-			.then((data) => (setUserList(data)))
-			.then(setLoading(false))
-			.catch((error) => alert("Error fetching user list"))			
-		};
 		fetchUsers();
 	}, [])
+
+	const filterUsers = (searchQuery) => {
+		setLoading(true);
+		fetch("/api/profile/search?" + new URLSearchParams({
+			name: searchQuery
+		}))
+		.then((response) => response.json())
+		.then((data) => (setFilteredUsers(data)))
+		.then(setLoading(false))
+		.then(setUserList(filteredUsers))
+		.catch((error) => alert("Error searching for users"))
+	}
+
+	useEffect(() => {
+		if (searchQuery.length == 0)
+		{
+			fetchUsers()
+		}
+		else
+		{
+			console.log("in use effect:" ,searchQuery)
+			filterUsers(searchQuery)
+			console.log("Filtered users:", filteredUsers)
+			setUserList(filteredUsers)
+		}
+	}, [searchQuery, filteredUsers])
 
 	const UsersOverview = ({loading, users, usersPerPage, currentPage}) => {
 
@@ -66,20 +92,9 @@ const Community = () => {
 		)
 	}
 
-	const handleSearch = () => {
-		
+	const handleSearch = (event) => {
+		setSearchQuery(event)
 	}
-
-	const SearchUser = () => {
-		
-		return (
-			<div className="flex justify-center">
-				<h2 className="mx-4 font-mono text-rose-950">Search users by name: </h2>
-				<input className="bg-rose-200 content-center" type="text"></input>
-			</div>
-		)
-	}
-
 
 	const Pagination = ({usersPerPage, length, currentPage}) => {
 
@@ -112,12 +127,16 @@ const Community = () => {
 	}
 
 	
-
 	return (
 		<main>
 			<section>
 				<h1 className="text-rose-900 font-pokemon text-center text-7xl my-10">Our community</h1>
-				<SearchUser/>
+				<div className="flex justify-center">
+				<h2 className="mx-4 font-mono text-rose-950">Search users by name: </h2>
+				<form>
+					<input value={searchQuery} onChange={(e) => handleSearch(e.target.value)} className="bg-rose-200 content-center" type="text"/>
+				</form>
+				</div>
 				<div className="">
 					<UsersOverview loading={loading} users={userList} usersPerPage={usersPerPage} currentPage={currentPage}/>
 				</div>
@@ -125,6 +144,7 @@ const Community = () => {
 			</section>
 		</main>
 	)
+	
 }
 
 export default Community;

@@ -1,15 +1,15 @@
 import React from "react";
 
-const UserLikedPokemon = ({likedPokemon}) => {
+const UserDislikedPokemon = ({dislikedPokemon}) => {
 
-	console.log("Liked pokemon array", likedPokemon)
+	console.log("Disliked pokemon array >>>", dislikedPokemon)
 
-	if (likedPokemon.length == 0)
+	if (dislikedPokemon.length == 0)
 	{
 		return (
 			<section className="justify-center items-center grid columns-3">
 			<p className="px-4 text-white text-center pb-3 pt-3 font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-slate-800">
-				No liked pokemon yet
+				No disliked pokemon yet
 			</p>
 			</section>
 		)
@@ -19,7 +19,7 @@ const UserLikedPokemon = ({likedPokemon}) => {
 		<section className="justify-center items-center grid columns-3">
 		<ul className="grid grid-cols-10 px-4 text-center pb-3 pt-3 list-inside font-bold opacity-80 rounded-lg border-double text-2xl font-mono border-pink-950 border-4 bg-slate-800">
 			{
-				likedPokemon.map((pokemon) => {	
+				dislikedPokemon.map((pokemon) => {	
 					return (<li className="p-3 items-center text-white" key={pokemon}><a href={`/pokemon/${pokemon}`}>{pokemon}</a></li>)
 				}
 			)}
@@ -28,4 +28,4 @@ const UserLikedPokemon = ({likedPokemon}) => {
 	)
 }
 
-export default UserLikedPokemon;
+export default UserDislikedPokemon;

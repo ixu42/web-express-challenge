@@ -18,9 +18,9 @@ const getLikedPokemonsByUserId = async (userId) => {
       u.id;
   `;
   const result = await db.query(query, [userId]);
-  if (result.rows.length === 0) {
+/*   if (result.rows.length === 0) {
     throw new NotFoundError("User not found");
-  }
+  } */
   return result.rows[0]; // Return the array of liked Pokémon
 };
 
@@ -41,10 +41,10 @@ const getDislikedPokemonsByUserId = async (userId) => {
       u.id;
   `;
   const result = await db.query(query, [userId]);
-  if (result.rows.length === 0) {
+  /* if (result.rows.length === 0) {
     throw new NotFoundError("User not found");
-  }
-  return result.rows; // Return the array of disliked Pokémon
+  } */
+  return result.rows[0]; // Return the array of disliked Pokémon
 }
 
 const searchUsers = async (query) => {

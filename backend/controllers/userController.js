@@ -1,6 +1,6 @@
 const userService = require('../services/userService');
 
-const getLikedPokemonsByUserId = async (req, res, next) => {
+const getLikedPokemonsByUser = async (req, res, next) => {
   try {
     const { id } = req.session.user;
     const pokemons = await userService.getLikedPokemonsByUserId(id);
@@ -10,10 +10,30 @@ const getLikedPokemonsByUserId = async (req, res, next) => {
   }
 }
 
-const getDislikedPokemonsByUserId = async (req, res, next) => {
+const getDislikedPokemonsByUser = async (req, res, next) => {
   try {
     const { id } = req.session.user;
     const pokemons = await userService.getDislikedPokemonsByUserId(id);
+    res.status(200).json(pokemons);
+  } catch (error) {
+    next(error);
+  }
+}
+
+const getLikedPokemonsByUserId = async (req, res, next) => {
+  try {
+    const { user_id } = req.params
+    const pokemons = await userService.getLikedPokemonsByUserId(user_id);
+    res.status(200).json(pokemons);
+  } catch (error) {
+    next(error);
+  }
+}
+
+const getDislikedPokemonsByUserId = async (req, res, next) => {
+  try {
+    const { user_id } = req.params;
+    const pokemons = await userService.getDislikedPokemonsByUserId(user_id);
     res.status(200).json(pokemons);
   } catch (error) {
     next(error);
@@ -31,6 +51,8 @@ const searchUsers = async (req, res, next) => {
 }
 
 module.exports = {
+  getLikedPokemonsByUser,
+  getDislikedPokemonsByUser,
   getLikedPokemonsByUserId,
   getDislikedPokemonsByUserId,
   searchUsers,
