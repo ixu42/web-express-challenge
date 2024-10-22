@@ -3,15 +3,16 @@ import testData from '../assets/profile_placeholder.json';
 import background from "../assets/profile_bg.png"
 import UserLikedPokemon from "../components/UserLikedPokemon"
 import { useState, useEffect } from "react";
+import defaultProfilePic from "../assets/no_profile_pic.jpg";
 
 const Profile = () => {
 
     const [editingBio, setEditingBio] = useState(false);
-    const [bio, setBio] = useState(testData.bio)
-    const [ownData, setOwnData] = useState();
+    const [bio, setBio] = useState("Loading...")
+    const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
 
     useEffect(() => {
-		const fetchProfile = async () => {
+		const fetchProfile = () => {
 			fetch("/api/profile/me")
 			.then((response) => response.json())
 			.then((data) => (setOwnData(data)))
@@ -31,7 +32,7 @@ const Profile = () => {
         console.log("Handling bio")
 
         if (editingBio === false)
-            return (<p className="m-3 text-lg">{bio}</p>)
+            return (<p className="m-3 text-lg">{ownData.bio}</p>)
         else
         {
             return (
@@ -39,6 +40,21 @@ const Profile = () => {
                     <textarea spellCheck="true" name="new_bio" onChange={updateBio} className="bg-gray-300 resize" cols={60} defaultValue={bio} maxLength={250} rows={2} type="text"/>
                 </section>
             )
+        }
+    }
+
+    const   RenderProfilePic = () => {
+        if (ownData.profile_pic === null)
+        {
+            return (
+                <img src={defaultProfilePic} alt="User Profile"
+                    className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]" />
+            )
+        }
+        else
+        {
+            <img src={ownData.profile_pic} alt="User Profile"
+                                className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]" />
         }
     }
 
@@ -57,11 +73,10 @@ const Profile = () => {
                 <div className="flex flex-col">
                     <img src={background} alt="pokemon in the background" className="w-full xl:h-[36rem] lg:h-[32rem] md:h-[28rem] sm:h-[24rem] xs:h-[20rem]"/>
                     <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
-                        <img src={testData.profile_pic} alt="User Profile"
-                                className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]" />
+                        <RenderProfilePic/>
                         <h1
                             className="w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-mono">
-                            {testData.name}</h1>
+                            {ownData.name}</h1>
                     </div>
                     <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
                         <div className="w-fit text-gray-700 dark:text-gray-400 text-md">{handleBio()}</div>
