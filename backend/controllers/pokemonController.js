@@ -1,3 +1,4 @@
+const pokemonService = require("../services/pokemonService");
 const pokemonModel = require("../models/pokemonModel");
 const axios = require('axios')
 const { fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addImgUrlToPokemonDetails } = require('./pokemonControllerUtils');
@@ -10,9 +11,10 @@ const defaultPokemonImgUrl = '../img/default_pokemon.png'
 
 const likedPokemon = async (req, res, next) => {
   try {
-    const { user_id, pokemon_id, pokemon_name } = req.body;
-    const pokemon = await pokemonModel.likedPokemon(
-      user_id,
+    const { id } = req.session.user;
+    const { pokemon_id, pokemon_name } = req.body;
+    const pokemon = await pokemonService.likedPokemon(
+      id,
       pokemon_id,
       pokemon_name
     );
@@ -21,6 +23,44 @@ const likedPokemon = async (req, res, next) => {
     next(error);
   }
 };
+
+const unlikePokemon = async (req, res, next) => {
+  try {
+    const { id } = req.session.user;
+    const { pokemon_id } = req.params;
+    const pokemon = await pokemonService.unlikePokemon(id, pokemon_id);
+    res.status(200).json(pokemon);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const dislikedPokemon = async (req, res, next) => {
+  try {
+    const { id } = req.session.user;
+    const { pokemon_id, pokemon_name } = req.body;
+    const pokemon = await pokemonService.dislikedPokemon(
+      id,
+      pokemon_id,
+      pokemon_name
+    );
+    res.status(200).json(pokemon);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const undislikePokemon = async (req, res, next) => {
+  try {
+    const { id } = req.session.user;
+    const { pokemon_id } = req.params;
+    const pokemon = await pokemonService.undislikePokemon(id, pokemon_id);
+    res.status(200).json(pokemon);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 // Fetch a list of Pokémon based on a substring match
 const getMatchingPokemon = async (req, res) => {
@@ -154,8 +194,12 @@ const getPokemon = async (req, res) => {
   }
 }
 
+
 module.exports = {
   likedPokemon,
+  unlikePokemon,
+  dislikedPokemon,
+  undislikePokemon,
   getMatchingPokemon,
   getPokemonByType,
   getPokemon,

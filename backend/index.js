@@ -11,9 +11,6 @@ const app = express()
 
 app.use(express.json())
 
-app.use("/api/pokemon", pokemonRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/profile", profileRoutes);
 
 app.use(session({
   secret: 'yourSecretKey', // Replace with your own secret key
@@ -25,6 +22,13 @@ app.use(session({
     httpOnly: true // Prevents JavaScript access to the cookie
   }
 }))
+
+// PostgreSQL connection configuration
+
+app.use("/api/pokemon", pokemonRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/profile", profileRoutes);
+
 
 // Base URL endpoint
 app.get('/api', (req, res) => {

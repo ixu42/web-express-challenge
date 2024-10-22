@@ -2,22 +2,24 @@ const express = require("express");
 const router = express.Router();
 const profileController = require("../controllers/profileController");
 const upload = require("../middlewares/uploadMiddleware");
+const { isAuthenticated } = require("../userController");
 
-// Route for fetching and storing Pokémon data
-router.get("/", profileController.fetchProfiles);
-router.get("/:id", profileController.getProfileById);
-router.post(
+router.get("/search", isAuthenticated, profileController.searchProfiles);
+router.get("/", isAuthenticated, profileController.getProfiles);
+router.get("/me", isAuthenticated, profileController.getMyProfile);
+router.get("/:id", isAuthenticated, profileController.getProfileById);
+/* router.post(
   "/create",
   upload.single("profile_pic"),
   profileController.createProfile
-);
-router.put("/update/:id", profileController.updateProfile);
-router.patch(
-  "/update/:id/profile_pic",
+); */
+router.put("/me/update", isAuthenticated, profileController.updateProfile);
+router.post(
+  "/me/update/profile_pic",
   upload.single("profile_pic"),
   profileController.updateProfilePic
 );
-router.patch("/update/:id/bio", profileController.updateBio);
-router.patch("/update/:id/name", profileController.updateName);
+router.patch("/me/update/bio", isAuthenticated, profileController.updateBio);
+router.patch("/me/update/name", isAuthenticated, profileController.updateName);
 
 module.exports = router;

@@ -1,16 +1,56 @@
-const axios = require("axios");
+const pokemonModel = require('../models/pokemonModel');
 
-const getPokemonById = async (id) => {
+const likedPokemon = async (user_id, pokemon_id, pokemon_name) => {
   try {
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${NameOrId}`
-    );
-    return response.data;
+    console.log('liking pokemon');
+    const pokemon = await pokemonModel.likedPokemon(user_id, pokemon_id, pokemon_name);
+    console.log('liking pokemon successful:', pokemon);
+    return pokemon;
   } catch (error) {
-    throw new Error("Error fetching pokemon data from PokeAPI");
+    console.log('error liking pokemon:', error.message);
+    throw error;
   }
-};
+}
+
+const unlikePokemon = async (user_id, pokemon_id) => {
+  try {
+    console.log('unliking pokemon');
+    const pokemon = await pokemonModel.unlikePokemon(user_id, pokemon_id);
+    console.log('unliking pokemon successful:', pokemon);
+    return pokemon;
+  } catch (error) {
+    console.log('error unliking pokemon:', error.message);
+    throw error;
+  }
+}
+
+const dislikedPokemon = async (user_id, pokemon_id, pokemon_name) => {
+  try {
+    console.log('disliking pokemon');
+    const pokemon = await pokemonModel.dislikedPokemon(user_id, pokemon_id, pokemon_name);
+    console.log('disliking pokemon successful:', pokemon);
+    return pokemon;
+  } catch (error) {
+    console.log('error disliking pokemon:', error.message);
+    throw error;
+  }
+}
+
+const undislikePokemon = async (user_id, pokemon_id) => {
+  try {
+    console.log('undisliking pokemon');
+    const pokemon = await pokemonModel.undislikePokemon(user_id, pokemon_id);
+    console.log('undisliking pokemon successful:', pokemon);
+    return pokemon;
+  } catch (error) {
+    console.log('error undisliking pokemon:', error.message);
+    throw error;
+  }
+}
 
 module.exports = {
-  getPokemonById,
+  likedPokemon,
+  unlikePokemon,
+  dislikedPokemon,
+  undislikePokemon,
 };
