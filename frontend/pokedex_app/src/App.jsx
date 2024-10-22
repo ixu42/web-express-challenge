@@ -13,36 +13,39 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Community from "./components/Community";
 import PageNotFound from './pages/pageNotFound';
+import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
 function App() {
   return (
     <Router>
-      <div id="root">
-        <Navbar />
-        <main>
-          <Routes>
-            <Route
-              exact
-              path="/"
-              element={
-                <ErrorBoundary>
-                  <Pokedex />
-                </ErrorBoundary>
-              }
-            />
-            <Route path="/Login" element={<Login />} />
-            <Route path="/Profile" element={<Profile />} />
-            <Route path="/pokemon/:name" element={<PokemonProfile />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/Community" element={<Community/>}/>
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AuthProvider>
+        <div id="root">
+          <Navbar />
+          <main>
+            <Routes>
+              <Route
+                exact
+                path="/"
+                element={
+                  <ErrorBoundary>
+                    <Pokedex />
+                  </ErrorBoundary>
+                }
+              />
+              <Route path="/Login" element={<Login />} />
+              <Route path="/Profile" element={<Profile />} />
+              <Route path="/pokemon/:name" element={<PokemonProfile />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/Community" element={<Community />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
