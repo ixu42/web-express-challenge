@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../img/logo.png';
 import './pokedex.css';
 import { RefreshCw } from 'lucide-react';
@@ -13,6 +14,9 @@ const Pokedex = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [sortOrder, setSortOrder] = useState("ID-asc");
+  
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
@@ -134,11 +138,72 @@ const searchPokemon = async (userInput) => {
     setIsLoading(false);
   };
 
-  // useEffect to call fetchPokemonList initially
+  const resetAll = () => {
+    setPokemonList([]);
+    setMatchingList([]);
+    setSearchTerm("");
+    setOffset(0);
+    setOffsetForSearching(0);
+    setMorePokemon(true);
+  }
+
+  // Effect to restore the scroll position when coming back from profile
   useEffect(() => {
-    console.log("useEffect() called");
-    fetchPokemonList(0, false, "ID-asc"); // Fetch the initial Pokémon list, sort by ID (ascending)
-  }, []);
+    const savedScrollPosition = location.state?.scrollPosition || 0;
+    window.scrollTo(0, savedScrollPosition);
+  }, [location.state]);
+  
+  useEffect(() => {
+    console.log("useEffect() for passed state");
+
+    const initialOffset = location.state?.offset || 0; // Default to 0 if offset doesn't exist
+    setOffset(initialOffset); // Set the offset for pagination
+    console.log("location.state?.offset:", location.state?.offset);
+    console.log("initialOffset:", initialOffset);
+
+    // Check if navigating back from the profile page
+    if (location.state?.from === 'profile') {
+      console.log("Navigating back from profile page");
+      if (!location.state.searchTerm) {
+        console.log("non search mode")
+        setPokemonList(location.state.pokemonList); // Use the passed Pokemon list
+      } else {
+        console.log("search mode")
+        console.log("location.state.matchingList:", location.state.matchingList)
+        console.log("location.state.morePokemon:", location.state.morePokemon)
+        setMatchingList(location.state.matchingList);
+        setOffsetForSearching(location.state.offsetForSearching);
+        setSearchTerm(location.state.searchTerm);
+        setMorePokemon(location.state.morePokemon);
+      }
+
+      // Restore the scroll position
+      const savedScrollPosition = location.state.scrollPosition || 0;
+      console.log("Restoring scroll position:", savedScrollPosition);
+      setTimeout(() => {
+        window.scrollTo(0, savedScrollPosition);
+      }, 100);
+    } else {
+      console.log("Fetching default Pokemon list");
+      resetAll();
+      fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the new Pokemon list
+    }
+
+    // Clear location.state on page reload
+    const handleBeforeUnload = () => {
+      // Clear location state before unloading the page
+      if (location.state?.from) {
+        navigate('/', { replace: true, state: {} }); // Replace the current state with an empty object
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // cleanup function to ensure that the event listener is removed when the component unmounts
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [location.state, navigate]);
 
   return (
     <div>
@@ -151,9 +216,9 @@ const searchPokemon = async (userInput) => {
         <Shuffle isFetching={isFetching} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
-          <PokemonList pokemonList={pokemonList} />
+          <PokemonList pokemonList={pokemonList} offset={offset} searchTerm={searchTerm} morePokemon={morePokemon} />
         ) : (
-          <SearchResults matchingList={matchingList} />
+          <SearchResults matchingList={matchingList} offset={offsetForSearching} searchTerm={searchTerm} morePokemon={morePokemon}/>
         )}
         {morePokemon && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon}/>)}
       </main>
@@ -210,45 +275,93 @@ const Shuffle = ({ isFetching, onShuffle }) => (
 );
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList }) => (
-  <ul className="pokemon-list">
+const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon }) => {
+  const navigate = useNavigate();
+
+  const handlePokemonClick = (pokemon) => {
+    // Capture the current scroll position before navigating
+    const currentScrollPosition = window.scrollY;
+    console.log("captured currentScrollPosition:", currentScrollPosition);
+
+    // Navigate to the Pokemon profile page, passing the current state
+    navigate(`/pokemon/${pokemon.name}`, {
+      state: { 
+        from: 'pokedex',
+        offset: offset,
+        pokemonList: pokemonList,
+        searchTerm: searchTerm,
+        morePokemon: morePokemon,
+        scrollPosition: currentScrollPosition
+      }
+    });
+  };
+
+  return (
+    <ul className="pokemon-list">
     {pokemonList.map(pokemon => (
       <li key={pokemon.name} className="pokemon-item">
-        <a href={`/pokemon/${pokemon.name}`}>
+        <button 
+          onClick={() => handlePokemonClick(pokemon)}
+        >
           <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
           <p>{pokemon.name}</p>
           <p>ID: {pokemon.id}</p>
-        </a>
+        </button>
       </li>
     ))}
   </ul>
-);
+  )
+};
 
 // Search Results component
-const SearchResults = ({ matchingList }) => (
-  matchingList && matchingList.length > 0 ? (
-    <ul className="pokemon-list">
-      {matchingList.map(pokemon => (
-        <li key={pokemon.name} className="pokemon-item">
-          <a href={`/pokemon/${pokemon.name}`}>
-            <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
-            {pokemon.name}
-            <p>ID: {pokemon.id}</p>
-          </a>
-        </li>
-      ))}
-    </ul>
-  ) : (
-    <div className="flex flex-col items-center mt-8">
-      <p className="text-center text-xl text-gray-600 font-semibold">
-        No Pokémon matched your search! 🤔
-      </p>
-      <p className="text-center text-md text-gray-500 mt-2">
-        Try a different name or spelling! 🌟
-      </p>
-    </div>
+const SearchResults = ({ matchingList, offset, searchTerm, morePokemon }) => {
+  const navigate = useNavigate();
+
+  const handlePokemonClick = (pokemon) => {
+    // Capture the current scroll position before navigating
+    const currentScrollPosition = window.scrollY;
+    console.log("captured currentScrollPosition:", currentScrollPosition);
+
+    // Navigate to the Pokemon profile page, passing the current state
+    navigate(`/pokemon/${pokemon.name}`, {
+      state: { 
+        from: 'pokedex',
+        offsetForSearching: offset,
+        matchingList: matchingList,
+        searchTerm: searchTerm,
+        morePokemon: morePokemon,
+        scrollPosition: currentScrollPosition
+      }
+    });
+  };
+
+  return (
+    matchingList && matchingList.length > 0 ? (
+      <ul className="pokemon-list">
+        {matchingList.map(pokemon => (
+          <li key={pokemon.name} className="pokemon-item">
+            <button 
+              onClick={() => handlePokemonClick(pokemon)}
+            >
+              <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
+              <p>{pokemon.name}</p>
+              <p>ID: {pokemon.id}</p>
+            </button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div className="flex flex-col items-center mt-8">
+        <p className="text-center text-xl text-gray-600 font-semibold">
+          No Pokémon matched your search! 🤔
+        </p>
+        <p className="text-center text-md text-gray-500 mt-2">
+          Try a different name or spelling! 🌟
+        </p>
+      </div>
+    )
   )
-);
+};
 
 // Load more button
 const LoadMore = ({ isLoading, onLoadMore }) => (

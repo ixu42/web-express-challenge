@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import AuthContext from "../../AuthContext"; // Update with your actual path
 
-const Navbar = () => {
+const Navbar = ({ handlePokedexClick }) => {
   const { isAuthenticated, logout, user } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -23,7 +23,7 @@ const Navbar = () => {
       <nav className="h-16 bg-rose-900 text-center">
         <div className="font-sans text-zinc-950 text-3xl py-4 flex justify-evenly">
           <NavLink to="/Profile">My Profile</NavLink>
-          <NavLink to="/">Pokedex</NavLink>
+          <NavLink to="/" onClick={handlePokedexClick}>Pokedex</NavLink>
     	    <NavLink to="/Community">
 						Community
 					</NavLink>
