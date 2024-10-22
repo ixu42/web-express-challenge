@@ -14,7 +14,7 @@ router.get("/:id", isAuthenticated, profileController.getProfileById);
   profileController.createProfile
 ); */
 router.put("/me/update", isAuthenticated, profileController.updateProfile);
-router.patch(
+router.post(
   "/me/update/profile_pic",
   upload.single("profile_pic"),
   profileController.updateProfilePic

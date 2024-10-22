@@ -1,6 +1,7 @@
 const db = require("../database/db");
 const { NotFoundError } = require("../errors/errorClass");
 
+
 const createProfile = async (user_id, name, bio, profile_pic) => {
   const result = await db.query(
     "INSERT INTO profiles (user_id, name, bio, profile_pic) VALUES ($1, $2, $3, $4) RETURNING *",
