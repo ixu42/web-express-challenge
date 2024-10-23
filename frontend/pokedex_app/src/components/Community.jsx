@@ -105,17 +105,22 @@ const Community = () => {
 					console.log(user.profile_pic)
 					if (user.profile_pic === null) {
 						return (
-							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
+							<a href={'/users/' + user.name}>
+							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/>
+								
 								<img src={defaultPic}/>
 							</li>
+							</a> 
 						)
 					}
 					else
 					{
 						return (
+							<a href={'/users/' + user.name}>
 							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
 								<img src={user.profile_pic}/>
-							</li> 
+							</li>
+							</a>
 						)
 					}
 				}))}
