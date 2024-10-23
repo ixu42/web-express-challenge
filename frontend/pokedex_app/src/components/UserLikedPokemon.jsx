@@ -2,8 +2,6 @@ import React from "react";
 
 const UserLikedPokemon = ({likedPokemon}) => {
 
-	console.log("Liked pokemon array", likedPokemon)
-
 	if (likedPokemon.length == 0)
 	{
 		return (

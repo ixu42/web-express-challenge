@@ -2,8 +2,6 @@ import React from "react";
 
 const UserDislikedPokemon = ({dislikedPokemon}) => {
 
-	console.log("Disliked pokemon array >>>", dislikedPokemon)
-
 	if (dislikedPokemon.length == 0)
 	{
 		return (
