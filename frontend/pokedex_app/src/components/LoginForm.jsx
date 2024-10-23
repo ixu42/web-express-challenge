@@ -23,7 +23,7 @@ const LoginForm = (props) => {
       username: username,
       password: password,
     };
-    fetch("/api/login", {
+    fetch("/api/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

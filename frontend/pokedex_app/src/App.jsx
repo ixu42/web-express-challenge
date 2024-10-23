@@ -23,8 +23,8 @@ const App = () => {
   };
 
   return (
-    <Router>
       <AuthProvider>
+    <Router>
         <div id="root">
         <Navbar handlePokedexClick={handlePokedexClick} />
           <main>
@@ -49,8 +49,8 @@ const App = () => {
           </main>
           <Footer />
         </div>
-      </AuthProvider>
     </Router>
+      </AuthProvider>
   );
 }
 

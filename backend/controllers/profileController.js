@@ -113,6 +113,7 @@ const searchProfiles = async (req, res, next) => {
 }
 
 
+
 module.exports = {
   updateProfile,
   updateProfilePic,

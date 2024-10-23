@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null); // To hold user details
   const [loading, setLoading] = useState(true); // New loading state
-  const navigate = useNavigate(); 
+ // const navigate = useNavigate(); 
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setUser(null);
     setLoading(false);
-    navigate("/login");
+    //navigate("/login");
   };
 
   return (

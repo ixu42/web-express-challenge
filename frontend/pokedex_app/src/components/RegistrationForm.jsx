@@ -23,7 +23,7 @@ const RegistrationForm = (props) => {
       password: password,
       email: email,
     };
-    fetch("/api/register", {
+    fetch("/api/user/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
