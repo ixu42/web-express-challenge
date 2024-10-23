@@ -15,10 +15,8 @@ const PokemonProfile = () => {
   const navigate = useNavigate();
 
   // Access the passed state (pokemonList) from location.state
-  const pokemonList = location.state?.pokemonList || [];
+  const displayedList = location.state?.displayedList || [];
   const offset = location.state?.offset || 0;
-  const matchingList = location.state?.matchingList || [];
-  const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
   const morePokemon = location.state?.morePokemon;
   const selectedType = location.state?.selectedType;
@@ -48,10 +46,8 @@ const PokemonProfile = () => {
     navigate('/', {
       state: {
         from: 'profile',
-        pokemonList: pokemonList,
+        displayedList: displayedList,
         offset: offset,
-        matchingList: matchingList,
-        offsetForSearching: offsetForSearching,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
         selectedType: selectedType,

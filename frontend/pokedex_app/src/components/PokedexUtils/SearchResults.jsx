@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
-const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder }) => {
+const SearchResults = ({ displayedList, offset, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -13,8 +13,8 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
     navigate(`/pokemon/${pokemon.name}`, {
       state: {
         from: 'pokedex',
-        offsetForSearching: offsetForSearching,
-        matchingList: matchingList,
+        offset: offset,
+        displayedList: displayedList,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
         selectedType: selectedType,
@@ -32,9 +32,9 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
         </div>
       ) : (
         // Display search results or "No Pokémon" message only after search completes
-        matchingList && matchingList.length > 0 ? (
+        displayedList && displayedList.length > 0 ? (
           <ul className="pokemon-list">
-            {matchingList.map(pokemon => (
+            {displayedList.map(pokemon => (
               <li key={pokemon.name} className="pokemon-item">
                 <button
                   onClick={() => handlePokemonClick(pokemon)}

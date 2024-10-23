@@ -14,10 +14,8 @@ import LoadMoreButton from '../components/PokedexUtils/LoadMoreButton'
 while its child components (under PokedexUtils) renders the UI */
 
 const Pokedex = () => {
-  const [pokemonList, setPokemonList] = useState([]);
-  const [matchingList, setMatchingList] = useState([]);
+  const [displayedList, setDisplayedList] = useState([]);
   const [offset, setOffset] = useState(0);
-  const [offsetForSearching, setOffsetForSearching] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ID-asc");
   const [morePokemon, setMorePokemon] = useState(true);
@@ -35,30 +33,9 @@ const Pokedex = () => {
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
   const typingTimeoutRef = useRef(null);  // Ref to track the typing timeout
 
-  console.log("rendering Pokedex...");
+  // console.log("rendering Pokedex...");
 
-  // Function to fetch Pokemon list (non-search)
-  const fetchPokemonList = async (offsetValue=0, shouldShuffle=false, sortOrderValue="") => {
-    console.log("fetchPokemonList() called, offset:", offsetValue, "shouldShuffle:", shouldShuffle);
-    try {
-      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&shuffle=${shouldShuffle}`);
-      const newPokemonList = await response.json();
-      console.log("newPokemonList:", newPokemonList)
-      if (newPokemonList.length > limit) {
-        setPokemonList((prevList) => [...prevList, ...newPokemonList.slice(0, limit)]);
-      } else {
-        setMorePokemon(false);
-        setPokemonList((prevList) => [...prevList, ...newPokemonList]);
-      }
-    } catch (error) {
-      console.error("Error fetching Pokemon:", error);
-    }
-  };
-
-  // Function to fetch Pokemon list (search)
-  const fetchMatchingList = async (query, offsetValue=0, sortOrderValue="", type="") => {
-    console.log("fetchMatchingList() called");
-
+  const fetchPokemonList = async (type, query, offsetValue=0, sortOrderValue="", shouldShuffle=false) => {
     // Cancel the previous fetch request if it exists
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -68,66 +45,41 @@ const Pokedex = () => {
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    console.log("offsetForSearching:", offsetValue);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&type=${type}`, {
-        signal: abortController.signal, // Pass the signal to the fetch request
-      });
-
+      let response;
+      if (type) {
+        console.log("fetching by type...")
+        response = await fetch(`/api/pokemon/type/${type}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&searchTerm=${query}`, {
+          signal: abortController.signal, // Pass the signal to the fetch request
+        })
+      } else if (query) {
+        console.log("fetching by query...")
+        response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&type=${type}`, {
+          signal: abortController.signal,
+        });
+      } else {
+        console.log("fetching...")
+        response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&shuffle=${shouldShuffle}`);
+      }
       if (response.ok) {
-        const newMatchingList = await response.json();
-        console.log("searchTerm:", query, "| newMatchingList:", newMatchingList)
-        if (newMatchingList.length > limit) {
-          setMatchingList(prevList => [...prevList, ...newMatchingList.slice(0, limit)]);
+        const fetchedPokemon = await response.json();
+        console.log("fetched pokemon:", fetchedPokemon);
+        if (fetchedPokemon.length > limit) {
+          setDisplayedList((prevList) => [...prevList, ...fetchedPokemon.slice(0, limit)]);
         } else {
           setMorePokemon(false);
-          setMatchingList(prevList => [...prevList, ...newMatchingList]);
+          setDisplayedList((prevList) => [...prevList, ...fetchedPokemon]);
         }
       } else {
-        setMatchingList([]);
+        setDisplayedList([]);
         setMorePokemon(false);
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
-        console.error("Error searching Pokémon:", error);
+        console.error("Error fetching Pokémon:", error);
       }
     }
   };
-
-  const searchPokemon = async (userInput) => {
-    console.log("searchPokemon() called, userInput:", userInput);
-    setIsTyping(true); // User has started typing
-    clearTimeout(typingTimeoutRef.current); // Clear the previous timeout
-
-    setSearchTerm(userInput);
-    setOffset(0);
-    setOffsetForSearching(0);
-    setPokemonList([]);
-    setMatchingList([]);
-    setMorePokemon(true);
-
-    typingTimeoutRef.current = setTimeout(async () => {
-      setIsTyping(false); // User has stopped typing
-      setIsFetching(true); // Actual search starts
-
-      if (selectedType) {
-        await fetchPokemonByType(selectedType, 0, sortOrder, userInput);
-      } else {
-        if (userInput === "") {
-          await fetchPokemonList(0, false, sortOrder);
-        } else {
-          await fetchMatchingList(userInput, 0, sortOrder, selectedType);
-        }
-      }
-      setIsFetching(false); // Search completes
-
-    }, 300); // 300ms delay before performing the search
-  };
-
-  // Fetch all Pokémon types on component mount
-  useEffect(() => {
-    fetchPokemonTypes();
-  }, []);
 
   const fetchPokemonTypes = async () => {
     try {
@@ -139,60 +91,33 @@ const Pokedex = () => {
     }
   };
 
-  const fetchPokemonByType = async (type, offsetValue=0, sortOrderValue="", userInput="") => {
-    console.log("fetchPokemonByType() called");
+  const searchPokemon = async (userInput) => {
+    console.log("searchPokemon() called, userInput:", userInput);
+    setIsTyping(true); // User has started typing
+    clearTimeout(typingTimeoutRef.current); // Clear the previous timeout
 
-    // Cancel the previous fetch request if it exists
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
+    setSearchTerm(userInput);
+    setOffset(0);
+    setDisplayedList([]);
+    setMorePokemon(true);
 
-    // Create a new AbortController instance
-    const abortController = new AbortController();
-    abortControllerRef.current = abortController;
+    typingTimeoutRef.current = setTimeout(async () => {
+      setIsTyping(false); // User has stopped typing
+      setIsFetching(true); // Actual search starts
+      await fetchPokemonList(selectedType, userInput, 0, sortOrder, false)
+      setIsFetching(false); // Search completes
 
-    try {
-      const response = await fetch(`/api/pokemon/type/${type}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&searchTerm=${userInput}`, {
-        signal: abortController.signal, // Pass the signal to the fetch request
-      });
-      const filteredPokemon = await response.json();
-      console.log("filtered pokemon:", filteredPokemon);
-      if (userInput) {
-        if (filteredPokemon.length > limit) {
-          setMatchingList((prevList) => [...prevList, ...filteredPokemon.slice(0, limit)]);
-        } else {
-          setMorePokemon(false);
-          setMatchingList((prevList) => [...prevList, ...filteredPokemon]);
-        }
-      } else {
-        if (filteredPokemon.length > limit) {
-          setPokemonList((prevList) => [...prevList, ...filteredPokemon.slice(0, limit)]);
-        } else {
-          setMorePokemon(false);
-          setPokemonList((prevList) => [...prevList, ...filteredPokemon]);
-        }
-      }
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        console.error("Error fetching Pokémon by type:", error);
-      }
-    }
+    }, 300); // 300ms delay before performing the search
   };
 
   const handleTypeChange = async (selectedType) => {
     console.log("handleTypeChange() called, selectedType:", selectedType)
     setSelectedType(selectedType);
     setOffset(0);
-    setOffsetForSearching(0);
-    setPokemonList([]);
-    setMatchingList([]);
+    setDisplayedList([]);
     setMorePokemon(true);
     setIsFetching(true);
-    if (selectedType) {
-      await fetchPokemonByType(selectedType, 0, sortOrder, searchTerm);
-    } else {
-      await fetchPokemonList(offset, false, "ID-asc");
-    }
+    await fetchPokemonList(selectedType, searchTerm, 0, sortOrder, false);
     setIsFetching(false);
   };
 
@@ -201,34 +126,28 @@ const Pokedex = () => {
 
     setSortOrder(sortOrderValue);
     setOffset(0);
-    setOffsetForSearching(0);
-    setPokemonList([]);
-    setMatchingList([]);
+    setDisplayedList([]);
     setMorePokemon(true);
     setIsFetching(true);
-    if (selectedType !== "") {
-      await fetchPokemonByType(selectedType, 0, sortOrderValue, searchTerm);
-    } else {
-      if (searchTerm === "") {
-        await fetchPokemonList(0, false, sortOrderValue);
-      } else {
-        await fetchMatchingList(searchTerm, 0, sortOrderValue, selectedType);
-      }
-    }
+    await fetchPokemonList(selectedType, searchTerm, 0, sortOrderValue, false);
     setIsFetching(false);
   };
 
+  const resetAll = () => {
+    setDisplayedList([]);
+    setOffset(0);
+    setSelectedType("");
+    setSearchTerm("");
+    setMorePokemon(true);
+  }
+
   const shufflePokemon = async () => {
     console.log("shufflePokemon() called");
-    setSearchTerm("");
     setSortOrder("ID-asc");
-    setOffset(0);
-    setPokemonList([]);
-    setMorePokemon(true);
-    setSelectedType("");
+    resetAll();
     setIsShuffling(true);
     setIsFetching(true);
-    await fetchPokemonList(0, true, ""); // Request a reshuffle
+    await fetchPokemonList("", "", 0, "ID-asc", true);
     setIsFetching(false);
     setIsShuffling(false);
   };
@@ -237,39 +156,16 @@ const Pokedex = () => {
     console.log("loadMorePokemon() called");
     setIsLoading(true);
     setIsFetching(true);
-    if (selectedType !== "") {
-      console.log("load more filtered pokemon...")
-      setOffset((prevOffset) => prevOffset + limit);
-      fetchPokemonByType(selectedType, offset + limit, sortOrder, searchTerm);
-    } else {
-      if (searchTerm === "") {
-        console.log("load more default pokemon...")
-        setOffset((prevOffset) => prevOffset + limit);
-        fetchPokemonList(offset + limit, false, sortOrder);
-      } else {
-        console.log("load more matching pokemon...")
-        setOffsetForSearching((prevOffset) => prevOffset + limit);
-        fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder, selectedType)
-      }
-    }
+    setOffset((prevOffset) => prevOffset + limit);
+    fetchPokemonList(selectedType, searchTerm, offset + limit, sortOrder, false);
     setIsFetching(false);
     setIsLoading(false);
   };
 
-  const resetAll = () => {
-    setPokemonList([]);
-    setMatchingList([]);
-    setSearchTerm("");
-    setOffset(0);
-    setOffsetForSearching(0);
-    setMorePokemon(true);
-  }
-
-  // Effect to restore the scroll position when coming back from profile
+  // Fetch all Pokémon types on component mount
   useEffect(() => {
-    const savedScrollPosition = location.state?.scrollPosition || 0;
-    window.scrollTo(0, savedScrollPosition);
-  }, [location.state]);
+    fetchPokemonTypes();
+  }, []);
 
   useEffect(() => {
     console.log("useEffect() for passed state");
@@ -283,10 +179,9 @@ const Pokedex = () => {
       setSelectedType(location.state.selectedType);
       setSortOrder(location.state.sortOrder);
       if (!location.state.searchTerm) {
-        setPokemonList(location.state.pokemonList); // Use the passed Pokemon list
+        setDisplayedList(location.state.displayedList); // Use the passed Pokemon list
       } else {
-        setMatchingList(location.state.matchingList);
-        setOffsetForSearching(location.state.offsetForSearching);
+        setDisplayedList(location.state.displayedList);
         setSearchTerm(location.state.searchTerm);
         setMorePokemon(location.state.morePokemon);
       }
@@ -302,7 +197,7 @@ const Pokedex = () => {
       resetAll();
       const fetchData = async () => {
         setIsFetching(true);
-        await fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the default Pokemon list
+        await fetchPokemonList("", "", initialOffset, "ID-asc", false);
         setIsFetching(false);
       }
       fetchData();
@@ -324,8 +219,8 @@ const Pokedex = () => {
     };
   }, [location.state, navigate]);
 
-  const pokemonListProps = { pokemonList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }
-  const searchResultsProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder };
+  const pokemonListProps = { displayedList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }
+  const searchResultsProps = { displayedList, offset, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder };
 
   return (
     <div>
