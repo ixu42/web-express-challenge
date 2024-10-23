@@ -90,6 +90,23 @@ const updateName = async ({ id, name }) => {
   }
 };
 
+const getProfileByName = async (name) => {
+  try {
+    console.log("fetching profile");
+    console.log(name);
+    const profile = await userModel.getProfileByName(name);
+    const base64Image = profile.profile_pic
+      ? profile.profile_pic.toString("base64")
+      : null;
+    profile.profile_pic = base64Image;
+    console.log("fetching profile successful:", profile);
+    return profile;
+  } catch (error) {
+    console.log("error fetching profile:", error.message);
+    throw error;
+  }
+};
+
 const getProfileById = async (id) => {
   try {
     console.log("fetching profile");
@@ -149,6 +166,7 @@ module.exports = {
   updateBio,
   updateName,
   getProfiles,
+  getProfileByName,
   getProfileById,
   searchProfiles,
 };

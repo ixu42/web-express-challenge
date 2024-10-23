@@ -8,6 +8,7 @@ router.get("/search", isAuthenticated, profileController.searchProfiles);
 router.get("/", isAuthenticated, profileController.getProfiles);
 router.get("/me", isAuthenticated, profileController.getMyProfile);
 router.get("/:id", isAuthenticated, profileController.getProfileById);
+router.get("/users/:name", isAuthenticated, profileController.getProfileByName);
 /* router.post(
   "/create",
   upload.single("profile_pic"),
