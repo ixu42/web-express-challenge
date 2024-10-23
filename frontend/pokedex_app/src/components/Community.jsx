@@ -29,7 +29,7 @@ const Community = () => {
       .then((response) => response.json())
       .then((data) => setUserList(data))
       .then(setLoading(false))
-      .catch((error) => alert("Error fetching user list"));
+      .catch((error) => console.error("Error fetching user list"));
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Community = () => {
       .then((data) => setFilteredUsers(data))
       .then(setLoading(false))
       .then(setUserList(filteredUsers))
-      .catch((error) => alert("Error searching for users"));
+      .catch((error) => console.error("Error searching for users"));
   };
 
   useEffect(() => {
