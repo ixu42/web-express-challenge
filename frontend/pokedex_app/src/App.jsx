@@ -13,6 +13,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Community from "./components/Community";
 import PageNotFound from './pages/pageNotFound';
+import ViewOnlyProfile from "./pages/ViewOnlyProfile";
 import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/Community" element={<Community />} />
               <Route path="*" element={<PageNotFound />} />
+              <Route path="/users/:name" element={<ViewOnlyProfile/>} />
             </Routes>
           </main>
           <Footer />
