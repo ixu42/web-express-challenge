@@ -65,9 +65,7 @@ const Community = () => {
 		}
 		else
 		{
-			console.log("in use effect:" ,searchQuery)
 			filterUsers(searchQuery)
-			console.log("Filtered users:", filteredUsers)
 			setUserList(filteredUsers)
 		}
 	}, [searchQuery, filteredUsers])
@@ -93,6 +91,12 @@ const Community = () => {
 		if (loading === true)
 		{
 			return (<h2 className="text-7xl text-center font-pokemon">Loading...</h2>)
+		}
+		if (users.length == 0)
+		{
+			return (
+				<h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>
+			)
 		}
 		return (
 			<ul className="grid grid-cols-4">
