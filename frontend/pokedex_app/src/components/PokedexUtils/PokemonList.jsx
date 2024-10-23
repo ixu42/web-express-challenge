@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }) => {
+const PokemonList = ({ displayedList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -15,7 +15,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching,
       state: {
         from: 'pokedex',
         offset: offset,
-        pokemonList: pokemonList,
+        displayedList: displayedList,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
         selectedType: selectedType,
@@ -33,7 +33,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching,
         </div>
       ) : (
         <ul className="pokemon-list">
-          {pokemonList.map(pokemon => (
+          {displayedList.map(pokemon => (
             <li key={pokemon.name} className="pokemon-item">
               <button
                 onClick={() => handlePokemonClick(pokemon)}
