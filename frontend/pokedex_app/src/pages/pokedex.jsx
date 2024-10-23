@@ -16,6 +16,9 @@ const Pokedex = () => {
   const [isShuffling, setIsShuffling] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [pokemonTypes, setPokemonTypes] = useState([]); // List of Pokémon types
+  const [filteredPokemon, setFilteredPokemon] = useState([]); // Filtered Pokémon by type
+  const [selectedType, setSelectedType] = useState(""); // Currently selected type
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,8 +109,43 @@ const Pokedex = () => {
         await fetchMatchingList(userInput, 0, "ID-asc");
       }
       setIsFetching(false); // Search completes
-  
+
     }, 300); // 300ms delay before performing the search
+  };
+
+  // Fetch all Pokémon types on component mount
+  useEffect(() => {
+    fetchPokemonTypes();
+  }, []);
+
+  const fetchPokemonTypes = async () => {
+    try {
+      const response = await fetch("https://pokeapi.co/api/v2/type/"); // replace this later
+      const data = await response.json();
+      setPokemonTypes(data.results);
+    } catch (error) {
+      console.error("Error fetching Pokémon types:", error);
+    }
+  };
+
+  const fetchPokemonByType = async (type) => {
+    try {
+      const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
+      const data = await response.json();
+      setFilteredPokemon(data.pokemon.map(p => p.pokemon)); // Save filtered Pokémon
+    } catch (error) {
+      console.error("Error fetching Pokémon by type:", error);
+    }
+  };
+
+  const handleTypeChange = (selectedType) => {
+    setSelectedType(selectedType);
+
+    if (selectedType) {
+      fetchPokemonByType(selectedType);
+    } else {
+      setFilteredPokemon([]);
+    }
   };
 
   const sortPokemon = async (sortOrderValue) => {
@@ -200,10 +238,10 @@ const Pokedex = () => {
       console.log("Fetching default Pokemon list");
       resetAll();
       const fetchData = async () => {
-          setIsFetching(true);
-          await fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the default Pokemon list
-          setIsFetching(false);
-        }
+        setIsFetching(true);
+        await fetchPokemonList(initialOffset, false, "ID-asc"); // Fetch the default Pokemon list
+        setIsFetching(false);
+      }
       fetchData();
     }
 
@@ -233,6 +271,29 @@ const Pokedex = () => {
       </header>
       <main>
         <Search searchTerm={searchTerm} onSearch={searchPokemon} />
+
+        {/* Render TypeFilter and pass types and handler */}
+        <TypeFilter
+          types={pokemonTypes}
+          selectedType={selectedType}
+          onTypeChange={handleTypeChange}
+        />
+        {/* Render PokemonList and pass the filtered Pokémon */}
+        <div>
+          <h2>Filtered Pokémon</h2>
+
+          {/* Conditional rendering: Show filtered Pokémon or a message */}
+          {filteredPokemon.length > 0 ? (
+            <ul>
+              {filteredPokemon.map((poke) => (
+                <li key={poke.name}>{poke.name}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No Pokémon found for the selected type.</p>
+          )}
+        </div>
+
         <Sort sortOrder={sortOrder} onSort={sortPokemon} />
         <Shuffle isShuffling={isShuffling} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
@@ -243,6 +304,24 @@ const Pokedex = () => {
         )}
         {morePokemon && !isFetching && !isTyping && (<LoadMore isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
       </main>
+    </div>
+  );
+};
+
+const TypeFilter = ({ types, selectedType, onTypeChange }) => {
+  return (
+    <div>
+      <h2>Filter by Type</h2>
+
+      {/* Dropdown for type selection */}
+      <select value={selectedType} onChange={(e) => onTypeChange(e.target.value)}>
+        <option value="">All Types</option>
+        {types.map((type) => (
+          <option key={type.name} value={type.name}>
+            {type.name}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };
