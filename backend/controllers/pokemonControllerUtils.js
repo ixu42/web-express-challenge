@@ -76,14 +76,24 @@ const getValidImgUrl = async (pokemonId) => {
   return imageUrl
 }
 
+const getTypeDetails = async (pokemonId) => {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+  const data = await response.json();
+
+  // Extract the types
+  return data.types.map(typeInfo => typeInfo.type.name);
+};
+
 // Fetch detailed information for each Pokémon to get image
 const addImgUrlToPokemonDetails = async (pokemonList) => {
   pokemonList = await Promise.all(
     pokemonList.map(async (pokemon) => {
-      const validImageUrl = await getValidImgUrl(pokemon.id) 
+      const validImageUrl = await getValidImgUrl(pokemon.id)
+      const typeDetails = await getTypeDetails(pokemon.id)
       return {
         ...pokemon,
-        image: validImageUrl
+        image: validImageUrl,
+        types: typeDetails
       }
     })
   )

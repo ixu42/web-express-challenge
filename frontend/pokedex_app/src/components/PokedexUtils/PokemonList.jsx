@@ -39,6 +39,7 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching 
                 <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
                 <p className="font-semibold text-lg">{pokemon.name}</p>
                 <p className="text-gray-500">ID: {pokemon.id}</p>
+                <p className="text-gray-500">Types: {pokemon.types.join(', ')}</p>
               </button>
             </li>
           ))}
