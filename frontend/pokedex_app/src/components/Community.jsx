@@ -1,5 +1,7 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../AuthContext";
 
 const Community = () => {
 
@@ -8,6 +10,9 @@ const Community = () => {
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredUsers, setFilteredUsers] = useState([])
+	const { isAuthenticated, user, authLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
 	let totalPages;
 
 	if (userList.length <= usersPerPage)
@@ -31,7 +36,14 @@ const Community = () => {
 	};
 
 	useEffect(() => {
-		fetchUsers();
+		if (!isAuthenticated && !authLoading)
+		{
+			navigate("/login"); // Redirect to login if not authenticated
+		}
+		else
+		{
+			fetchUsers();
+		}
 	}, [])
 
 	const filterUsers = (searchQuery) => {
