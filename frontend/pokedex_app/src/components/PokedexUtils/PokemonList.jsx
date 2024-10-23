@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 
 // Pokémon List component (non-search)
-const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching }) => {
+const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -18,6 +18,8 @@ const PokemonList = ({ pokemonList, offset, searchTerm, morePokemon, isFetching 
         pokemonList: pokemonList,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
+        selectedType: selectedType,
+        sortOrder: sortOrder,
         scrollPosition: currentScrollPosition
       }
     });

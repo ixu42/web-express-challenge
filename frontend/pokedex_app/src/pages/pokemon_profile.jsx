@@ -21,6 +21,8 @@ const PokemonProfile = () => {
   const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
   const morePokemon = location.state?.morePokemon;
+  const selectedType = location.state?.selectedType;
+  const sortOrder = location.state?.sortOrder;
   // console.log("pokemon profile page | location.state", location.state);
 
   useEffect(() => {
@@ -54,6 +56,8 @@ const PokemonProfile = () => {
         offsetForSearching: offsetForSearching,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
+        selectedType: selectedType,
+        sortOrder: sortOrder,
         scrollPosition: location.state.scrollPosition, // Pass back the saved scroll position
       },
     });

@@ -158,7 +158,8 @@ const getPokemonByType = async (req, res) => {
   const { type } = req.params
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  console.log("/api/pokemon/type/:type?, type:", type, "limit:", limit, "offset:", offset)
+  const sort = req.query.sort // Sort order, if "", no sorting
+  console.log("/api/pokemon/type/:type?, type:", type, "limit:", limit, "offset:", offset, "sort:", sort);
   try {
     if (offset === 0) {
       if (!type || type.trim() === "") {
@@ -170,9 +171,14 @@ const getPokemonByType = async (req, res) => {
         url: p.pokemon.url,
         id: extractIdFromUrl(p.pokemon.url),
       }))
-      pokemonList = await addImgUrlToPokemonDetails(typePokemon);
+
+      if (sort !== "") {
+        pokemonList = sortPokemon(typePokemon, sort);
+      }
+
+      pokemonList = await addImgUrlToPokemonDetails(pokemonList);
     }
-    
+
     const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
     const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
     

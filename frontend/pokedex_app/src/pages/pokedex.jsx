@@ -39,10 +39,10 @@ const Pokedex = () => {
   console.log("rendering Pokedex...");
 
   // Function to fetch Pokemon list (non-search)
-  const fetchPokemonList = async (offsetValue = 0, shouldShuffle = false, sortOrder = "") => {
+  const fetchPokemonList = async (offsetValue=0, shouldShuffle=false, sortOrderValue="") => {
     console.log("fetchPokemonList() called, offset:", offsetValue, "shouldShuffle:", shouldShuffle);
     try {
-      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}&shuffle=${shouldShuffle}`);
+      const response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&shuffle=${shouldShuffle}`);
       const newPokemonList = await response.json();
       console.log("newPokemonList:", newPokemonList)
       if (newPokemonList.length > limit) {
@@ -57,7 +57,7 @@ const Pokedex = () => {
   };
 
   // Function to fetch Pokemon list (search)
-  const fetchMatchingList = async (query, offsetValue = 0, sortOrder = "") => {
+  const fetchMatchingList = async (query, offsetValue=0, sortOrderValue="") => {
     console.log("fetchMatchingList() called");
 
     // Cancel the previous fetch request if it exists
@@ -71,7 +71,7 @@ const Pokedex = () => {
 
     console.log("offsetForSearching:", offsetValue);
     try {
-      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrder}`, {
+      const response = await fetch(`/api/pokemon/search/${query}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}`, {
         signal: abortController.signal, // Pass the signal to the fetch request
       });
 
@@ -137,9 +137,9 @@ const Pokedex = () => {
     }
   };
 
-  const fetchPokemonByType = async (type, offsetValue=0) => {
+  const fetchPokemonByType = async (type, offsetValue=0, sortOrderValue="") => {
     try {
-      const response = await fetch(`/api/pokemon/type/${type}?limit=${limit + 1}&offset=${offsetValue}`);
+      const response = await fetch(`/api/pokemon/type/${type}?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}`);
       const filteredPokemon = await response.json();
       console.log("filtered pokemon:", filteredPokemon);
       if (filteredPokemon.length > limit) {
@@ -160,7 +160,7 @@ const Pokedex = () => {
     setMorePokemon(true);
     setIsFetching(true);
     if (selectedType) {
-      await fetchPokemonByType(selectedType, 0);
+      await fetchPokemonByType(selectedType, 0, sortOrder);
     } else {
       await fetchPokemonList(initialOffset, false, "ID-asc");
     }
@@ -177,10 +177,14 @@ const Pokedex = () => {
     setMatchingList([]);
     setMorePokemon(true);
     setIsFetching(true);
-    if (searchTerm === "") {
-      await fetchPokemonList(0, false, sortOrderValue);
+    if (selectedType !== "") {
+      await fetchPokemonByType(selectedType, 0, sortOrderValue);
     } else {
-      await fetchMatchingList(searchTerm, 0, sortOrderValue);
+      if (searchTerm === "") {
+        await fetchPokemonList(0, false, sortOrderValue);
+      } else {
+        await fetchMatchingList(searchTerm, 0, sortOrderValue);
+      }
     }
     setIsFetching(false);
   };
@@ -207,7 +211,7 @@ const Pokedex = () => {
     if (selectedType !== "") {
       console.log("load more filtered pokemon...")
       setOffset((prevOffset) => prevOffset + limit);
-      fetchPokemonByType(selectedType, offset + limit);
+      fetchPokemonByType(selectedType, offset + limit, sortOrder);
     } else {
       if (searchTerm === "") {
         console.log("load more default pokemon...")
@@ -247,6 +251,8 @@ const Pokedex = () => {
     // Check if navigating back from the profile page
     if (location.state?.from === 'profile') {
       console.log("Navigating back from profile page");
+      setSelectedType(location.state.selectedType);
+      setSortOrder(location.state.sortOrder);
       if (!location.state.searchTerm) {
         setPokemonList(location.state.pokemonList); // Use the passed Pokemon list
       } else {
@@ -289,8 +295,8 @@ const Pokedex = () => {
     };
   }, [location.state, navigate]);
 
-  const pokemonListProps = { pokemonList, offset, searchTerm, morePokemon, isFetching }
-  const searchResultsProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching };
+  const pokemonListProps = { pokemonList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }
+  const searchResultsProps = { matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder };
 
   return (
     <div>

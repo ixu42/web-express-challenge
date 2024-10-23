@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 
-const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching }) => {
+const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder }) => {
   const navigate = useNavigate();
 
   const handlePokemonClick = (pokemon) => {
@@ -17,6 +17,8 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
         matchingList: matchingList,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
+        selectedType: selectedType,
+        sortOrder: sortOrder,
         scrollPosition: currentScrollPosition
       }
     });
