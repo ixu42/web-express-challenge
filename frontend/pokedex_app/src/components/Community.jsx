@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
+import defaultPic from "../assets/no_profile_pic.jpg"
 
 const Community = () => {
 
@@ -44,7 +45,7 @@ const Community = () => {
 		{
 			fetchUsers();
 		}
-	}, [])
+	}, [isAuthenticated, navigate, authLoading])
 
 	const filterUsers = (searchQuery) => {
 		setLoading(true);
@@ -100,10 +101,24 @@ const Community = () => {
 		}
 		return (
 			<ul className="grid grid-cols-4">
-				{currentPageUsers.map((user => (
-					<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> <img src={user.profile_pic}/> </li>
-				)))
-				}
+				{currentPageUsers.map((user => {
+					console.log(user.profile_pic)
+					if (user.profile_pic === null) {
+						return (
+							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
+								<img src={defaultPic}/>
+							</li>
+						)
+					}
+					else
+					{
+						return (
+							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
+								<img src={user.profile_pic}/>
+							</li> 
+						)
+					}
+				}))}
 			</ul>
 		)
 	}
