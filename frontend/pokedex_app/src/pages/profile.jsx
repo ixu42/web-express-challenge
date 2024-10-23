@@ -22,8 +22,8 @@ const Profile = () => {
         fetch("/api/profile/me")
         .then((response) => response.json())
         .then((data) => (setOwnData(data)))
-        .then(fetchLikedPokemon())
-        .then(fetchDislikedPokemon())
+        //.then(fetchLikedPokemon())
+        //.then(fetchDislikedPokemon())
         .catch((error) => alert("Error fetching user list"))
     };
 
@@ -33,7 +33,6 @@ const Profile = () => {
         fetch(`api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setLikedPokemons(data)))
-        .then(() => {console.log('Liked pokemons: ', likedPokemons)})
         .catch((error) => alert("Error fetching liked pokemons' list"))
         }
     }
@@ -44,7 +43,6 @@ const Profile = () => {
         fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
         .then((data) => (setDislikedPokemons(data)))
-        .then(() => {console.log('Disliked pokemons: ', dislikedPokemons)})
         .catch((error) => alert("Error fetching disliked pokemons' list"))
         }
     }
@@ -54,17 +52,14 @@ const Profile = () => {
         navigate("/login"); // Redirect to login if not authenticated
         } else {
         fetchProfile();
-        //fetchLikedPokemon();
-        //fetchDislikedPokemon();
+        fetchLikedPokemon();
+        fetchDislikedPokemon();
         }
-    }, [isAuthenticated, navigate, loading]);
+    }, [isAuthenticated, navigate, loading, ownData.user_id]);
 
-      const updateBio = (event) => {
+    const updateBio = (event) => {
         setBio(event.target.value)
     }
-
-    console.log('Liked pokemon: ', likedPokemons)
-
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent the default form submission
@@ -73,7 +68,6 @@ const Profile = () => {
         const file = fileInputRef.current.files[0]; // Get the file from the input
         if (file) {
         formData.append("profile_pic", file); // Append the file to FormData
-        console.log("form data: ", formData);
 
         try {
             const response = await fetch("/api/profile/me/update/profile_pic", {
@@ -94,11 +88,7 @@ const Profile = () => {
         }
     };
 
-
-
-  console.log("own data: ", ownData);
-
-  const handleBio = () => {
+  const BioElement = () => {
     console.log("Handling bio");
 
     if (editingBio === false)
@@ -184,7 +174,7 @@ const Profile = () => {
           </div>
           <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
             <div className="w-fit text-gray-700 dark:text-gray-400 text-md">
-              {handleBio()}
+              <BioElement/>
             </div>
             <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
               <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
@@ -227,7 +217,7 @@ const Profile = () => {
           Pokemon that I like:
         </h1>
         <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl y-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
         <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
       </section>
     </main>
