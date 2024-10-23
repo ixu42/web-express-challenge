@@ -29,7 +29,7 @@ const Community = () => {
       .then((response) => response.json())
       .then((data) => setUserList(data))
       .then(setLoading(false))
-      .catch((error) => alert("Error fetching user list"));
+      .catch((error) => console.error("Error fetching user list"));
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Community = () => {
       .then((data) => setFilteredUsers(data))
       .then(setLoading(false))
       .then(setUserList(filteredUsers))
-      .catch((error) => alert("Error searching for users"));
+      .catch((error) => console.error("Error searching for users"));
   };
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const Community = () => {
     }
   }, [searchQuery, filteredUsers]);
 
-  const UsersOverview = ({ loading, users, usersPerPage, currentPage }) => {
+  const UsersOverview = ({ users, usersPerPage, currentPage }) => {
     let shownUsersStart;
 
     if (currentPage == 1) {
@@ -77,27 +77,18 @@ const Community = () => {
 
     const currentPageUsers = users.slice(shownUsersStart, shownUsersEnd);
 
-    if (loading === true) {
-      return <h2 className="text-7xl text-center font-pokemon">Loading...</h2>;
-    }
-    if (users.length == 0) {
-      return (
-        <h2 className="text-5xl m-10 p-10 text-center font-pokemon">
-          No matches found
-        </h2>
-      );
-    }
+    console.log("Current page users:", currentPageUsers)
     return (
-      <ul className="grid grid-cols-4">
+      <ul className="m-80 grid grid-cols-4 gap-40">
         {currentPageUsers.map((user) => {
 
           return (
-            <li className="p-5 text-center text-3xl" key={user.name}>
+            <li className="max-w-64 max-h-64 flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
               <a href={"/users/" + user.name}>
                 {user.name}
                 <br />
                 <br />
-                <img src={`data:image/jpeg;base64,${user.profile_pic}`} />
+                <img className="" src={`data:image/jpeg;base64,${user.profile_pic}`} />
               </a>
             </li>
           );
@@ -160,12 +151,17 @@ const Community = () => {
           </form>
         </div>
         <div className="">
-          <UsersOverview
+          { (loading) && <h2 className="text-7xl text-center font-pokemon">Loading...</h2>  }
+          { (userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
+          {
+            (userList.length > 0) && 
+            <UsersOverview
             loading={loading}
             users={userList}
             usersPerPage={usersPerPage}
             currentPage={currentPage}
           />
+          }
         </div>
         <Pagination
           currentPage={currentPage}
