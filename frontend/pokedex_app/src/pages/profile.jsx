@@ -186,7 +186,26 @@ const Profile = () => {
           </div>
           <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
             <div className="w-fit text-gray-700 dark:text-gray-400 text-md">
-              <BioElement />
+            {
+              !editingBio ?
+                (<p className="m-3 text-lg">{ownData.bio}</p>)
+                :
+                (
+                  <section className="text-lg">
+                    <textarea
+                      spellCheck="true"
+                      name="new_bio"
+                      onChange={updateBio}
+                      className="bg-gray-300 resize"
+                      cols={60}
+                      defaultValue={ownData.bio}
+                      maxLength={250}
+                      rows={2}
+                      type="text"
+                    />
+                  </section>
+                )
+            }
             </div>
             <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
               <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
