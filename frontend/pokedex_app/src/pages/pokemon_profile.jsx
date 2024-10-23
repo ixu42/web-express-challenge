@@ -21,7 +21,6 @@ const PokemonProfile = () => {
   const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
   const morePokemon = location.state?.morePokemon;
-  // console.log("pokemon profile page | location.state", location.state);
 
   useEffect(() => {
     const fetchPokemonInfo = async () => {
@@ -42,9 +41,7 @@ const PokemonProfile = () => {
     fetchPokemonInfo();
   }, [name]);
 
-  // Function to handle "Back to Pokedex" button click
   const handleBackToPokedex = () => {
-    // console.log("handleBackToPokedex() called")
     navigate('/', {
       state: {
         from: 'profile',
@@ -54,7 +51,7 @@ const PokemonProfile = () => {
         offsetForSearching: offsetForSearching,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
-        scrollPosition: location.state.scrollPosition, // Pass back the saved scroll position
+        scrollPosition: location.state.scrollPosition,
       },
     });
   };
@@ -62,7 +59,8 @@ const PokemonProfile = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
-  const handleLike = async () => {
+
+  const handleLike = async () => {{
     try {
       if (like) {
         // If already liked, unlike the Pokémon
@@ -105,7 +103,7 @@ const PokemonProfile = () => {
       setUserError(true);
       alert(err.message);
     }
-  }
+  }};
 
   const handleDislike = async () => {
     try {
@@ -150,49 +148,62 @@ const PokemonProfile = () => {
       setUserError(true);
       alert(err.message);
     }
-  }
+  };
 
   console.log(userError);
+
   return (
     <div>
-      <div className="pokemon-details">
-        <h1 className="font-pokemon text-[#E03C31] text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
-        {/* Display the Pokémon's image */}
-        <img
-          src={pokemonInfo.image}
-          alt={`${pokemonInfo.name} sprite`}
-          style={{ width: '150px', height: '150px' }} // Adjust size as needed
-        />
+      <PokemonInfo pokemonInfo={pokemonInfo} />
+      {/* <PokemonStats stats={pokemonInfo.stats} /> */}
+      <LikeDislikeButtons
+        like={like}
+        dislike={dislike}
+        handleLike={handleLike}
+        handleDislike={handleDislike}
+        userError={userError}
+      />
+      <div className="flex justify-center">
+        <button
+          onClick={handleBackToPokedex}
+          className="px-6 py-3 my-4 font-semibold text-black bg-gray-300 hover:bg-gray-400 rounded-lg shadow-md transition-transform transform hover:scale-110 duration-300"
+        >
+          Back to Pokedex
+        </button>
+      </div>
+    </div>
+  );
+};
 
-        <div className="info-section grid grid-cols-2 gap-4">
-          {/* Height */}
-          <p className="font-semibold">Height:</p>
-          <div className="flex items-baseline">
-            <span className="min-w-[25px]">{(pokemonInfo.height * 10).toFixed(2)}</span>
-            <span className="ml-1">cm</span>
-          </div>
+const PokemonInfo = ({ pokemonInfo }) => (
+  <div className="pokemon-details">
+    <h1 className="font-pokemon text-[#E03C31] text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
+    <img src={pokemonInfo.image} alt={`${pokemonInfo.name} sprite`} style={{ width: '150px', height: '150px' }} />
 
-          {/* Weight */}
-          <p className="font-semibold">Weight:</p>
-          <div className="flex items-baseline">
-            <span className="min-w-[25px]">{(pokemonInfo.weight * 0.1).toFixed(2)}</span>
-            <span className="ml-1">kg</span>
-          </div>
+    <div className="info-section grid grid-cols-2 gap-4">
+      <p className="font-semibold">Height:</p>
+      <div className="flex items-baseline">
+        <span className="min-w-[25px]">{(pokemonInfo.height * 10).toFixed(2)}</span><span className="ml-1">cm</span>
+      </div>
 
-          {/* Type */}
-          <p className="font-semibold">Type:</p>
-          <div className="flex flex-col">
-            <span>{pokemonInfo.types[0].type.name}</span>
-            {pokemonInfo.types[1]?.type.name && <span>{pokemonInfo.types[1].type.name}</span>}
-          </div>
-        </div>
+      <p className="font-semibold">Weight:</p>
+      <div className="flex items-baseline">
+        <span className="min-w-[25px]">{(pokemonInfo.weight * 0.1).toFixed(2)}</span><span className="ml-1">kg</span>
+      </div>
 
-        <div className="stats-section">
+      <p className="font-semibold">Type:</p>
+      <div className="flex flex-col">
+        <span>{pokemonInfo.types[0].type.name}</span>
+        {pokemonInfo.types[1]?.type.name && <span>{pokemonInfo.types[1].type.name}</span>}
+      </div>
+      </div>
+
+      <div className="stats-section">
           <h2 className="text-center text-2xl font-bold mb-4">Stats</h2> {/* Centered "Stats" heading */}
           <div className="flex flex-col space-y-2">
             {pokemonInfo.stats.map((stats, index) => (
               <div key={index} className="flex items-center">
-                <p className="w-1/4 min-w-[140px] whitespace-nowrap font-semibold">{stats.stat.name}:</p> {/* Semibold stat names */}
+                <p className="w-1/4 min-w-[180px] whitespace-nowrap font-semibold">{stats.stat.name}:</p> {/* Semibold stat names */}
                 <div
                   className="bg-blue-500 h-4 rounded"
                   style={{ width: `${stats.base_stat}px` }} // Set width based on base_stat
@@ -200,39 +211,30 @@ const PokemonProfile = () => {
                 <span className="ml-2">{stats.base_stat}</span>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Like and Dislike Buttons */}
-        <div className="flex flex-row items-center space-x-20">
-          {/* Like Button */}
-          <button
-            className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400': (like ? 'bg-pink-500' : 'bg-gray-400')}  text-white shadow-lg transition-transform transform hover:scale-105`}
-            onClick={handleLike}
-          >
-            <HeartIcon className="w-8 h-8" />
-          </button>
-
-          {/* Dislike Button */}
-          <button
-            className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400': (dislike ? 'bg-red-600' : 'bg-gray-400')} text-white shadow-lg transition-transform transform hover:scale-105`}
-            onClick={handleDislike}
-          >
-            <HandThumbDownIcon className="w-8 h-8" />
-          </button>
-        </div>
-        <div className="flex justify-center">
-          {/* Back to Pokedex Button */}
-          <button
-            onClick={handleBackToPokedex}
-            className="px-6 py-3 my-4 font-semibold text-black bg-gray-300 hover:bg-gray-400 rounded-lg shadow-md transition-transform transform hover:scale-110 duration-300"
-          >
-            Back to Pokedex
-          </button>
         </div>
       </div>
-    </div>
-  );
-};
+  </div>
+);
+
+
+const LikeDislikeButtons = ({ like, dislike, handleLike, handleDislike, userError }) => (
+  <div className="flex justify-center items-center space-x-20">
+    <button
+      className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400' : (like ? 'bg-pink-500' : 'bg-gray-400')} text-white shadow-lg transition-transform transform hover:scale-105`}
+      onClick={handleLike}
+    >
+      <HeartIcon className="w-8 h-8" />
+    </button>
+
+    <button
+      className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400' : (dislike ? 'bg-red-600' : 'bg-gray-400')} text-white shadow-lg transition-transform transform hover:scale-105`}
+      onClick={handleDislike}
+    >
+      <HandThumbDownIcon className="w-8 h-8" />
+    </button>
+  </div>
+);
+
+
 
 export default PokemonProfile;
