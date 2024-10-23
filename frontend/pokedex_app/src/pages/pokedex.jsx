@@ -19,9 +19,9 @@ const Pokedex = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ID-asc");
   const [morePokemon, setMorePokemon] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [isShuffling, setIsShuffling] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [pokemonTypes, setPokemonTypes] = useState([]); // List of Pokémon types
   const [selectedType, setSelectedType] = useState(""); // Currently selected type
@@ -35,7 +35,7 @@ const Pokedex = () => {
 
   // console.log("rendering Pokedex...");
 
-  const fetchPokemonList = async (type, query, offsetValue=0, sortOrderValue="", shouldShuffle=false) => {
+  const fetchPokemonList = async (type, query, offsetValue = 0, sortOrderValue = "", shouldShuffle = false) => {
     // Cancel the previous fetch request if it exists
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -46,6 +46,7 @@ const Pokedex = () => {
     abortControllerRef.current = abortController;
 
     try {
+      setIsLoading(true);
       let response;
       if (type) {
         console.log("fetching by type...")
@@ -61,6 +62,7 @@ const Pokedex = () => {
         console.log("fetching...")
         response = await fetch(`/api/pokemon?limit=${limit + 1}&offset=${offsetValue}&sort=${sortOrderValue}&shuffle=${shouldShuffle}`);
       }
+      setIsLoading(false);
       if (response.ok) {
         const fetchedPokemon = await response.json();
         console.log("fetched pokemon:", fetchedPokemon);
@@ -154,12 +156,10 @@ const Pokedex = () => {
 
   const loadMorePokemon = async () => {
     console.log("loadMorePokemon() called");
-    setIsLoading(true);
     setIsFetching(true);
     setOffset((prevOffset) => prevOffset + limit);
     fetchPokemonList(selectedType, searchTerm, offset + limit, sortOrder, false);
     setIsFetching(false);
-    setIsLoading(false);
   };
 
   // Fetch all Pokémon types on component mount
@@ -229,8 +229,6 @@ const Pokedex = () => {
       </header>
       <main>
         <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
-
-        {/* Render TypeFilter and pass types and handler */}
         <TypeFilter
           types={pokemonTypes}
           selectedType={selectedType}
