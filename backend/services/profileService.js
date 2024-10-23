@@ -147,13 +147,15 @@ const searchProfiles = async (name) => {
   try {
     console.log("searching profiles");
     console.log(name);
-    const profile = await userModel.searchProfiles(name);
-    const base64Image = profile.profile_pic
-      ? profile.profile_pic.toString("base64")
-      : null;
-    profile.profile_pic = base64Image;
-    console.log("searching profiles successful:", profile);
-    return profile;
+    const profiles = await userModel.searchProfiles(name);
+    profiles.map((profile) => {
+      const base64Image = profile.profile_pic
+        ? profile.profile_pic.toString("base64")
+        : null;
+      profile.profile_pic = base64Image;
+    });
+    console.log("searching profiles successful:", profiles);
+    return profiles;
   } catch (error) {
     console.log("error searching profiles:", error.message);
     throw error;

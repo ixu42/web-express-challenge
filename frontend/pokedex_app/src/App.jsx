@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import './App.css';
-import './index.css'
-import ErrorBoundary from './ErrorBoundary';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
+import "./index.css";
+import ErrorBoundary from "./ErrorBoundary";
 import Navbar from "./components/Navbar/Navbar";
-import Footer from './components/footer';
-import Pokedex from './pages/pokedex';
-import Login from './pages/login';
-import Profile from './pages/profile';
-import PokemonProfile from './pages/pokemon_profile';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import TermsOfService from './pages/TermsOfService';
+import Footer from "./components/footer";
+import Pokedex from "./pages/pokedex";
+import Login from "./pages/login";
+import Profile from "./pages/profile";
+import PokemonProfile from "./pages/pokemon_profile";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import Community from "./components/Community";
-import PageNotFound from './pages/pageNotFound';
+import PageNotFound from "./pages/pageNotFound";
 import ViewOnlyProfile from "./pages/ViewOnlyProfile";
 import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
@@ -24,10 +24,10 @@ const App = () => {
   };
 
   return (
-      <AuthProvider>
     <Router>
+      <AuthProvider>
         <div id="root">
-        <Navbar handlePokedexClick={handlePokedexClick} />
+          <Navbar handlePokedexClick={handlePokedexClick} />
           <main>
             <Routes>
               <Route
@@ -46,14 +46,14 @@ const App = () => {
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/Community" element={<Community />} />
               <Route path="*" element={<PageNotFound />} />
-              <Route path="/users/:name" element={<ViewOnlyProfile/>} />
+              <Route path="/users/:name" element={<ViewOnlyProfile />} />
             </Routes>
           </main>
           <Footer />
         </div>
-    </Router>
       </AuthProvider>
+    </Router>
   );
-}
+};
 
 export default App;
