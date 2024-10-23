@@ -137,11 +137,17 @@ const Pokedex = () => {
     }
   };
 
-  const fetchPokemonByType = async (type) => {
+  const fetchPokemonByType = async (type, offsetValue=0) => {
     try {
-      const response = await fetch(`/api/pokemon/type/${type}`);
+      const response = await fetch(`/api/pokemon/type/${type}?limit=${limit + 1}&offset=${offsetValue}`);
       const filteredPokemon = await response.json();
-      setPokemonList(filteredPokemon);
+      console.log("filtered pokemon:", filteredPokemon);
+      if (filteredPokemon.length > limit) {
+        setPokemonList((prevList) => [...prevList, ...filteredPokemon.slice(0, limit)]);
+      } else {
+        setMorePokemon(false);
+        setPokemonList((prevList) => [...prevList, ...filteredPokemon]);
+      }
     } catch (error) {
       console.error("Error fetching Pokémon by type:", error);
     }
@@ -149,9 +155,12 @@ const Pokedex = () => {
 
   const handleTypeChange = (selectedType) => {
     setSelectedType(selectedType);
+    setOffset(0);
+    setPokemonList([]);
+    setMorePokemon(true);
 
     if (selectedType) {
-      fetchPokemonByType(selectedType);
+      fetchPokemonByType(selectedType, 0);
     } else {
       // setFilteredPokemon([]);
       fetchPokemonList(initialOffset, false, "ID-asc");
@@ -194,12 +203,20 @@ const Pokedex = () => {
     console.log("loadMorePokemon() called");
     setIsLoading(true);
     setIsFetching(true);
-    if (searchTerm === "") {
+    if (selectedType !== "") {
+      console.log("load more filtered pokemon...")
       setOffset((prevOffset) => prevOffset + limit);
-      await fetchPokemonList(offset + limit, false, sortOrder);
+      fetchPokemonByType(selectedType, offset + limit);
     } else {
-      setOffsetForSearching((prevOffset) => prevOffset + limit);
-      await fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
+      if (searchTerm === "") {
+        console.log("load more default pokemon...")
+        setOffset((prevOffset) => prevOffset + limit);
+        await fetchPokemonList(offset + limit, false, sortOrder);
+      } else {
+        console.log("load more matching pokemon...")
+        setOffsetForSearching((prevOffset) => prevOffset + limit);
+        await fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
+      }
     }
     setIsFetching(false);
     setIsLoading(false);

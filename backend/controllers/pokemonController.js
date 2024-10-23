@@ -3,12 +3,6 @@ const pokemonModel = require("../models/pokemonModel");
 const axios = require('axios')
 const { extractIdFromUrl, fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addImgUrlToPokemonDetails } = require('./pokemonControllerUtils');
 
-// cache for pokemon list
-let pokemonList = null;
-
-// If a fetched pokemon img is invalid, fall back to default img
-const defaultPokemonImgUrl = '../img/default_pokemon.png'
-
 const likedPokemon = async (req, res, next) => {
   try {
     const { id } = req.session.user;
@@ -62,6 +56,9 @@ const undislikePokemon = async (req, res, next) => {
 };
 
 /* FETCH FROM EXTERNAL API */
+
+// cache for pokemon list
+let pokemonList = null;
 
 // Fetch a list of Pokemon
 const getPokemon = async (req, res) => {
@@ -159,19 +156,29 @@ const getPokemonTypes = async (req, res) => {
 // A list of Pokémon by type
 const getPokemonByType = async (req, res) => {
   const { type } = req.params
-  console.log("/api/pokemon/type/:type?, type:", type)
+  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
+  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
+  console.log("/api/pokemon/type/:type?, type:", type, "limit:", limit, "offset:", offset)
   try {
-    if (!type || type.trim() === "") {
-      return res.status(404).json({ 'error': 'Type not provided.' })
+    if (offset === 0) {
+      if (!type || type.trim() === "") {
+        return res.status(404).json({ 'error': 'Type not provided.' })
+      }
+      const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
+      const typePokemon = response.data.pokemon.map(p => ({
+        name: p.pokemon.name,
+        url: p.pokemon.url,
+        id: extractIdFromUrl(p.pokemon.url),
+      }))
+      pokemonList = await addImgUrlToPokemonDetails(typePokemon);
     }
-    const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
-    const typePokemon = response.data.pokemon.map(p => ({
-      name: p.pokemon.name,
-      url: p.pokemon.url,
-      id: extractIdFromUrl(p.pokemon.url),
-    }))
-    const typedPokemonWithValidImage = await addImgUrlToPokemonDetails(typePokemon);
-    res.json(typedPokemonWithValidImage)
+    
+    const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
+    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
+    
+    // const typedPokemonWithValidImage = await addImgUrlToPokemonDetails(typePokemon);
+    // res.json(typedPokemonWithValidImage)
+    res.json(detailedPokemonList)
 
   } catch (err) {
     console.error(err)
