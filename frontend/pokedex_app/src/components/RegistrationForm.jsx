@@ -61,7 +61,7 @@ const RegistrationForm = (props) => {
 
   return (
     <section className="border-t-4 border-pink-700">
-      <header className="pt-4 font-pokemon w-full text-center font-bold text-pink-950 text-2xl">
+      <header className="pt-4 w-full text-center font-bold text-pink-950 text-2xl">
         Don't have an account yet?
         <br />
         Register here
@@ -115,7 +115,7 @@ const RegistrationForm = (props) => {
           />
         </div>
         <button
-          className="font-pokemon w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
+          className="w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
           type="submit"
         >
           Register

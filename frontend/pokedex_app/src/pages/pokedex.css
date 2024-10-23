@@ -1,27 +1,140 @@
 .pokemon-list {
-  display: flex; /* enables Flexbox layout for the list items */
-  flex-wrap: wrap; /* allows the flex items to wrap onto the next line if there isn’t enough space in the container */
-  gap: 20px;
-  padding: 0;
-}
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center; /* Align items to the start */
+	padding: 10px; /* Adjust padding to fit your layout */
+	list-style-type: none;
+	margin: 0;
+  }
 
-.pokemon-item {
-  text-align: center;
-  width: 250px;
-}
+  .pokemon-item {
+	background-color: #fff; /* Card background */
+	border: 1px solid #ccc; /* Card border */
+	border-radius: 10px; /* Rounded corners */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+	margin: 5px; /* Reduced margin for less space between items */
+	width: calc(15% - 10px); /* Adjusted width for larger items */
+	display: flex; /* Use flexbox to manage internal layout */
+	flex-direction: column; /* Stack content vertically */
+	align-items: center; /* Center items */
+	padding: 10px; /* Add some padding inside the boxes */
+	transition: transform 0.3s; /* Optional: Add a hover effect */
+  }
 
-.pokemon-image {
-  width: 100px;
-  height: 80px;
-  display: block;
-  margin: 0 auto;
-}
+  .pokemon-item:hover {
+	transform: scale(1.05); /* Optional: Scale up on hover */
+  }
 
-.pokemon-item a {
-  text-decoration: none;
-  color: #333;
-}
+  .pokemon-item a {
+	color: #000;
+	text-decoration: none;
+	text-align: center; /* Center text */
+  }
 
-.pokemon-item a:hover {
-  color: #007bff;
-}
+  .pokemon-image {
+	display: block;
+	margin: auto;
+	width: 100px; /* Set a fixed width */
+	height: 100px; /* Set a fixed height */
+	object-fit: contain; /* Ensure the whole image is visible without cropping */
+  }
+
+
+  /* Responsive adjustments */
+  @media (max-width: 1200px) {
+	.pokemon-item {
+	  width: calc(20% - 10px); /* 5 items per row */
+	}
+  }
+
+  @media (max-width: 900px) {
+	.pokemon-item {
+	  width: calc(25% - 10px); /* 4 items per row */
+	}
+  }
+
+  @media (max-width: 600px) {
+	.pokemon-item {
+	  width: calc(50% - 10px); /* 2 items per row */
+	}
+  }
+
+  @media (max-width: 400px) {
+	.pokemon-item {
+	  width: calc(100% - 10px); /* 1 item per row */
+	}
+  }
+
+  .pokemon-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    max-width: 450px;
+    margin: 20px auto;
+    padding: 20px;
+    color: #000;
+    text-transform: capitalize;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .pokemon-details img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .pokemon-details p {
+    margin: 5px;
+    }
+
+  .pokemon-details::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: -10px;
+	right: -10px;
+	bottom: -10px;
+	border-radius: 15px; /* Match the card's border radius */
+	background: white; /* Colorful gradient */
+	z-index: -1; /* Place it behind the card */
+	filter: blur(5px); /* Soft blur for a subtle effect */
+  }
+
+  .img-section {
+	text-align: center;
+	  background-color: #ffffff;
+	  padding: 15px;
+	  border-radius: 8px;
+	  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	  margin: 10px 0;
+	  width: 100%;
+	  text-transform: capitalize;
+  }
+
+  .info-section {
+	background-color: #f2f9bc;
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+	margin: 10px 0;
+	width: 100%;
+	text-transform: capitalize;
+	}
+
+	.info-section h2 {
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	}
+
+	.stats-section {
+		background-color: #a6b1db;
+		padding: 15px;
+		border-radius: 8px;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+		margin: 10px 0;
+		width: 100%;
+		text-transform: capitalize;
+	}
+

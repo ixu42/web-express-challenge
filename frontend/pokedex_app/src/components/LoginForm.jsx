@@ -60,7 +60,7 @@ const LoginForm = (props) => {
 
   return (
     <section className="">
-      <header className="font-pokemon w-28 mx-auto mb-5 font-bold text-pink-950 text-5xl">
+      <header className="w-28 mx-auto mb-5 font-bold text-pink-950 text-5xl">
         Login
       </header>
       <form onSubmit={loginAttempt}>
@@ -99,7 +99,7 @@ const LoginForm = (props) => {
           </div>
         </div>
         <button
-          className="w-full text-2xl font-pokemon bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
+          className="w-full text-2xl bg-pink-700 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
           type="submit"
         >
           Log in

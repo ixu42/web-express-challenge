@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import './App.css';
 import './index.css'
@@ -15,12 +15,18 @@ import Community from "./components/Community";
 import PageNotFound from './pages/pageNotFound';
 import { AuthProvider } from "./AuthContext"; // Import AuthProvider
 
-function App() {
+const App = () => {
+  const [pokedexKey, setPokedexKey] = useState(0); // State to manage the Pokedex key
+
+  const handlePokedexClick = () => {
+    setPokedexKey((prevKey) => prevKey + 1); // Increment key to force re-render
+  };
+
   return (
     <Router>
       <AuthProvider>
         <div id="root">
-          <Navbar />
+        <Navbar handlePokedexClick={handlePokedexClick} />
           <main>
             <Routes>
               <Route
@@ -28,7 +34,7 @@ function App() {
                 path="/"
                 element={
                   <ErrorBoundary>
-                    <Pokedex />
+                    <Pokedex key={pokedexKey} />
                   </ErrorBoundary>
                 }
               />
