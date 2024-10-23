@@ -87,13 +87,6 @@ const Community = () => {
         </h2>
       );
     }
-    if (users.length == 0) {
-      return (
-        <h2 className="text-5xl m-10 p-10 text-center font-pokemon">
-          No matches found
-        </h2>
-      );
-    }
     return (
       <ul className="grid grid-cols-4">
         {currentPageUsers.map((user) => {

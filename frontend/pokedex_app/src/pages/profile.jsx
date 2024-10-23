@@ -39,7 +39,7 @@ const Profile = () => {
         setUser(data);
         setProfilePic(data.profile_pic);
       })
-      .catch((error) => alert("Error fetching user list"));
+      .catch((error) => console.error("Error fetching user list"));
   };
 
   const fetchLikedPokemon = () => {
@@ -47,7 +47,7 @@ const Profile = () => {
       fetch(`/api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
         .then((data) => setLikedPokemons(data))
-        .catch((error) => alert("Error fetching liked pokemons' list"));
+        .catch((error) => console.error("Error fetching liked pokemons' list"));
     }
   };
 
@@ -56,7 +56,7 @@ const Profile = () => {
       fetch(`/api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
         .then((data) => setDislikedPokemons(data))
-        .catch((error) => alert("Error fetching disliked pokemons' list"));
+        .catch((error) => console.error("Error fetching disliked pokemons' list"));
     }
   };
 
@@ -70,30 +70,6 @@ const Profile = () => {
       fetchDislikedPokemon();
     }
   }, [isAuthenticated, navigate, authLoading, profilePic, editingBio]);
-
-  const BioElement = () => {
-    console.log("Handling bio");
-
-    if (editingBio === false)
-      return <p className="m-3 text-lg">{ownData.bio}</p>;
-    else {
-      return (
-        <section className="text-lg">
-          <textarea
-            spellCheck="true"
-            name="new_bio"
-            onChange={updateBio}
-            className="bg-gray-300 resize"
-            cols={60}
-            defaultValue={ownData.bio}
-            maxLength={250}
-            rows={2}
-            type="text"
-          />
-        </section>
-      );
-    }
-  };
 
   const RenderProfilePic = () => {
     console.log("rendering profile pic");
