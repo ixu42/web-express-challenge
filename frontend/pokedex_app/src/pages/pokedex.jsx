@@ -187,17 +187,10 @@ const Pokedex = () => {
     setPokemonList([]);
     setMatchingList([]);
     setMorePokemon(true);
-    let sortOrderValue = sortOrder;
-    if (sortOrder === "random") {
-      sortOrderValue = "ID-asc";
-      setSortOrder("ID-asc");
-    }
     setIsFetching(true);
     if (selectedType) {
-      console.log("debug1")
-      await fetchPokemonByType(selectedType, 0, sortOrderValue, searchTerm);
+      await fetchPokemonByType(selectedType, 0, sortOrder, searchTerm);
     } else {
-      console.log("debug2")
       await fetchPokemonList(offset, false, "ID-asc");
     }
     setIsFetching(false);
@@ -228,7 +221,7 @@ const Pokedex = () => {
   const shufflePokemon = async () => {
     console.log("shufflePokemon() called");
     setSearchTerm("");
-    setSortOrder("random");
+    setSortOrder("ID-asc");
     setOffset(0);
     setPokemonList([]);
     setMorePokemon(true);
