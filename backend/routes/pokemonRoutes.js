@@ -13,9 +13,10 @@ router.post("/disliked", isAuthenticated, pokemonController.dislikedPokemon);
 router.delete("/undislike/:pokemon_id",isAuthenticated, pokemonController.undislikePokemon);
 
 
-router.get('/search/:query?', pokemonController.getMatchingPokemon)
-router.get('/type/:type?', pokemonController.getPokemonByType)
 router.get('/', pokemonController.getPokemon)
+router.get('/search/:query?', pokemonController.getMatchingPokemon)
+router.get('/type/', pokemonController.getPokemonTypes)
+router.get('/type/:type?', pokemonController.getPokemonByType)
 router.get('/:name?', pokemonController.getPokemonByName)
 
 module.exports = router;

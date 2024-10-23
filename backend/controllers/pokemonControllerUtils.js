@@ -76,24 +76,35 @@ const getValidImgUrl = async (pokemonId) => {
   return imageUrl
 }
 
-// Fetch detailed information for each Pokémon to get image
-const addImgUrlToPokemonDetails = async (paginatedPokemonList) => {
-  paginatedPokemonList = await Promise.all(
-    paginatedPokemonList.map(async (pokemon) => {
-      const validImageUrl = await getValidImgUrl(pokemon.id) 
+const getTypeDetails = async (pokemonId) => {
+  const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+  const data = await response.json();
+
+  // Extract the types
+  return data.types.map(typeInfo => typeInfo.type.name);
+};
+
+// Add valid image url/path and type details to pokemon list
+const addDataToPokemonList = async (pokemonList) => {
+  pokemonList = await Promise.all(
+    pokemonList.map(async (pokemon) => {
+      const validImageUrl = await getValidImgUrl(pokemon.id)
+      const typeDetails = await getTypeDetails(pokemon.id)
       return {
         ...pokemon,
-        image: validImageUrl
+        image: validImageUrl,
+        types: typeDetails
       }
     })
   )
-  return paginatedPokemonList;
+  return pokemonList;
 };
 
 module.exports = {
+  extractIdFromUrl,
   fetchAllPokemon,
   shufflePokemon,
   sortPokemon,
   getValidImgUrl,
-  addImgUrlToPokemonDetails
+  addDataToPokemonList
 };
