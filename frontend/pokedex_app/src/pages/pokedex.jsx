@@ -153,18 +153,18 @@ const Pokedex = () => {
     }
   };
 
-  const handleTypeChange = (selectedType) => {
+  const handleTypeChange = async (selectedType) => {
     setSelectedType(selectedType);
     setOffset(0);
     setPokemonList([]);
     setMorePokemon(true);
-
+    setIsFetching(true);
     if (selectedType) {
-      fetchPokemonByType(selectedType, 0);
+      await fetchPokemonByType(selectedType, 0);
     } else {
-      // setFilteredPokemon([]);
-      fetchPokemonList(initialOffset, false, "ID-asc");
+      await fetchPokemonList(initialOffset, false, "ID-asc");
     }
+    setIsFetching(false);
   };
 
   const sortPokemon = async (sortOrderValue) => {
@@ -192,6 +192,7 @@ const Pokedex = () => {
     setOffset(0);
     setPokemonList([]);
     setMorePokemon(true);
+    setSelectedType("");
     setIsShuffling(true);
     setIsFetching(true);
     await fetchPokemonList(0, true, ""); // Request a reshuffle
