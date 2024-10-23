@@ -82,6 +82,16 @@ const getProfiles = async (req, res, next) => {
   }
 };
 
+const getProfileByName = async (req, res, next) => {
+  try {
+    const { name } = req.params;
+    const profile = await profileService.getProfileByName(name);
+    res.json(profile);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getProfileById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -113,12 +123,14 @@ const searchProfiles = async (req, res, next) => {
 }
 
 
+
 module.exports = {
   updateProfile,
   updateProfilePic,
   updateBio,
   updateName,
   getProfiles,
+  getProfileByName,
   getProfileById,
   getMyProfile,
   searchProfiles,

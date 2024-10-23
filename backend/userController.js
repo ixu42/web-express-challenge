@@ -44,7 +44,7 @@ const registerUser = async (req, res) => {
 
     // Save user in session
     const userProfile = await createProfile(profile);
-    req.session.user = { id: userProfile.id, username: userProfile.name, profile_pic: userProfile.profile_pic };
+    req.session.user = { id: userProfile.id, username: userProfile.name};
     res.status(201).json({
       user: req.session.user,
       msg: "User registered",
@@ -84,9 +84,7 @@ const loginUser = async (req, res) => {
 
     if (match) {
       // Save user in session
-      const base64 = user.profile_pic ? user.profile_pic.toString("base64") : null;
-      user.profile_pic = base64;
-      req.session.user = { id: user.id, username: user.username, profile_pic: user.profile_pic };
+      req.session.user = { id: user.id, username: user.username};
       res.json({ loggedIn: true, user: req.session.user });
 
      // res.send("Login successful");

@@ -1,3 +1,4 @@
+const { get } = require("http");
 const userModel = require("../models/profileModel");
 
 const fs = require("fs");
@@ -6,17 +7,17 @@ const fs = require("fs");
 const defaultProfilePic = fs.readFileSync("./database/profile_pic.png");
 
 // Convert it to a binary format
-const defaultProfilePicBinary = Buffer.from(defaultProfilePic);
+const profile_pic = Buffer.from(defaultProfilePic);;
 
 const createProfile = async ({ user_id, name, bio }) => {
   try {
     console.log("creating profile");
-    console.log(user_id, name, bio, defaultProfilePicBinary);
+    console.log(user_id, name, bio, profile_pic);
     const profile = await userModel.createProfile(
       user_id,
       name,
       bio,
-      defaultProfilePicBinary
+      profile_pic
     );
     const base64Image = profile.profile_pic
       ? profile.profile_pic.toString("base64")
@@ -90,6 +91,23 @@ const updateName = async ({ id, name }) => {
   }
 };
 
+const getProfileByName = async (name) => {
+  try {
+    console.log("fetching profile");
+    console.log(name);
+    const profile = await userModel.getProfileByName(name);
+    const base64Image = profile.profile_pic
+      ? profile.profile_pic.toString("base64")
+      : null;
+    profile.profile_pic = base64Image;
+    console.log("fetching profile successful:", profile);
+    return profile;
+  } catch (error) {
+    console.log("error fetching profile:", error.message);
+    throw error;
+  }
+};
+
 const getProfileById = async (id) => {
   try {
     console.log("fetching profile");
@@ -99,7 +117,7 @@ const getProfileById = async (id) => {
       ? profile.profile_pic.toString("base64")
       : null;
     profile.profile_pic = base64Image;
-    console.log("fetching profile successful:", profile);
+    console.log("fetching profile successful:");
     return profile;
   } catch (error) {
     console.log("error fetching profile:", error.message);
@@ -117,7 +135,7 @@ const getProfiles = async () => {
         : null;
       profile.profile_pic = base64Image;
     });
-    console.log("fetching profiles successful:", profiles);
+    console.log("fetching profiles successful:" , profiles);
     return profiles;
   } catch (error) {
     console.log("error fetching profiles:", error.message);
@@ -142,6 +160,7 @@ const searchProfiles = async (name) => {
   }
 };
 
+
 module.exports = {
   createProfile,
   updateProfile,
@@ -149,6 +168,7 @@ module.exports = {
   updateBio,
   updateName,
   getProfiles,
+  getProfileByName,
   getProfileById,
   searchProfiles,
 };
