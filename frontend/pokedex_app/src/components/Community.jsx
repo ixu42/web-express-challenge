@@ -64,7 +64,7 @@ const Community = () => {
     }
   }, [searchQuery, filteredUsers]);
 
-  const UsersOverview = ({ loading, users, usersPerPage, currentPage }) => {
+  const UsersOverview = ({ users, usersPerPage, currentPage }) => {
     let shownUsersStart;
 
     if (currentPage == 1) {
@@ -83,12 +83,12 @@ const Community = () => {
         {currentPageUsers.map((user) => {
 
           return (
-            <li className="p-5 text-center text-3xl" key={user.name}>
+            <li className="flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
               <a href={"/users/" + user.name}>
                 {user.name}
                 <br />
                 <br />
-                <img src={`data:image/jpeg;base64,${user.profile_pic}`} />
+                <img className="" src={`data:image/jpeg;base64,${user.profile_pic}`} />
               </a>
             </li>
           );
