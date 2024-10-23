@@ -44,8 +44,9 @@ const Profile = () => {
     if (ownData.user_id != undefined) {
       fetch(`api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
-        .then((data) => setLikedPokemons(data))
-        .catch((error) => alert("Error fetching liked pokemons' list"));
+        .then((data) => (setLikedPokemons(data)))
+        .catch((error) => alert("Error fetching liked pokemons' list"))
+        }
     }
   };
 
@@ -53,8 +54,9 @@ const Profile = () => {
     if (ownData.user_id != undefined) {
       fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
-        .then((data) => setDislikedPokemons(data))
-        .catch((error) => alert("Error fetching disliked pokemons' list"));
+        .then((data) => (setDislikedPokemons(data)))
+        .catch((error) => alert("Error fetching disliked pokemons' list"))
+        }
     }
   };
 

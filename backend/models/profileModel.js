@@ -59,6 +59,14 @@ const getProfiles = async () => {
   return result.rows;
 };
 
+const getProfileByName = async (name) => {
+  const result = await db.query("SELECT * FROM profiles WHERE name = $1", [name]);
+  if (result.rows.length === 0) {
+    throw new NotFoundError("Profile not found");
+  }
+  return result.rows[0];
+};
+
 const getProfileById = async (id) => {
   const result = await db.query("SELECT * FROM profiles WHERE user_id = $1", [id]);
   if (result.rows.length === 0) {
@@ -83,6 +91,7 @@ module.exports = {
   updateBio,
   updateName,
   getProfiles,
+  getProfileByName,
   getProfileById,
   searchProfiles,
 };
