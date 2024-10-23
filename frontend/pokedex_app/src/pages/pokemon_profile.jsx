@@ -202,7 +202,7 @@ const PokemonProfile = () => {
             ))}
           </div>
         </div>
-        
+
         {/* Like and Dislike Buttons */}
         <div className="flex flex-row items-center space-x-20">
           {/* Like Button */}
@@ -215,7 +215,7 @@ const PokemonProfile = () => {
 
           {/* Dislike Button */}
           <button
-            className={`flex items-center justify-center w-16 h-16 rounded-full ${dislike ? 'bg-red-600' : 'bg-gray-400'} text-white shadow-lg transition-transform transform hover:scale-105`}
+            className={`flex items-center justify-center w-16 h-16 rounded-full ${userError ? 'bg-gray-400': (dislike ? 'bg-red-600' : 'bg-gray-400')} text-white shadow-lg transition-transform transform hover:scale-105`}
             onClick={handleDislike}
           >
             <HandThumbDownIcon className="w-8 h-8" />
