@@ -5,7 +5,7 @@ const Footer = () => {
 
 	return (
     <footer>
-      <p>&copy; 2024 Pokedex App. All rights reserved.</p>
+      <p>&copy; 2024 Pokédex App. All rights reserved.</p>
       <Link to="/privacy-policy">Privacy Policy</Link> | <Link to="/terms">Terms of Service</Link>
     </footer>
   )

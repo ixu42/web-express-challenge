@@ -168,7 +168,7 @@ const PokemonProfile = () => {
           onClick={handleBackToPokedex}
           className="px-6 py-3 my-4 font-semibold text-black bg-gray-300 hover:bg-gray-400 rounded-lg shadow-md transition-transform transform hover:scale-110 duration-300"
         >
-          Back to Pokedex
+          Back to Pokédex
         </button>
       </div>
     </div>

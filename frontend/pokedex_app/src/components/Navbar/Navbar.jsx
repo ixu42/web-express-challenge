@@ -30,7 +30,7 @@ const Navbar = () => {
               : "hover:text-yellow-400 transition duration-300"
           }
         >
-          Pokedex
+          Pokédex
         </NavLink>
         <NavLink
           to="/Community"

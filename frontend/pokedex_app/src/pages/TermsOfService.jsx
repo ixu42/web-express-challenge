@@ -5,11 +5,11 @@ const TermsOfService = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold text-center mb-6">Terms of Service</h1>
       <p className="text-lg text-gray-700 mb-4">
-        Welcome to the Pokedex App! By using this app, you agree to these Terms of Service. Please note that this app is a student project and not intended for commercial purposes.
+        Welcome to the Pokédex App! By using this app, you agree to these Terms of Service. Please note that this app is a student project and not intended for commercial purposes.
       </p>
       <h2 className="text-2xl font-semibold mt-4">Use of the App</h2>
       <p className="text-lg text-gray-700 mb-4">
-        The Pokedex App is intended for educational and non-commercial use only. The app allows users to view Pokémon data and related information, which is retrieved from a third-party API PokéAPI (https://pokeapi.co/). Registered users may like specific Pokémon, and get personalized experience. Users can also explore the favorite Pokémon of others, fostering community among Pokémon enthusiasts. Any data collected, such as usernames and favorite Pokémon, is for enhancing user experience and is not shared with third parties.
+        The Pokédex App is intended for educational and non-commercial use only. The app allows users to view Pokémon data and related information, which is retrieved from a third-party API PokéAPI (https://pokeapi.co/). Registered users may like specific Pokémon, and get personalized experience. Users can also explore the favorite Pokémon of others, fostering community among Pokémon enthusiasts. Any data collected, such as usernames and favorite Pokémon, is for enhancing user experience and is not shared with third parties.
       </p>
       <h2 className="text-2xl font-semibold mt-4">Third-Party APIs</h2>
       <p className="text-lg text-gray-700 mb-4">

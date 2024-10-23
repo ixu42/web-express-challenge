@@ -1,6 +1,6 @@
-# Pokedex App
+# Pokédex App
 
-Welcome to the Pokedex App! This application allows users to explore and interact with a vast collection of Pokémon. Users can browse Pokémon, view their details, and manage their favorites through a user-friendly interface.
+Welcome to the Pokédex App! This application allows users to explore and interact with a vast collection of Pokémon. Users can browse Pokémon, view their details, and manage their favorites through a user-friendly interface.
 
 ## Features
 
@@ -29,7 +29,7 @@ Welcome to the Pokedex App! This application allows users to explore and interac
 
 ## Installation
 
-To run the Pokedex App locally, follow these steps:
+To run the Pokédex App locally, follow these steps:
 
 1. **Clone the repository**:
 
