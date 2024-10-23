@@ -1,6 +1,5 @@
 const express = require('express')
 const session = require('express-session')
-const { registerUser, loginUser, logoutUser, isAuthenticated } = require('./userController')
 const pokemonRoutes = require("./routes/pokemonRoutes");
 const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
@@ -38,9 +37,6 @@ app.get('/api', (req, res) => {
   })
 })
 
-app.post('/api/register', registerUser)
-app.post('/api/login', loginUser)
-app.post('/api/logout', logoutUser)
 
 // Check if the user is logged in
 app.get('/api/auth/check', async (req, res) => {
@@ -56,6 +52,7 @@ app.get('/api/auth/check', async (req, res) => {
 
 //middleware
 app.use(handleError);
+app.use
 
 app.listen(port, () => {
   console.log(`Hello from port ${port}`)

@@ -275,6 +275,8 @@ const Sort = ({ sortOrder, onSort }) => (
       <option value="ID-desc">ID (Descending)</option>
       <option value="A-Z">A-Z</option>
       <option value="Z-A">Z-A</option>
+      <option value="likes">Likes</option>
+      <option value="dislikes">Dislikes</option>
       <option value="random" disabled>Random</option>
     </select>
   </div>

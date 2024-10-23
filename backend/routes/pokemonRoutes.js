@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pokemonController = require("../controllers/pokemonController");
-const { isAuthenticated } = require("../userController");
+const { isAuthenticated } = require("../middlewares/authMiddleware");
 
 router.post("/liked", isAuthenticated, pokemonController.likedPokemon);
 router.delete(
@@ -10,12 +10,18 @@ router.delete(
   pokemonController.unlikePokemon
 );
 router.post("/disliked", isAuthenticated, pokemonController.dislikedPokemon);
-router.delete("/undislike/:pokemon_id",isAuthenticated, pokemonController.undislikePokemon);
+router.delete(
+  "/undislike/:pokemon_id",
+  isAuthenticated,
+  pokemonController.undislikePokemon
+);
 
+router.get("/sort/likes", pokemonController.sortByLikes);
+router.get("/sort/dislikes", pokemonController.sortByDislikes);
 
-router.get('/search/:query?', pokemonController.getMatchingPokemon)
-router.get('/type/:type?', pokemonController.getPokemonByType)
-router.get('/', pokemonController.getPokemon)
-router.get('/:name?', pokemonController.getPokemonByName)
+router.get("/search/:query?", pokemonController.getMatchingPokemon);
+router.get("/type/:type?", pokemonController.getPokemonByType);
+router.get("/", pokemonController.getPokemon);
+router.get("/:name?", pokemonController.getPokemonByName);
 
 module.exports = router;

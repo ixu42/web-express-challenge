@@ -48,9 +48,43 @@ const undislikePokemon = async (user_id, pokemon_id) => {
   }
 }
 
+const sortByLikes = async () => {
+  try {
+    console.log('sorting by likes');
+    const pokemons = await pokemonModel.sortByLikes();
+    pokemons.map(pokemon => {
+      pokemon.url = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`;
+    });
+    console.log('sorting by likes successful:', pokemons);
+    return pokemons;
+  }
+  catch (error) {
+    console.log('error sorting by likes:', error.message);
+    throw error;
+  }
+}
+
+const sortByDislikes = async () => {
+  try {
+    console.log('sorting by dislikes');
+    const pokemons = await pokemonModel.sortByDislikes();
+    console.log('sorting by dislikes successful:', pokemons);
+    pokemons.map(pokemon => {
+      pokemon.url = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}/`;
+    });
+    return pokemons;
+  }
+  catch (error) {
+    console.log('error sorting by dislikes:', error.message);
+    throw error;
+  }
+}
+
 module.exports = {
   likedPokemon,
   unlikePokemon,
   dislikedPokemon,
   undislikePokemon,
+  sortByLikes,
+  sortByDislikes,
 };

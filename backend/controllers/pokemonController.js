@@ -179,8 +179,12 @@ const getPokemon = async (req, res) => {
       }
 
       // Sort the Pokémon list based on the sort parameter
-      if (sort !== "") {
+      if (sort !== "" && sort !== "likes" && sort !== "dislikes") {
         pokemonList = sortPokemon(pokemonList, sort);
+      } else if (sort == "likes") {
+        pokemonList = await pokemonService.sortByLikes();
+      } else if (sort == "dislikes") {
+        pokemonList = await pokemonService.sortByDislikes();
       }
     }
 
@@ -194,6 +198,23 @@ const getPokemon = async (req, res) => {
   }
 }
 
+const sortByLikes = async (req, res, next) => {
+  try {
+    const pokemons = await pokemonService.sortByLikes();
+    res.json(pokemons);
+  } catch (error) {
+    next(error);
+  }
+}
+
+const sortByDislikes = async (req, res, next) => {
+  try {
+    const pokemons = await pokemonService.sortByDislikes();
+    res.json(pokemons);
+  } catch (error) {
+    next(error);
+  }
+}
 
 module.exports = {
   likedPokemon,
@@ -203,5 +224,7 @@ module.exports = {
   getMatchingPokemon,
   getPokemonByType,
   getPokemon,
-  getPokemonByName
+  getPokemonByName,
+  sortByLikes,
+  sortByDislikes,
 };
