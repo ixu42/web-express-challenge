@@ -118,7 +118,7 @@ const getProfiles = async () => {
         : null;
       profile.profile_pic = base64Image;
     });
-    console.log("fetching profiles successful:");
+    console.log("fetching profiles successful:" , profiles);
     return profiles;
   } catch (error) {
     console.log("error fetching profiles:", error.message);

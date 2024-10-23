@@ -24,10 +24,10 @@ const Profile = () => {
     user_id: -1,
     disliked_pokemons: [],
   });
-  const [profilePic, setProfilePic] = useState(null);
-  const { isAuthenticated, user, loading, setUser } = useContext(AuthContext);
+  const { isAuthenticated, user, authLoading, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const [profilePic, setProfilePic] = useState(null);
 
   const fetchProfile = () => {
     fetch("/api/profile/me")
@@ -44,15 +44,7 @@ const Profile = () => {
     if (ownData.user_id != undefined) {
       fetch(`api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
-        .then((data) => {
-          if (data.liked_pokemons === undefined) {
-            data.liked_pokemons = [];
-          }
-          setLikedPokemons(data);
-        })
-        .then(() => {
-          console.log("Liked pokemons: ", likedPokemons);
-        })
+        .then((data) => setLikedPokemons(data))
         .catch((error) => alert("Error fetching liked pokemons' list"));
     }
   };
@@ -61,70 +53,25 @@ const Profile = () => {
     if (ownData.user_id != undefined) {
       fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
-        .then((data) => {
-          if (data.disliked_pokemons === undefined) {
-            data.disliked_pokemons = [];
-          }
-          setDislikedPokemons(data);
-        })
-        .then(() => {
-          console.log("Disliked pokemons: ", dislikedPokemons);
-        })
+        .then((data) => setDislikedPokemons(data))
         .catch((error) => alert("Error fetching disliked pokemons' list"));
     }
   };
 
   useEffect(() => {
-    if (!isAuthenticated && !loading) {
+    if (!isAuthenticated && !authLoading) {
       navigate("/login"); // Redirect to login if not authenticated
-    } else if (isAuthenticated && !loading){
+    } else if (isAuthenticated && !authLoading && !editingBio) {
+      console.log("Fetching profile");
       fetchProfile();
-      fetchLikedPokemon();
-      fetchDislikedPokemon();
+      //fetchLikedPokemon();
+      //fetchDislikedPokemon();
     }
-  }, [isAuthenticated, navigate, loading, bio, profilePic]);
+  }, [isAuthenticated, navigate, authLoading,  profilePic]);
 
-  const updateBio = (event) => {
-    setBio(event.target.value);
-  };
 
-  console.log("Liked pokemon: ", likedPokemons);
 
-  const handleFileChange = async (event) => {
-    event.preventDefault(); // Prevent the default form submission
-
-    const file = event.target.files[0]; // Get the selected file
-
-    if (file) {
-      const formData = new FormData();
-      formData.append("profile_pic", file); // Append the file to FormData
-      console.log("form data: ", formData);
-
-      try {
-        const response = await fetch("/api/profile/me/update/profile_pic", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        setProfilePic(null);
-        // Handle success, e.g., update the UI or show a message
-      } catch (error) {
-        console.error("Error uploading profile picture:", error);
-        alert("Error uploading profile picture");
-      }
-    } 
-  };
-
-  const handleButtonClick = (event) => {
-    fileInputRef.current.click();
-  };
-
-  console.log("own data: ", ownData);
-
-  const handleBio = () => {
+  const BioElement = () => {
     console.log("Handling bio");
 
     if (editingBio === false)
@@ -173,7 +120,12 @@ const Profile = () => {
     setEditingBio(true);
   };
 
+  const updateBio = (event) => {
+    setBio(event.target.value);
+  };
+
   const handleBioSaving = (event) => {
+    
     setEditingBio(false);
     const newBio = { bio: bio };
     fetch("api/profile/me/update/bio", {
@@ -185,6 +137,38 @@ const Profile = () => {
     })
       .then(fetchProfile())
       .catch((error) => alert("Error updating bio"));
+  };
+
+
+  const handleFileChange = async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+
+    const file = event.target.files[0]; // Get the selected file
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("profile_pic", file); // Append the file to FormData
+      console.log("form data: ", formData);
+
+      try {
+        const response = await fetch("/api/profile/me/update/profile_pic", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setProfilePic(null);
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+        alert("Error uploading profile picture");
+      }
+    }
+  };
+
+  const handleButtonClick = (event) => {
+    fileInputRef.current.click();
   };
 
   return (
@@ -204,7 +188,7 @@ const Profile = () => {
           </div>
           <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
             <div className="w-fit text-gray-700 dark:text-gray-400 text-md">
-              {handleBio()}
+              <BioElement />
             </div>
             <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
               <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
@@ -246,7 +230,7 @@ const Profile = () => {
           Pokemon that I like:
         </h1>
         <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl y-6 my-6 text-white border-pink-950">
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 my-6 text-white border-pink-950">
           Pokemon that I dislike:
         </h1>
         <UserDislikedPokemon

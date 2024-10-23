@@ -44,8 +44,14 @@ const searchUsers = async (username) => {
 const registerUser = async (username, password, email) => {
   try {
     console.log('registerUser');
-    if (!username || !password || !email) {
-      throw new ValidationError('Missing required fields');
+    if (!username){
+      throw new ValidationError("Username is required");
+    }
+    if (!password){
+      throw new ValidationError("Password is required");
+    }
+    if (!email){
+      throw new ValidationError("Email is required");
     }
     const hash = await bcrypt.hash(password, saltRounds);
     const user = await userModel.registerUser(username, hash, email);
@@ -67,7 +73,10 @@ const loginUser = async (username, password ) => {
   try {
     console.log('loginUser');
     if (!username || !password) {
-      throw new ValidationError('Missing required fields');
+      throw new ValidationError('Username is required');
+    }
+    if (!password) {
+      throw new ValidationError('Password is required');
     }
     const user = await userModel.loginUser(username);
     console.log('loginUser user:', user);

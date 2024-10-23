@@ -1,5 +1,8 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../AuthContext";
+import defaultPic from "../assets/no_profile_pic.jpg"
 
 const Community = () => {
 
@@ -8,6 +11,9 @@ const Community = () => {
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredUsers, setFilteredUsers] = useState([])
+	const { isAuthenticated, user, authLoading } = useContext(AuthContext);
+    const navigate = useNavigate();
+
 	let totalPages;
 
 	if (userList.length <= usersPerPage)
@@ -31,8 +37,15 @@ const Community = () => {
 	};
 
 	useEffect(() => {
-		fetchUsers();
-	}, [])
+		if (!isAuthenticated && !authLoading)
+		{
+			navigate("/login"); // Redirect to login if not authenticated
+		}
+		else
+		{
+			fetchUsers();
+		}
+	}, [isAuthenticated, navigate, authLoading, user])
 
 	const filterUsers = (searchQuery) => {
 		setLoading(true);
@@ -53,9 +66,7 @@ const Community = () => {
 		}
 		else
 		{
-			console.log("in use effect:" ,searchQuery)
 			filterUsers(searchQuery)
-			console.log("Filtered users:", filteredUsers)
 			setUserList(filteredUsers)
 		}
 	}, [searchQuery, filteredUsers])
@@ -82,12 +93,33 @@ const Community = () => {
 		{
 			return (<h2 className="text-7xl text-center font-pokemon">Loading...</h2>)
 		}
+		if (users.length == 0)
+		{
+			return (
+				<h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>
+			)
+		}
 		return (
 			<ul className="grid grid-cols-4">
-				{currentPageUsers.map((user => (
-					<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> <img src={user.profile_pic}/> </li>
-				)))
-				}
+				{currentPageUsers.map((user => {
+					console.log(user.profile_pic)
+					if (user.profile_pic === null) {
+						return (
+							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
+								<img src={defaultPic}/>
+							</li>
+						)
+					}
+					else
+					{
+						return (
+							<li className="p-5 text-center text-3xl" key={user.name}>{user.name}<br/><br/> 
+								<img src={`data:image/jpeg;base64,${user.profile_pic}`}/>
+								
+							</li> 
+						)
+					}
+				}))}
 			</ul>
 		)
 	}

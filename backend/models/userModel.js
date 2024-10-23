@@ -61,7 +61,7 @@ const registerUser = async (username, password, email) => {
   const query = `
     INSERT INTO users (username, password, email)
     VALUES ($1, $2, $3)
-    RETURNING id, username;
+    RETURNING *;
   `;
   const result = await db.query(query, [username, password, email]);
   if (result.rows.length === 0) {
@@ -78,7 +78,7 @@ const loginUser = async (username) => {
   `;
   const result = await db.query(query, [username]);
   if (result.rows.length === 0) {
-    throw new UnauthorizedError("User not found");
+    throw new UnauthorizedError("Username not found");
   }
   return result.rows[0]; // Return the user
 }
