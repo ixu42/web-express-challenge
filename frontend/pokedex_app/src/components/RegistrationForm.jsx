@@ -23,32 +23,30 @@ const RegistrationForm = (props) => {
       password: password,
       email: email,
     };
-    fetch("/api/register", {
+    fetch("/api/user/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newUser),
-	  credentials: "include",
+      credentials: "include",
     })
       .then((response) => {
-        if (response.status === 201) {
-          return response.json();
-          //alert("Successfully registered!")
-        } else if (response.status === 400) {
-          alert("Username and password are required");
-        } else {
-          alert("Error registering user");
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.message);
+          });
         }
+        return response.json();
       })
       .then((data) => {
         if (data) {
           setIsAuthenticated(true);
           navigate("/profile");
-		  setUser(data.user);
+          setUser(data.user);
         }
       })
-      .catch((error) => alert("Error registering user"));
+      .catch((error) => alert(error.message));
   };
 
   const handlePassword = (event) => {

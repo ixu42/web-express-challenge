@@ -1,4 +1,9 @@
 const userModel = require('../models/userModel');
+const profileModel = require('../models/profileModel');
+const profileService = require('./profileService');
+const {ValidationError} = require('../errors/errorClass');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const getLikedPokemonsByUserId = async (user_id) => {
   try {
@@ -36,9 +41,63 @@ const searchUsers = async (username) => {
   }
 }
 
+const registerUser = async (username, password, email) => {
+  try {
+    console.log('registerUser');
+    if (!username){
+      throw new ValidationError("Username is required");
+    }
+    if (!password){
+      throw new ValidationError("Password is required");
+    }
+    if (!email){
+      throw new ValidationError("Email is required");
+    }
+    const hash = await bcrypt.hash(password, saltRounds);
+    const user = await userModel.registerUser(username, hash, email);
+    const newProfile = {
+      user_id: user.id,
+      name: user.username,
+      bio: ''
+    };
+    const profile = await profileService.createProfile(newProfile);
+    console.log('registerUser successfull:', profile);
+    return profile;
+  } catch (error) {
+    console.log('error registerUser:', error.message);
+    throw error;
+  }
+}
+
+const loginUser = async (username, password ) => {
+  try {
+    console.log('loginUser');
+    if (!username || !password) {
+      throw new ValidationError('Username is required');
+    }
+    if (!password) {
+      throw new ValidationError('Password is required');
+    }
+    const user = await userModel.loginUser(username);
+    console.log('loginUser user:', user);
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      throw new ValidationError('Invalid username or password');
+    }
+    const profile = await profileService.getProfileById(user.id);
+    console.log('loginUser successfull:', profile);
+    return profile;
+  } catch (error) {
+    console.log('error loginUser:', error.message);
+    throw error;
+  }
+}
+
 
 module.exports = {
   getLikedPokemonsByUserId,
   getDislikedPokemonsByUserId,
   searchUsers,
+  registerUser,
+  loginUser,
 };

@@ -8,85 +8,68 @@ import UserDislikedPokemon from "../components/UserDislikedPokemon";
 import defaultProfilePic from "../assets/no_profile_pic.jpg";
 
 const Profile = () => {
+  const [editingBio, setEditingBio] = useState(false);
+  const [bio, setBio] = useState("Loading...");
+  const [ownData, setOwnData] = useState({
+    id: 1,
+    name: "Loading...",
+    bio: "loading...",
+    profile_pic: null,
+  });
+  const [likedPokemons, setLikedPokemons] = useState({
+    user_id: -1,
+    liked_pokemons: [],
+  });
+  const [dislikedPokemons, setDislikedPokemons] = useState({
+    user_id: -1,
+    disliked_pokemons: [],
+  });
+  const { isAuthenticated, user, authLoading, setUser } =
+    useContext(AuthContext);
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
+  const [profilePic, setProfilePic] = useState(null);
 
-    const [editingBio, setEditingBio] = useState(false);
-    const [bio, setBio] = useState("Loading...")
-    const [ownData, setOwnData] = useState({id: 1, name: "Loading...", bio: "loading...", profile_pic: null});
-    const [likedPokemons, setLikedPokemons] = useState({user_id: -1, liked_pokemons: []})
-    const [dislikedPokemons, setDislikedPokemons] = useState({user_id: -1, disliked_pokemons: []})
-    const { isAuthenticated, user, loading } = useContext(AuthContext);
-    const navigate = useNavigate();
-    const fileInputRef = useRef();
+  const fetchProfile = () => {
+    fetch("/api/profile/me")
+      .then((response) => response.json())
+      .then((data) => {
+        setOwnData(data);
+        console.log("Setting user data: ", data);
+        setUser(data);
+        setProfilePic(data.profile_pic);
+      })
+      .catch((error) => alert("Error fetching user list"));
+  };
 
-    const fetchProfile = () => {
-        fetch("/api/profile/me")
+  const fetchLikedPokemon = () => {
+    if (ownData.user_id != undefined) {
+      fetch(`/api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
-        .then((data) => (setOwnData(data)))
-        //.then(fetchLikedPokemon())
-        //.then(fetchDislikedPokemon())
-        .catch((error) => alert("Error fetching user list"))
-    };
+        .then((data) => setLikedPokemons(data))
+        .catch((error) => alert("Error fetching liked pokemons' list"));
+    }
+  };
 
-    const fetchLikedPokemon = () => {
-        if (ownData.user_id != undefined)
-        {
-        fetch(`api/user/${ownData.user_id}/liked_pokemons`)
+  const fetchDislikedPokemon = () => {
+    if (ownData.user_id != undefined) {
+      fetch(`/api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
-        .then((data) => (setLikedPokemons(data)))
-        .catch((error) => alert("Error fetching liked pokemons' list"))
-        }
+        .then((data) => setDislikedPokemons(data))
+        .catch((error) => alert("Error fetching disliked pokemons' list"));
     }
+  };
 
-    const fetchDislikedPokemon = () => {
-        if (ownData.user_id != undefined)
-        {
-        fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
-        .then((response) => response.json())
-        .then((data) => (setDislikedPokemons(data)))
-        .catch((error) => alert("Error fetching disliked pokemons' list"))
-        }
+  useEffect(() => {
+    if (!isAuthenticated && !authLoading) {
+      navigate("/login"); // Redirect to login if not authenticated
+    } else if (isAuthenticated && !authLoading && !editingBio) {
+      console.log("Fetching profile");
+      fetchProfile();
+      fetchLikedPokemon();
+      fetchDislikedPokemon();
     }
-
-    useEffect(() => {
-        if (!isAuthenticated && !loading) {
-        navigate("/login"); // Redirect to login if not authenticated
-        } else {
-        fetchProfile();
-        fetchLikedPokemon();
-        fetchDislikedPokemon();
-        }
-    }, [isAuthenticated, navigate, loading, ownData.user_id]);
-
-    const updateBio = (event) => {
-        setBio(event.target.value)
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent the default form submission
-
-        const formData = new FormData();
-        const file = fileInputRef.current.files[0]; // Get the file from the input
-        if (file) {
-        formData.append("profile_pic", file); // Append the file to FormData
-
-        try {
-            const response = await fetch("/api/profile/me/update/profile_pic", {
-            method: "POST",
-            body: formData,
-            });
-
-            if (!response.ok) {
-            throw new Error("Network response was not ok");
-            }
-
-            // Handle success, e.g., update the UI or show a message
-            alert("Profile picture uploaded successfully!");
-        } catch (error) {
-            console.error("Error uploading profile picture:", error);
-            alert("Error uploading profile picture");
-        }
-        }
-    };
+  }, [isAuthenticated, navigate, authLoading, profilePic]);
 
   const BioElement = () => {
     console.log("Handling bio");
@@ -115,23 +98,21 @@ const Profile = () => {
   const RenderProfilePic = () => {
     console.log("rendering profile pic");
     if (ownData.profile_pic === null) {
-        return (
-          <img
-            src={defaultProfilePic}
-            alt="User Profile"
-            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-          />
-    )
-    }
-    else
-    {
-        return (
+      return (
         <img
-            src={defaultProfilePic}
-            alt="User Profile"
-            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+          src={defaultProfilePic}
+          alt="User Profile"
+          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
         />
-        );
+      );
+    } else {
+      return (
+        <img
+          src={`data:image/jpeg;base64,${ownData.profile_pic}`}
+          alt="User Profile"
+          className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-rose-900 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+        />
+      );
     }
   };
 
@@ -139,23 +120,54 @@ const Profile = () => {
     setEditingBio(true);
   };
 
-    const handleBioSaving = (event) => {
-        setEditingBio(false);
-        const newBio = {bio: bio}
-        fetch("api/profile/me/update/bio", {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newBio)
-        })
-        .then(fetchProfile())
-        .catch((error) => alert("Error updating bio"))
-    }
+  const updateBio = (event) => {
+    setBio(event.target.value);
+  };
 
-    const handleNewProfilePic = (event) => {
+  const handleBioSaving = (event) => {
+    setEditingBio(false);
+    const newBio = { bio: bio };
+    fetch("api/profile/me/update/bio", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newBio),
+    })
+      .then(fetchProfile())
+      .catch((error) => alert("Error updating bio"));
+  };
 
+  const handleFileChange = async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+
+    const file = event.target.files[0]; // Get the selected file
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("profile_pic", file); // Append the file to FormData
+      console.log("form data: ", formData);
+
+      try {
+        const response = await fetch("/api/profile/me/update/profile_pic", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setProfilePic(null);
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+        alert("Error uploading profile picture");
+      }
     }
+  };
+
+  const handleButtonClick = (event) => {
+    fileInputRef.current.click();
+  };
 
   return (
     <main>
@@ -174,26 +186,25 @@ const Profile = () => {
           </div>
           <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
             <div className="w-fit text-gray-700 dark:text-gray-400 text-md">
-              <BioElement/>
+              <BioElement />
             </div>
             <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
               <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                  <input
-                    className="text-white"
-                    type="file"
-                    name="profile_pic"
-                    accept=".jpg, .png, .gif"
-                    ref={fileInputRef}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
-                  >
-                    Upload new picture
-                  </button>
-                </form>
+                <input
+                  type="file"
+                  name="profile_pic"
+                  accept=".jpg, .png, .gif"
+                  ref={fileInputRef}
+                  style={{ display: "none" }} // Hide the input
+                  onChange={handleFileChange} // Handle file selection
+                />
+                <button
+                  type="button" // Set type to button to prevent default form submission
+                  onClick={handleButtonClick} // Open file dialog
+                  className="bg-rose-900 hover:bg-pink-950 text-white font-bold my-3 py-2 px-4 mb-6 rounded"
+                >
+                  Change profile picture
+                </button>
 
                 <button
                   type="button"
@@ -217,8 +228,12 @@ const Profile = () => {
           Pokemon that I like:
         </h1>
         <UserLikedPokemon likedPokemon={likedPokemons.liked_pokemons} />
-        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 my-6 text-white border-pink-950">Pokemon that I dislike:</h1>
-        <UserDislikedPokemon dislikedPokemon={dislikedPokemons.disliked_pokemons}/>
+        <h1 className="mb-10 font-bold w-full max-w-md m-auto rounded-lg opacity-90 border-8  bg-slate-800 text-center text-5xl py-6 my-6 text-white border-pink-950">
+          Pokemon that I dislike:
+        </h1>
+        <UserDislikedPokemon
+          dislikedPokemon={dislikedPokemons.disliked_pokemons}
+        />
       </section>
     </main>
   );

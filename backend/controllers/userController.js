@@ -50,10 +50,44 @@ const searchUsers = async (req, res, next) => {
   }
 }
 
+const registerUser = async (req, res, next) => {
+  try {
+    const { username, password, email } = req.body;
+    const user = await userService.registerUser(username, password, email);
+    req.session.user = { id: user.id, username: user.username };
+    res.status(201).json({ user: user, msg: "User registered" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+const loginUser = async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const user = await userService.loginUser(username, password);
+    req.session.user = { id: user.id, username: user.username };
+    res.status(200).json({ user: user, msg: "User logged in" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+const logoutUser = async (req, res, next) => {
+  try {
+    req.session.destroy();
+    res.clearCookie("connect.sid");
+    res.status(200).json({ msg: "User logged out" });
+  } catch (error) {
+    next(error);
+  }
+}
 module.exports = {
   getLikedPokemonsByUser,
   getDislikedPokemonsByUser,
   getLikedPokemonsByUserId,
   getDislikedPokemonsByUserId,
   searchUsers,
+  registerUser,
+  loginUser,
+  logoutUser,
 };
