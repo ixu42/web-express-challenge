@@ -212,11 +212,11 @@ const Pokedex = () => {
       if (searchTerm === "") {
         console.log("load more default pokemon...")
         setOffset((prevOffset) => prevOffset + limit);
-        await fetchPokemonList(offset + limit, false, sortOrder);
+        fetchPokemonList(offset + limit, false, sortOrder);
       } else {
         console.log("load more matching pokemon...")
         setOffsetForSearching((prevOffset) => prevOffset + limit);
-        await fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
+        fetchMatchingList(searchTerm, offsetForSearching + limit, sortOrder)
       }
     }
     setIsFetching(false);
