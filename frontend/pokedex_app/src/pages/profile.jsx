@@ -69,7 +69,7 @@ const Profile = () => {
       fetchLikedPokemon();
       fetchDislikedPokemon();
     }
-  }, [isAuthenticated, navigate, authLoading, profilePic, editingBio]);
+  }, [isAuthenticated, navigate, authLoading, profilePic]);
 
   const RenderProfilePic = () => {
     console.log("rendering profile pic");
@@ -100,18 +100,21 @@ const Profile = () => {
     setBio(event.target.value);
   };
 
-  const handleBioSaving = (event) => {
-    setEditingBio(false);
+  const handleBioSaving = async (event) => {
     const newBio = { bio: bio };
-    fetch("api/profile/me/update/bio", {
+    const response = await fetch("api/profile/me/update/bio", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newBio),
-    })
-      .then(fetchProfile())
-      .catch((error) => alert("Error updating bio"));
+    });
+    const data = await response.json();
+    setOwnData(oldData => {
+      const newData = {...oldData, bio: data.bio};
+      return newData
+    });
+    setEditingBio(false);
   };
 
   const handleFileChange = async (event) => {
