@@ -69,7 +69,7 @@ const Profile = () => {
       fetchLikedPokemon();
       fetchDislikedPokemon();
     }
-  }, [isAuthenticated, navigate, authLoading, profilePic]);
+  }, [isAuthenticated, navigate, authLoading, profilePic, editingBio]);
 
   const BioElement = () => {
     console.log("Handling bio");
