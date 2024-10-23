@@ -26,7 +26,7 @@ const Pokedex = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [pokemonTypes, setPokemonTypes] = useState([]); // List of Pokémon types
-  const [filteredPokemon, setFilteredPokemon] = useState([]); // Filtered Pokémon by type
+  // const [filteredPokemon, setFilteredPokemon] = useState([]); // Filtered Pokémon by type
   const [selectedType, setSelectedType] = useState(""); // Currently selected type
 
   const navigate = useNavigate();
@@ -141,7 +141,7 @@ const Pokedex = () => {
     try {
       const response = await fetch(`/api/pokemon/type/${type}`);
       const filteredPokemon = await response.json();
-      setFilteredPokemon(filteredPokemon);
+      setPokemonList(filteredPokemon);
     } catch (error) {
       console.error("Error fetching Pokémon by type:", error);
     }
@@ -153,7 +153,8 @@ const Pokedex = () => {
     if (selectedType) {
       fetchPokemonByType(selectedType);
     } else {
-      setFilteredPokemon([]);
+      // setFilteredPokemon([]);
+      fetchPokemonList(initialOffset, false, "ID-asc");
     }
   };
 
@@ -287,22 +288,6 @@ const Pokedex = () => {
           selectedType={selectedType}
           onTypeChange={handleTypeChange}
         />
-        {/* Render PokemonList and pass the filtered Pokémon */}
-        <div>
-          <h2>Filtered Pokémon</h2>
-
-          {/* Conditional rendering: Show filtered Pokémon or a message */}
-          {filteredPokemon.length > 0 ? (
-            <ul>
-              {filteredPokemon.map((poke) => (
-                <li key={poke.name}>{poke.name}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>No Pokémon found for the selected type.</p>
-          )}
-        </div>
-
         <SortOptions sortOrder={sortOrder} onSort={sortPokemon} />
         <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon} />
         {/* Pokémon List or Search Results */}
