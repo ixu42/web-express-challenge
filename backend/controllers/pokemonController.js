@@ -1,7 +1,7 @@
 const pokemonService = require("../services/pokemonService");
 const pokemonModel = require("../models/pokemonModel");
 const axios = require('axios')
-const { fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addImgUrlToPokemonDetails } = require('./pokemonControllerUtils');
+const { extractIdFromUrl, fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addImgUrlToPokemonDetails } = require('./pokemonControllerUtils');
 
 // cache for pokemon list
 let pokemonList = null;
@@ -165,15 +165,13 @@ const getPokemonByType = async (req, res) => {
       return res.status(404).json({ 'error': 'Type not provided.' })
     }
     const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
-
-  // Extract a list of Pokémon of a given type
-  // could add image key-value pair to each pokemon (check getPokemonByName)
-  const typePokemon = response.data.pokemon.map(p => ({
-    name: p.pokemon.name,
-    url: p.pokemon.url
-  }))
-
-  res.json(typePokemon)
+    const typePokemon = response.data.pokemon.map(p => ({
+      name: p.pokemon.name,
+      url: p.pokemon.url,
+      id: extractIdFromUrl(p.pokemon.url),
+    }))
+    const typedPokemonWithValidImage = await addImgUrlToPokemonDetails(typePokemon);
+    res.json(typedPokemonWithValidImage)
 
   } catch (err) {
     console.error(err)

@@ -77,9 +77,9 @@ const getValidImgUrl = async (pokemonId) => {
 }
 
 // Fetch detailed information for each Pokémon to get image
-const addImgUrlToPokemonDetails = async (paginatedPokemonList) => {
-  paginatedPokemonList = await Promise.all(
-    paginatedPokemonList.map(async (pokemon) => {
+const addImgUrlToPokemonDetails = async (pokemonList) => {
+  pokemonList = await Promise.all(
+    pokemonList.map(async (pokemon) => {
       const validImageUrl = await getValidImgUrl(pokemon.id) 
       return {
         ...pokemon,
@@ -87,10 +87,11 @@ const addImgUrlToPokemonDetails = async (paginatedPokemonList) => {
       }
     })
   )
-  return paginatedPokemonList;
+  return pokemonList;
 };
 
 module.exports = {
+  extractIdFromUrl,
   fetchAllPokemon,
   shufflePokemon,
   sortPokemon,
