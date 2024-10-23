@@ -3,10 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
 import defaultPic from "../assets/no_profile_pic.jpg"
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthContext from "../AuthContext";
-import defaultPic from "../assets/no_profile_pic.jpg"
+
 
 const Community = () => {
 
@@ -15,9 +12,6 @@ const Community = () => {
 	const [usersPerPage, setUsersPerPage] = useState(8);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredUsers, setFilteredUsers] = useState([])
-	const { isAuthenticated, user, authLoading } = useContext(AuthContext);
-    const navigate = useNavigate();
-
 	const { isAuthenticated, user, authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
 

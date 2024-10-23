@@ -24,7 +24,8 @@ const Profile = () => {
     user_id: -1,
     disliked_pokemons: [],
   });
-  const { isAuthenticated, user, authLoading, setUser } = useContext(AuthContext);
+  const { isAuthenticated, user, authLoading, setUser } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [profilePic, setProfilePic] = useState(null);
@@ -34,6 +35,7 @@ const Profile = () => {
       .then((response) => response.json())
       .then((data) => {
         setOwnData(data);
+        console.log("Setting user data: ", data);
         setUser(data);
         setProfilePic(data.profile_pic);
       })
@@ -42,21 +44,19 @@ const Profile = () => {
 
   const fetchLikedPokemon = () => {
     if (ownData.user_id != undefined) {
-      fetch(`api/user/${ownData.user_id}/liked_pokemons`)
+      fetch(`/api/user/${ownData.user_id}/liked_pokemons`)
         .then((response) => response.json())
-        .then((data) => (setLikedPokemons(data)))
-        .catch((error) => alert("Error fetching liked pokemons' list"))
-        }
+        .then((data) => setLikedPokemons(data))
+        .catch((error) => alert("Error fetching liked pokemons' list"));
     }
   };
 
   const fetchDislikedPokemon = () => {
     if (ownData.user_id != undefined) {
-      fetch(`api/user/${ownData.user_id}/disliked_pokemons`)
+      fetch(`/api/user/${ownData.user_id}/disliked_pokemons`)
         .then((response) => response.json())
-        .then((data) => (setDislikedPokemons(data)))
-        .catch((error) => alert("Error fetching disliked pokemons' list"))
-        }
+        .then((data) => setDislikedPokemons(data))
+        .catch((error) => alert("Error fetching disliked pokemons' list"));
     }
   };
 
@@ -66,12 +66,10 @@ const Profile = () => {
     } else if (isAuthenticated && !authLoading && !editingBio) {
       console.log("Fetching profile");
       fetchProfile();
-      //fetchLikedPokemon();
-      //fetchDislikedPokemon();
+      fetchLikedPokemon();
+      fetchDislikedPokemon();
     }
-  }, [isAuthenticated, navigate, authLoading,  profilePic]);
-
-
+  }, [isAuthenticated, navigate, authLoading, profilePic]);
 
   const BioElement = () => {
     console.log("Handling bio");
@@ -127,7 +125,6 @@ const Profile = () => {
   };
 
   const handleBioSaving = (event) => {
-    
     setEditingBio(false);
     const newBio = { bio: bio };
     fetch("api/profile/me/update/bio", {
@@ -140,7 +137,6 @@ const Profile = () => {
       .then(fetchProfile())
       .catch((error) => alert("Error updating bio"));
   };
-
 
   const handleFileChange = async (event) => {
     event.preventDefault(); // Prevent the default form submission
