@@ -42,6 +42,7 @@ const SearchResults = ({ matchingList, offsetForSearching, searchTerm, morePokem
                   <img src={pokemon.image} alt={pokemon.name} className="pokemon-image" />
                   <p>{pokemon.name}</p>
                   <p>ID: {pokemon.id}</p>
+                  <p className="text-gray-500">Types: {pokemon.types.join(', ')}</p>
                 </button>
               </li>
             ))}

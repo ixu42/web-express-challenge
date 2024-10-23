@@ -84,8 +84,8 @@ const getTypeDetails = async (pokemonId) => {
   return data.types.map(typeInfo => typeInfo.type.name);
 };
 
-// Fetch detailed information for each Pokémon to get image
-const addImgUrlToPokemonDetails = async (pokemonList) => {
+// Add valid image url/path and type details to pokemon list
+const addDataToPokemonList = async (pokemonList) => {
   pokemonList = await Promise.all(
     pokemonList.map(async (pokemon) => {
       const validImageUrl = await getValidImgUrl(pokemon.id)
@@ -106,5 +106,5 @@ module.exports = {
   shufflePokemon,
   sortPokemon,
   getValidImgUrl,
-  addImgUrlToPokemonDetails
+  addDataToPokemonList
 };

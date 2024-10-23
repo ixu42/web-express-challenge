@@ -1,7 +1,7 @@
 const pokemonService = require("../services/pokemonService");
 const pokemonModel = require("../models/pokemonModel");
 const axios = require('axios')
-const { extractIdFromUrl, fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addImgUrlToPokemonDetails } = require('./pokemonControllerUtils');
+const { extractIdFromUrl, fetchAllPokemon, shufflePokemon, sortPokemon, getValidImgUrl, addDataToPokemonList } = require('./pokemonControllerUtils');
 
 const likedPokemon = async (req, res, next) => {
   try {
@@ -84,7 +84,7 @@ const getPokemon = async (req, res) => {
     }
 
     const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
-    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
+    const detailedPokemonList = await addDataToPokemonList(paginatedPokemonList);
 
     res.json(detailedPokemonList)
   } catch (err) {
@@ -99,8 +99,9 @@ const getMatchingPokemon = async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
   const sort = req.query.sort // Sort order, if "", no sorting
+  const type = req.query.type
   console.log("/api/pokemon/search/:query?")
-  console.log("query:", query, "limit:", limit, "offset:", offset, "sort", sort)
+  console.log("query:", query, "limit:", limit, "offset:", offset, "sort", sort, "type:", type)
 
   try {
     if (offset === 0) {
@@ -121,10 +122,12 @@ const getMatchingPokemon = async (req, res) => {
       }
     }
 
-    const paginatedPokemonList = pokemonList.slice(offset, offset + limit);
-    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
+    let listToRespond = pokemonList.slice(offset, offset + limit);
+    if (type === "") {
+      listToRespond = await addDataToPokemonList(listToRespond);
+    }
 
-    res.json(detailedPokemonList)
+    res.json(listToRespond)
   } catch (err) {
     console.error(err)
     if (err.response) {
@@ -159,31 +162,35 @@ const getPokemonByType = async (req, res) => {
   const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
   const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
   const sort = req.query.sort // Sort order, if "", no sorting
-  console.log("/api/pokemon/type/:type?, type:", type, "limit:", limit, "offset:", offset, "sort:", sort);
+  const searchTerm = req.query.searchTerm
+  console.log("/api/pokemon/type/:type?, type:", type, "limit:", limit, "offset:", offset, "sort:", sort, "searchTerm:", searchTerm);
   try {
     if (offset === 0) {
       if (!type || type.trim() === "") {
         return res.status(404).json({ 'error': 'Type not provided.' })
       }
       const response = await axios.get(`https://pokeapi.co/api/v2/type/${type}`)
-      const typePokemon = response.data.pokemon.map(p => ({
+      pokemonList = response.data.pokemon.map(p => ({
         name: p.pokemon.name,
         url: p.pokemon.url,
         id: extractIdFromUrl(p.pokemon.url),
       }))
 
-      if (sort !== "") {
-        pokemonList = sortPokemon(typePokemon, sort);
+      if (searchTerm && searchTerm.trim() !== "") {
+        pokemonList = pokemonList.filter(pokemon => pokemon.name.includes(searchTerm.toLowerCase()))
+        if (pokemonList.length === 0) {
+          return res.json([])
+        }
       }
 
-      pokemonList = await addImgUrlToPokemonDetails(pokemonList);
+      if (sort !== "") {
+        pokemonList = sortPokemon(pokemonList, sort);
+      }
     }
 
     const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
-    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
-    
-    // const typedPokemonWithValidImage = await addImgUrlToPokemonDetails(typePokemon);
-    // res.json(typedPokemonWithValidImage)
+    const detailedPokemonList = await addDataToPokemonList(paginatedPokemonList);
+
     res.json(detailedPokemonList)
 
   } catch (err) {
