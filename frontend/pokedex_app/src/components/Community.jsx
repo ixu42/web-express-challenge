@@ -77,16 +77,7 @@ const Community = () => {
 
     const currentPageUsers = users.slice(shownUsersStart, shownUsersEnd);
 
-    if (loading === true) {
-      return <h2 className="text-7xl text-center font-pokemon">Loading...</h2>;
-    }
-    if (users.length == 0) {
-      return (
-        <h2 className="text-5xl m-10 p-10 text-center font-pokemon">
-          No matches found
-        </h2>
-      );
-    }
+    console.log("Current page users:", currentPageUsers)
     return (
       <ul className="grid grid-cols-4">
         {currentPageUsers.map((user) => {
@@ -160,12 +151,17 @@ const Community = () => {
           </form>
         </div>
         <div className="">
-          <UsersOverview
+          { (loading) && <h2 className="text-7xl text-center font-pokemon">Loading...</h2>  }
+          { (userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
+          {
+            (userList.length > 0) && 
+            <UsersOverview
             loading={loading}
             users={userList}
             usersPerPage={usersPerPage}
             currentPage={currentPage}
           />
+          }
         </div>
         <Pagination
           currentPage={currentPage}
