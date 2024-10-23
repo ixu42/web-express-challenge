@@ -79,11 +79,11 @@ const Community = () => {
 
     console.log("Current page users:", currentPageUsers)
     return (
-      <ul className="grid grid-cols-4">
+      <ul className="m-80 grid grid-cols-4 gap-40">
         {currentPageUsers.map((user) => {
 
           return (
-            <li className="flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
+            <li className="max-w-64 max-h-64 flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
               <a href={"/users/" + user.name}>
                 {user.name}
                 <br />
