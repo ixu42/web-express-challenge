@@ -47,7 +47,7 @@ const LoginForm = (props) => {
           navigate("/profile"); // Redirect to profile page
         }
       })
-      .catch((error) => alert());
+      .catch((error) => alert(error.message));
   };
 
   const handlePassword = (event) => {
