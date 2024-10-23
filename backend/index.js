@@ -43,9 +43,11 @@ app.post('/api/login', loginUser)
 app.post('/api/logout', logoutUser)
 
 // Check if the user is logged in
-app.get('/api/auth/check', (req, res) => {
+app.get('/api/auth/check', async (req, res) => {
   if (req.session.user) {
-    const user = profileService.getProfileById(req.session.user.id);
+    console.log("User is logged in");
+    const user = await profileService.getProfileById(req.session.user.id);
+    console.log("User:", user);
     res.json({ loggedIn: true, user: user });
   } else {
     res.json({ loggedIn: false });
