@@ -61,6 +61,40 @@ const undislikePokemon = async (req, res, next) => {
   }
 };
 
+/* FETCH FROM EXTERNAL API */
+
+// Fetch a list of Pokemon
+const getPokemon = async (req, res) => {
+  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
+  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
+  const sort = req.query.sort // Sort order, if "", no sorting
+  const shuffle = req.query.shuffle === 'true'; // Check if shuffle is requested
+  console.log("/api/pokemon, limit:", limit, "offset:", offset, "sortorder:", sort, "shuffle:", shuffle)
+  
+  try {
+    if (offset === 0) {
+      pokemonList = await fetchAllPokemon();
+
+      // If shuffle is requested or there's no cached shuffled list, reshuffle
+      if (shuffle) {
+        pokemonList = shufflePokemon(pokemonList);
+      }
+
+      // Sort the Pokémon list based on the sort parameter
+      if (sort !== "") {
+        pokemonList = sortPokemon(pokemonList, sort);
+      }
+    }
+
+    const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
+    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
+
+    res.json(detailedPokemonList)
+  } catch (err) {
+    console.error('Error in fetching Pokémon:', err.message);
+    res.status(500).json({ 'error': 'Error fetching Pokémon data' })
+  }
+}
 
 // Fetch a list of Pokémon based on a substring match
 const getMatchingPokemon = async (req, res) => {
@@ -102,6 +136,22 @@ const getMatchingPokemon = async (req, res) => {
     } else {
       // Something happened in setting up the request that triggered an error
       res.status(500).json({ 'error': 'There was an error fetching the Pokémon data.' })
+    }
+  }
+}
+
+// Fetch all Pokémon types
+const getPokemonTypes = async (req, res) => {
+  console.log("/api/pokemon/type/")
+  try {
+    const response = await axios.get(`https://pokeapi.co/api/v2/type/`)
+    res.json(response.data.results)
+  } catch (err) {
+    console.error(err)
+    if (err.response) {
+      res.status(err.response.status).json({ 'error': 'Pokémon types not found.' })
+    } else {
+      res.status(500).json({ 'error': 'There was an error fetching the Pokémon types.'})
     }
   }
 }
@@ -161,47 +211,14 @@ const getPokemonByName = async (req, res) => {
   }
 }
 
-// Fetch a list of Pokemon
-const getPokemon = async (req, res) => {
-  const limit = parseInt(req.query.limit) || 20  // Number of Pokémon per page
-  const offset = parseInt(req.query.offset) || 0 // How many Pokémon to skip
-  const sort = req.query.sort // Sort order, if "", no sorting
-  const shuffle = req.query.shuffle === 'true'; // Check if shuffle is requested
-  console.log("/api/pokemon, limit:", limit, "offset:", offset, "sortorder:", sort, "shuffle:", shuffle)
-  
-  try {
-    if (offset === 0) {
-      pokemonList = await fetchAllPokemon();
-
-      // If shuffle is requested or there's no cached shuffled list, reshuffle
-      if (shuffle) {
-        pokemonList = shufflePokemon(pokemonList);
-      }
-
-      // Sort the Pokémon list based on the sort parameter
-      if (sort !== "") {
-        pokemonList = sortPokemon(pokemonList, sort);
-      }
-    }
-
-    const paginatedPokemonList = pokemonList.slice(offset, offset + limit); 
-    const detailedPokemonList = await addImgUrlToPokemonDetails(paginatedPokemonList);
-
-    res.json(detailedPokemonList)
-  } catch (err) {
-    console.error('Error in fetching Pokémon:', err.message);
-    res.status(500).json({ 'error': 'Error fetching Pokémon data' })
-  }
-}
-
-
 module.exports = {
   likedPokemon,
   unlikePokemon,
   dislikedPokemon,
   undislikePokemon,
   getMatchingPokemon,
-  getPokemonByType,
   getPokemon,
+  getPokemonTypes,
+  getPokemonByType,
   getPokemonByName
 };

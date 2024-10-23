@@ -129,9 +129,9 @@ const Pokedex = () => {
 
   const fetchPokemonTypes = async () => {
     try {
-      const response = await fetch("https://pokeapi.co/api/v2/type/"); // replace this later
-      const data = await response.json();
-      setPokemonTypes(data.results);
+      const response = await fetch("/api/pokemon/type/");
+      const types = await response.json();
+      setPokemonTypes(types);
     } catch (error) {
       console.error("Error fetching Pokémon types:", error);
     }
@@ -139,9 +139,9 @@ const Pokedex = () => {
 
   const fetchPokemonByType = async (type) => {
     try {
-      const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
-      const data = await response.json();
-      setFilteredPokemon(data.pokemon.map(p => p.pokemon)); // Save filtered Pokémon
+      const response = await fetch(`/api/pokemon/type/${type}`);
+      const filteredPokemon = await response.json();
+      setFilteredPokemon(filteredPokemon);
     } catch (error) {
       console.error("Error fetching Pokémon by type:", error);
     }
