@@ -24,4 +24,10 @@ class ServerError extends AppError {
   }
 }
 
-module.exports = { AppError, NotFoundError, ValidationError, ServerError };
+class UnauthorizedError extends AppError {
+  constructor(message = "Unauthorized") {
+    super(message, 401);
+  }
+}
+
+module.exports = { AppError, NotFoundError, ValidationError, ServerError, UnauthorizedError };

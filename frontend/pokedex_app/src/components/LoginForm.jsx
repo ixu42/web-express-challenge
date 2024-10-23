@@ -23,7 +23,7 @@ const LoginForm = (props) => {
       username: username,
       password: password,
     };
-    fetch("/api/login", {
+    fetch("/api/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,26 +32,22 @@ const LoginForm = (props) => {
       credentials: "include",
     })
       .then((response) => {
-        if (response.status === 400) {
-          alert("Both username and password are required");
-        } else if (response.status === 401) {
-          alert("Invalid username or password");
-        } else if (response.status === 500) {
-          alert("Error logging in");
-        } else {
-          //alert("Logged in successfully!");
-          return response.json();
+        if (!response.ok) {
+          return response.json().then((error) => {
+            throw new Error(error.message);
+          });
         }
+        return response.json();
       })
       .then((data) => {
         if (data) {
-			console.log("User login data:", data);
+          console.log("User login data:", data);
           setIsAuthenticated(true); // Set authenticated state to true
           setUser(data.user); // Set user state to the response
           navigate("/profile"); // Redirect to profile page
         }
       })
-      .catch((error) => alert("Error registering user"));
+      .catch((error) => alert());
   };
 
   const handlePassword = (event) => {

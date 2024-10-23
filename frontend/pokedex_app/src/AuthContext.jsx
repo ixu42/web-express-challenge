@@ -9,8 +9,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null); // To hold user details
-  const [loading, setLoading] = useState(true); // New loading state
-  const navigate = useNavigate(); 
+  const [authLoading, setLoading] = useState(true); // New loading state
+ // const navigate = useNavigate(); 
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -50,9 +50,9 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, logout, user, setUser, loading }}
+      value={{ isAuthenticated, setIsAuthenticated, logout, user, setUser, authLoading }}
     >
-      {loading && <HolyLoader />} {/* Render the loader when loading */}
+      {authLoading && <HolyLoader />} {/* Render the loader when loading */}
       {children}
     </AuthContext.Provider>
   );

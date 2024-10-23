@@ -1,5 +1,5 @@
 const db = require("../database/db");
-const { NotFoundError, ValidationError } = require("../errors/errorClass");
+const { NotFoundError, UnauthorizedError } = require("../errors/errorClass");
 
 const getLikedPokemonsByUserId = async (userId) => {
   const query = `
@@ -18,9 +18,9 @@ const getLikedPokemonsByUserId = async (userId) => {
       u.id;
   `;
   const result = await db.query(query, [userId]);
-/*   if (result.rows.length === 0) {
-    throw new NotFoundError("User not found");
-  } */
+  if (result.rows.length === 0) {
+    return [];
+  }
   return result.rows[0]; // Return the array of liked Pokémon
 };
 
@@ -41,9 +41,9 @@ const getDislikedPokemonsByUserId = async (userId) => {
       u.id;
   `;
   const result = await db.query(query, [userId]);
-  /* if (result.rows.length === 0) {
-    throw new NotFoundError("User not found");
-  } */
+  if (result.rows.length === 0) {
+    return [];
+  }
   return result.rows[0]; // Return the array of disliked Pokémon
 }
 
@@ -54,11 +54,39 @@ const searchUsers = async (query) => {
     WHERE username ILIKE $1;
   `;
   const result = await db.query(searchQuery, [`%${query}%`]);
-  return result.rows; // Return the array of users
+  return result.rows[0]; // Return the array of users
+}
+
+const registerUser = async (username, password, email) => {
+  const query = `
+    INSERT INTO users (username, password, email)
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `;
+  const result = await db.query(query, [username, password, email]);
+  if (result.rows.length === 0) {
+    throw new UnauthorizedError("User not found");
+  }
+  return result.rows[0]; // Return the user
+};
+
+const loginUser = async (username) => {
+  const query = `
+    SELECT *
+    FROM users
+    WHERE username = $1;
+  `;
+  const result = await db.query(query, [username]);
+  if (result.rows.length === 0) {
+    throw new UnauthorizedError("Username not found");
+  }
+  return result.rows[0]; // Return the user
 }
 
 module.exports = {
   getLikedPokemonsByUserId,
   getDislikedPokemonsByUserId,
   searchUsers,
+  registerUser,
+  loginUser
 };

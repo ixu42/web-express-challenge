@@ -5,6 +5,7 @@ const pokemonRoutes = require("./routes/pokemonRoutes");
 const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const { handleError } = require("./middlewares/errorMiddleware");
+const profileService = require("./services/profileService");
 
 const port = 3000
 const app = express()
@@ -44,7 +45,8 @@ app.post('/api/logout', logoutUser)
 // Check if the user is logged in
 app.get('/api/auth/check', (req, res) => {
   if (req.session.user) {
-    res.json({ loggedIn: true, user: req.session.user });
+    const user = profileService.getProfileById(req.session.user.id);
+    res.json({ loggedIn: true, user: user });
   } else {
     res.json({ loggedIn: false });
   }
