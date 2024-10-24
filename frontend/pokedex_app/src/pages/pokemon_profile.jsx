@@ -23,7 +23,9 @@ const PokemonProfile = () => {
   const morePokemon = location.state?.morePokemon;
   const selectedType = location.state?.selectedType;
   const sortOrder = location.state?.sortOrder;
-  // console.log("pokemon profile page | location.state", location.state);
+  const scrollPosition = location.state?.scrollPosition || 0;
+  // const { displayedList = [], offset = 0, searchTerm = "", morePokemon = true, selectedType = "", sortOrder = "ID-asc" } = location.state || null;
+  console.log("pokemon profile page | location.state", location.state);
 
 
   const fetchLikedPokemon = () => {
@@ -81,7 +83,7 @@ const PokemonProfile = () => {
         morePokemon: morePokemon,
         selectedType: selectedType,
         sortOrder: sortOrder,
-        scrollPosition: location.state.scrollPosition,
+        scrollPosition: scrollPosition,
       },
     });
   };
