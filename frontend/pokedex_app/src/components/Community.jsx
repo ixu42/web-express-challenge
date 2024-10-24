@@ -2,14 +2,12 @@ import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
-import defaultPic from "../assets/no_profile_pic.jpg";
 
 const Community = () => {
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [usersPerPage, setUsersPerPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [currentPageUsersState, setCurrentPageUsersState] = useState([]);
   const { isAuthenticated, user, authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ const Community = () => {
       const data = await response.json()
       console.log("Fetched users: ", data)
       setUserList(data)
-      recalculateCurrentPageUsers()
+      recalculateCurrentPageUsers(data)
       setLoading(false)
     }
     catch (error)
@@ -44,9 +42,7 @@ const Community = () => {
   useEffect(() => {
     if (!isAuthenticated && !authLoading) {
       navigate("/login"); // Redirect to login if not authenticated
-    } /* else {
-      fetchUsers();
-    } */
+    }
   }, [isAuthenticated, navigate, authLoading, user]);
 
   const filterUsers = async () => {
@@ -61,10 +57,8 @@ const Community = () => {
       )
       const data = await response.json()
       console.log("Filtering's response:", data)
-      setFilteredUsers(data)
-      setUserList(filteredUsers)
-      recalculateCurrentPageUsers()
-      console.log("Query:", searchQuery, "Filtered users: ", filteredUsers)
+      setUserList(data)
+      recalculateCurrentPageUsers(data)
       setLoading(false)
     }
     catch
@@ -80,11 +74,10 @@ const Community = () => {
     } else {
       console.log("Use effect - filtering...")
       filterUsers(searchQuery);
-      //setUserList(filteredUsers);
     }
-  }, []);
+  }, [searchQuery]);
 
-  const recalculateCurrentPageUsers = () => {
+  const recalculateCurrentPageUsers = (userArray) => {
     let shownUsersStart;
 
     if (currentPage == 1) {
@@ -95,51 +88,12 @@ const Community = () => {
 
     let shownUsersEnd = currentPage * usersPerPage;
 
-    const currentPageUsers = userList.slice(shownUsersStart, shownUsersEnd);
+    console.log(userList)
+
+    const currentPageUsers = userArray.slice(shownUsersStart, shownUsersEnd);
     setCurrentPageUsersState(currentPageUsers)
 
   }
-
-  /* const UsersOverview = (props) => {
-
-    console.log("Users in UsersOverview", userList)
-    
-
-    const users = props.users
-    const currentPageNum = props.currentPageNum
-    const usersPerOnePage = props.usersPerOnePage
-
-    let shownUsersStart;
-
-    if (currentPageNum == 1) {
-      shownUsersStart = 0;
-    } else {
-      shownUsersStart = (currentPageNum - 1) * usersPerOnePage;
-    }
-
-    let shownUsersEnd = currentPageNum * usersPerOnePage;
-
-    const currentPageUsers = users.slice(shownUsersStart, shownUsersEnd);
-
-    console.log("Current page users:", currentPageUsers)
-    return (
-      <ul className="m-80 grid grid-cols-4 gap-40">
-        {currentPageUsers.map((user) => {
-
-          return (
-            <li className="max-w-64 max-h-64 flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
-              <a href={"/users/" + user.name}>
-                {user.name}
-                <br />
-                <br />
-                <img className="" src={`data:image/jpeg;base64,${user.profile_pic}`} />
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  }; */
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
@@ -196,7 +150,7 @@ const Community = () => {
           </form>
         </div>
         <div className="">
-          { (loading) && <h2 className="text-7xl text-center font-pokemon m-10">Loading...</h2>  }
+          { (loading) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">Loading...</h2>  }
           { (userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
           {
             (userList.length > 0) && 
