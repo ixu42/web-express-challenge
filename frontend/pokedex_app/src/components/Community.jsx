@@ -2,14 +2,14 @@ import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
-import defaultPic from "../assets/no_profile_pic.jpg";
+import HolyLoader from "holy-loader";
 
 const Community = () => {
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [usersPerPage, setUsersPerPage] = useState(8);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [currentPageUsersState, setCurrentPageUsersState] = useState([]);
   const { isAuthenticated, user, authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -24,47 +24,57 @@ const Community = () => {
   const [currentPage, setCurrentPage] = useState(totalPages);
 
   const fetchUsers = async () => {
-    setLoading(true);
-    fetch("/api/profile")
-      .then((response) => response.json())
-      .then((data) => setUserList(data))
-      .then(setLoading(false))
-      .catch((error) => console.error("Error fetching user list"));
+    try
+    {
+      setLoading(true);
+      const response = await fetch("/api/profile")
+      const data = await response.json()
+      setLoading(false)
+      setUserList(data)
+      recalculateCurrentPageUsers(data)
+    }
+    catch (error)
+    {
+      console.error("Error fetching user list");
+    }
   };
 
   useEffect(() => {
     if (!isAuthenticated && !authLoading) {
       navigate("/login"); // Redirect to login if not authenticated
-    } else {
-      fetchUsers();
     }
   }, [isAuthenticated, navigate, authLoading, user]);
 
-  const filterUsers = (searchQuery) => {
-    setLoading(true);
-    fetch(
-      "/api/profile/search?" +
-        new URLSearchParams({
-          name: searchQuery,
-        })
-    )
-      .then((response) => response.json())
-      .then((data) => setFilteredUsers(data))
-      .then(setLoading(false))
-      .then(setUserList(filteredUsers))
-      .catch((error) => console.error("Error searching for users"));
-  };
+  const filterUsers = async () => {
+    try
+    {
+      setLoading(true);
+      const response = await fetch(
+        "/api/profile/search?" +
+          new URLSearchParams({
+            name: searchQuery,
+          })
+      )
+      const data = await response.json()
+      setLoading(false)
+      setUserList(data)
+      recalculateCurrentPageUsers(data)
+    }
+    catch
+    {
+      console.error("Error filtering users")
+    }
+  }
 
   useEffect(() => {
     if (searchQuery.length == 0) {
       fetchUsers();
     } else {
       filterUsers(searchQuery);
-      setUserList(filteredUsers);
     }
-  }, [searchQuery, filteredUsers]);
+  }, [searchQuery]);
 
-  const UsersOverview = ({ users, usersPerPage, currentPage }) => {
+  const recalculateCurrentPageUsers = (userArray) => {
     let shownUsersStart;
 
     if (currentPage == 1) {
@@ -75,30 +85,13 @@ const Community = () => {
 
     let shownUsersEnd = currentPage * usersPerPage;
 
-    const currentPageUsers = users.slice(shownUsersStart, shownUsersEnd);
+    const currentPageUsers = userArray.slice(shownUsersStart, shownUsersEnd);
+    setCurrentPageUsersState(currentPageUsers)
 
-    console.log("Current page users:", currentPageUsers)
-    return (
-      <ul className="m-80 grid grid-cols-4 gap-40">
-        {currentPageUsers.map((user) => {
-
-          return (
-            <li className="max-w-64 max-h-64 flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
-              <a href={"/users/" + user.name}>
-                {user.name}
-                <br />
-                <br />
-                <img className="" src={`data:image/jpeg;base64,${user.profile_pic}`} />
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    );
-  };
+  }
 
   const handleSearch = (event) => {
-    setSearchQuery(event);
+    setSearchQuery(event.target.value);
   };
 
   const Pagination = ({ usersPerPage, length, currentPage }) => {
@@ -141,33 +134,47 @@ const Community = () => {
           <h2 className="mx-4 font-mono text-rose-950">
             Search users by name:{" "}
           </h2>
-          <form>
+          <form >
             <input
+              name="searchField"
               value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
+              onChange={handleSearch}
               className="bg-rose-200 content-center"
               type="text"
             />
           </form>
         </div>
         <div className="">
-          { (loading) && <h2 className="text-7xl text-center font-pokemon">Loading...</h2>  }
-          { (userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
+          { (loading) && <HolyLoader/>  }
+          { (!loading && userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
           {
-            (userList.length > 0) && 
-            <UsersOverview
-            loading={loading}
-            users={userList}
-            usersPerPage={usersPerPage}
-            currentPage={currentPage}
-          />
+            (!loading && userList.length > 0) && 
+            (
+              <ul className="m-80 grid grid-cols-4 gap-40">
+                {currentPageUsersState.map((user) => {
+
+                  return (
+                    <li className="max-w-64 max-h-64 flex justify-center items-center p-5 text-center text-3xl" key={user.name}>
+                      <a href={"/users/" + user.name}>
+                        {user.name}
+                        <br />
+                        <br />
+                        <img className="" src={`data:image/jpeg;base64,${user.profile_pic}`} />
+                      </a>
+                    </li>
+                  );
+                  })}
+                </ul>
+            )
           }
         </div>
-        <Pagination
-          currentPage={currentPage}
-          length={userList.length}
-          usersPerPage={usersPerPage}
-        />
+        {(!loading) && 
+          <Pagination
+            currentPage={currentPage}
+            length={userList.length}
+            usersPerPage={usersPerPage}
+          />
+        }
       </section>
     </main>
   );

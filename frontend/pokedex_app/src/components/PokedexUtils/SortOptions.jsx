@@ -1,7 +1,7 @@
 import React from "react";
 
 const SortOptions = ({ sortOrder, onSort }) => (
-  <div className="w-full md:w-1/3 flex items-center justify-end">
+  <div>
     <label className="text-lg font-semibold mr-2 text-gray-700">Sort by:</label>
     <select
       id="sortOrder"
@@ -13,6 +13,8 @@ const SortOptions = ({ sortOrder, onSort }) => (
       <option value="ID-desc">ID (Descending)</option>
       <option value="A-Z">A-Z</option>
       <option value="Z-A">Z-A</option>
+      <option value="likes">Likes</option>
+      <option value="dislikes">Dislikes</option>
     </select>
   </div>
 );

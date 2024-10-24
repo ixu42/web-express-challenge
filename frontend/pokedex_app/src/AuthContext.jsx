@@ -15,16 +15,16 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        console.log("Checking login status...");
+        //console.log("Checking login status...");
         const response = await fetch("/api/auth/check", {
           method: "GET",
           credentials: "include",
         });
-        console.log("response:", response);
+        //console.log("response:", response);
         const data = await response.json();
         if (data.loggedIn) {
           setIsAuthenticated(true);
-          console.log("data.user:", data.user);
+          //console.log("data.user:", data.user);
           setUser(data.user);
         } else {
           setIsAuthenticated(false);
@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setLoading(true);
-    await fetch("/api/logout", { method: "POST", credentials: "include" });
+    await fetch("/api/user/logout", { method: "POST", credentials: "include" });
     setIsAuthenticated(false);
     setUser(null);
     setLoading(false);

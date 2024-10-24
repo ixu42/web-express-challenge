@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+/* const bcrypt = require("bcrypt");
 const { Pool } = require("pg");
 const saltRounds = 10;
 const { createProfile } = require("./services/profileService");
@@ -109,3 +109,4 @@ const logoutUser = (req, res) => {
 };
 
 module.exports = { registerUser, loginUser, logoutUser, isAuthenticated };
+ */
