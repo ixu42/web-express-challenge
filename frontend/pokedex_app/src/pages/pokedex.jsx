@@ -172,16 +172,17 @@ const Pokedex = () => {
 
     const initialOffset = location.state?.offset || 0; // Default to 0 if offset doesn't exist
     setOffset(initialOffset); // Set the offset for pagination
+    const restoredList = location.state?.displayedList;
 
     // Check if navigating back from the profile page
-    if (location.state?.from === 'profile') {
+    if (location.state?.from === 'profile' && restoredList.length) {
       console.log("Navigating back from profile page");
       setSelectedType(location.state.selectedType);
       setSortOrder(location.state.sortOrder);
       if (!location.state.searchTerm) {
-        setDisplayedList(location.state.displayedList); // Use the passed Pokemon list
+        setDisplayedList(restoredList); // Use the passed Pokemon list
       } else {
-        setDisplayedList(location.state.displayedList);
+        setDisplayedList(restoredList);
         setSearchTerm(location.state.searchTerm);
         setMorePokemon(location.state.morePokemon);
       }
