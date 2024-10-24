@@ -229,13 +229,15 @@ const Pokedex = () => {
       </header>
       <main>
         <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
-        <TypeFilter
-          types={pokemonTypes}
-          selectedType={selectedType}
-          onTypeChange={handleTypeChange}
-        />
-        <SortOptions sortOrder={sortOrder} onSort={sortPokemon} />
-        <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon} />
+        <div className="flex flex-col md:flex-row items-center gap-2">
+          <TypeFilter
+            types={pokemonTypes}
+            selectedType={selectedType}
+            onTypeChange={handleTypeChange}
+          />
+          <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon}/>
+          <SortOptions sortOrder={sortOrder} onSort={sortPokemon} />
+        </div>
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
           <PokemonList {...pokemonListProps} />
