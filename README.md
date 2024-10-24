@@ -47,7 +47,7 @@ To run the Pokédex App locally, follow these steps:
 
 3. **Set up the backend**:
    ```bash
-	cd ../backend
+	cd backend
 	npm install
 	npm run dev
 	```
@@ -56,7 +56,8 @@ To run the Pokédex App locally, follow these steps:
 	Ensure you have Docker installed and running; \
 	Run the PostgreSQL container;
    ```bash
-   docker-compose up -d
+   cd backend/database
+   docker compose up
    ```
 
 5. Open your browser and navigate to http://localhost:5173 to see the app in action!
