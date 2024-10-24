@@ -125,8 +125,15 @@ const getMatchingPokemon = async (req, res) => {
       }
 
       // Sort the list, if requested
-      if (sort !== "") {
+      // if (sort !== "") {
+      //   pokemonList = sortPokemon(pokemonList, sort);
+      // }
+      if (sort !== "" && sort !== "likes" && sort !== "dislikes") {
         pokemonList = sortPokemon(pokemonList, sort);
+      } else if (sort === "likes") {
+        pokemonList = await pokemonService.sortByLikes();
+      } else if (sort === "dislikes") {
+        pokemonList = await pokemonService.sortByDislikes();
       }
     }
 
@@ -191,8 +198,15 @@ const getPokemonByType = async (req, res) => {
         }
       }
 
-      if (sort !== "") {
+      // if (sort !== "") {
+      //   pokemonList = sortPokemon(pokemonList, sort);
+      // }
+      if (sort !== "" && sort !== "likes" && sort !== "dislikes") {
         pokemonList = sortPokemon(pokemonList, sort);
+      } else if (sort === "likes") {
+        pokemonList = await pokemonService.sortByLikes();
+      } else if (sort === "dislikes") {
+        pokemonList = await pokemonService.sortByDislikes();
       }
     }
 

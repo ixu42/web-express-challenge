@@ -112,7 +112,7 @@ const Pokedex = () => {
     }, 300); // 300ms delay before performing the search
   };
 
-  const handleTypeChange = async (selectedType) => {
+  const handleTypeChange = async () => {
     console.log("handleTypeChange() called, selectedType:", selectedType)
     setSelectedType(selectedType);
     setOffset(0);
