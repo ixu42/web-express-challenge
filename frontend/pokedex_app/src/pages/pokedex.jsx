@@ -228,7 +228,6 @@ const Pokedex = () => {
       <header>
         <img alt="pokemon logo" className="logo" src={logo} />
       </header>
-      <main>
         <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 px-20 mb-6">
           <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon}/>
@@ -249,7 +248,6 @@ const Pokedex = () => {
           <SearchResults {...searchResultsProps} />
         )}
         {morePokemon && !isFetching && !isTyping && (<LoadMoreButton isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
-      </main>
     </div>
   );
 };

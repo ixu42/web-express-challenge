@@ -82,7 +82,6 @@ const ViewOnlyProfile = () => {
   };
 
   return (
-    <main>
       <section className="w-full overflow-hidden dark:bg-gray-900">
         <div className="flex flex-col">
           <img
@@ -113,7 +112,6 @@ const ViewOnlyProfile = () => {
           dislikedPokemon={dislikedPokemons.disliked_pokemons}
         />
       </section>
-    </main>
   );
 };
 
