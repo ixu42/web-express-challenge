@@ -2,7 +2,7 @@ import React from "react";
 import { RefreshCw } from 'lucide-react';
 
 const ShuffleButton = ({ isShuffling, onShuffle }) => (
-  <div className="w-full md:w-1/3 flex justify-center">
+  <div>
     <button
       onClick={onShuffle}
       disabled={isShuffling}

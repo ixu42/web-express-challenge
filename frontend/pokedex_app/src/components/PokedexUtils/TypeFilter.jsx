@@ -2,7 +2,7 @@ import React from "react";
 
 const TypeFilter = ({ types, selectedType, onTypeChange }) => {
   return (
-    <div className="w-full md:w-1/3 flex items-center whitespace-nowrap">
+    <div>
       <label className="text-lg font-semibold mr-2 text-gray-700">Filter by:</label>
       {/* Dropdown for type selection */}
       <select 
