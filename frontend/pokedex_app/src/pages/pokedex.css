@@ -72,6 +72,7 @@
     justify-content: center;
     width: 40%;
     max-width: 450px;
+	min-width: 350px; /* Prevent the card from shrinking below this size */
     margin: 20px auto;
     padding: 20px;
     color: #000;

@@ -89,11 +89,36 @@ const PokemonProfile = () => {
   };
 
   if (loading) return (
-  <div  className="flex justify-center items-center h-screen">
+  <div className="flex justify-center items-center h-screen">
     <p className="text-center text-2xl text-gray-600">Loading Pokémon data... 🐾</p>
   </div>);
 
-  if (error) return <div>{error}</div>;
+
+if (error) return (
+  <div className="flex flex-col items-center justify-center">
+    <img
+      src="/img/pikachu_detective.png"
+      alt="Pikachu Detective"
+      className="w-80 h-80 mb-3"
+    />
+    <h1 className="text-5xl text-gray-600 leading-tight text-center mb-6">
+    Oops! Pokémon Not Found🔍
+    </h1>
+    <p className="text-2xl text-gray-600 leading-8 text-center">
+    Please try another keyword. <br />
+    </p>
+  </div>
+);
+  // if (error) return (
+  //   <div className="flex justify-center items-center h-screen">
+  //     <img
+  //         src="../../img/pikachu_detective.png"
+  //         alt="Pikachu Detective"
+  //         className="mb-4 w-24 h-24" // Adjust size as needed
+  //       />
+  //     <h2 className="text-center text-2xl text-gray-600">Oops! Pokémon Not Found🔍</h2>
+  //     <h2 className="text-center text-2xl text-gray-600">Please try another keyword</h2>
+  //   </div>);
 
   const handleLike = async () => {
     {
@@ -214,7 +239,7 @@ const PokemonProfile = () => {
 
 const PokemonInfo = ({ pokemonInfo }) => (
   <div className="pokemon-details">
-    <h1 className="font-pokemon text-[#E03C31] text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
+    <h1 className="font-pokemon text-[#E03C31] text-center text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
     <img src={pokemonInfo.image} alt={`${pokemonInfo.name} sprite`} style={{ width: '150px', height: '150px' }} />
 
     <div className="info-section grid grid-cols-2 gap-4">
