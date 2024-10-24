@@ -72,7 +72,7 @@ const Community = () => {
     } else {
       filterUsers(searchQuery);
     }
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
 
   const recalculateCurrentPageUsers = (userArray) => {
     let shownUsersStart;
@@ -125,7 +125,6 @@ const Community = () => {
   };
 
   return (
-    <main>
       <section>
         <h1 className="text-rose-900 font-pokemon text-center text-7xl my-10">
           Our community
@@ -148,9 +147,9 @@ const Community = () => {
           { (loading) && <HolyLoader/>  }
           { (!loading && userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
           {
-            (!loading && userList.length > 0) && 
+            (!loading && userList.length > 0) &&
             (
-              <ul className="m-80 grid grid-cols-4 gap-40">
+              <ul className="m-20 grid grid-cols-4 gap-40">
                 {currentPageUsersState.map((user) => {
 
                   return (
@@ -168,7 +167,7 @@ const Community = () => {
             )
           }
         </div>
-        {(!loading) && 
+        {(!loading) &&
           <Pagination
             currentPage={currentPage}
             length={userList.length}
@@ -176,7 +175,6 @@ const Community = () => {
           />
         }
       </section>
-    </main>
   );
 };
 

@@ -6,7 +6,7 @@ const SearchBar = React.memo(({ onSearch, lastSubmittedTerm }) => {
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      // Only call onSearch if the current inputValue is different from the lastSubmittedTerm
+      // Only call onSearch if the current inputValue is not empty and is different from the lastSubmittedTerm
       if (inputValue && inputValue !== lastSubmittedTerm) {
         onSearch(inputValue);
       }
