@@ -6,8 +6,8 @@ const Navbar = () => {
   const { isAuthenticated, logout, user } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  console.log(isAuthenticated);
-  console.log(user);
+  //console.log(isAuthenticated);
+  //console.log(user);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };

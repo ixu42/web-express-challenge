@@ -68,10 +68,8 @@ const Community = () => {
 
   useEffect(() => {
     if (searchQuery.length == 0) {
-      console.log("Use effect - no fiilter")
       fetchUsers();
     } else {
-      console.log("Use effect - filtering...")
       filterUsers(searchQuery);
     }
   }, [searchQuery]);
@@ -86,8 +84,6 @@ const Community = () => {
     }
 
     let shownUsersEnd = currentPage * usersPerPage;
-
-    console.log(userList)
 
     const currentPageUsers = userArray.slice(shownUsersStart, shownUsersEnd);
     setCurrentPageUsersState(currentPageUsers)
