@@ -72,7 +72,7 @@ const Community = () => {
     } else {
       filterUsers(searchQuery);
     }
-  }, [searchQuery]);
+  }, [searchQuery, currentPage]);
 
   const recalculateCurrentPageUsers = (userArray) => {
     let shownUsersStart;
