@@ -48,18 +48,17 @@ const SearchResults = ({ displayedList, offset, searchTerm, morePokemon, isTypin
             ))}
           </ul>
         ) : (
-          !isTyping && (
-            <div className="flex flex-col items-center mt-8">
-              <p className="text-center text-2xl text-gray-600 font-semibold">
-                No Pokémon matched your search! 🤔
-              </p>
-              <p className="text-center text-xl text-gray-500 mt-2">
-                Try a different name or spelling! 🌟
-              </p>
-            </div>
-          )
+          <div className="flex flex-col items-center mt-8">
+            <p className="text-center text-2xl text-gray-600 font-semibold">
+              No Pokémon matched your search! 🤔
+            </p>
+            <p className="text-center text-xl text-gray-500 mt-2">
+              Try a different name or spelling! 🌟
+            </p>
+          </div>
         )
-      )};
+      )
+      };
     </div>
   )
 };
