@@ -149,7 +149,7 @@ const Pokedex = () => {
     resetAll();
     setIsShuffling(true);
     setIsFetching(true);
-    await fetchPokemonList("", "", 0, "ID-asc", true);
+    await fetchPokemonList("", "", 0, "", true);
     setIsFetching(false);
     setIsShuffling(false);
   };
