@@ -16,12 +16,10 @@ router.delete(
   pokemonController.undislikePokemon
 );
 
-router.get("/sort/likes", pokemonController.sortByLikes);
-router.get("/sort/dislikes", pokemonController.sortByDislikes);
-
-router.get("/search/:query?", pokemonController.getMatchingPokemon);
-router.get("/type/:type?", pokemonController.getPokemonByType);
-router.get("/", pokemonController.getPokemon);
-router.get("/:name?", pokemonController.getPokemonByName);
+router.get('/', pokemonController.getPokemon)
+router.get('/search/:query?', pokemonController.getMatchingPokemon)
+router.get('/type/', pokemonController.getPokemonTypes)
+router.get('/type/:type?', pokemonController.getPokemonByType)
+router.get('/:name?', pokemonController.getPokemonByName)
 
 module.exports = router;

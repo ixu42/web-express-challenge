@@ -34,69 +34,7 @@ https://localhost.com:3000/api
     ]
     ```
 
-### 2. Get Pokémon by Name
-
-- **Endpoint**: `/api/pokemon/:name?`
-- **Method**: `GET`
-- **Description**: Fetches the details of a Pokémon by its name.
-- **Path Parameters**:
-  - `name` (string, required): Name of the Pokémon.
-- **Response**:
-  - **200 OK**
-    ```json
-    {
-      "abilities": [
-      {
-        "ability": {
-          "name": "static",
-          "url": "https://pokeapi.co/api/v2/ability/9/"
-        },
-        "is_hidden": false,
-        "slot": 1
-      },
-      ...
-      ],
-      "base_experience":112,
-      ...
-    }
-    ```
-  - **404 Not Found**
-    ```json
-    {
-      "error": "Pokémon not found."
-    }
-    ```
-
-### 3. Get Pokémon by Type
-
-- **Endpoint**: `/api/pokemon/type/:type?`
-- **Method**: `GET`
-- **Description**: Fetches the details of a list of Pokémon by its type.
-- **Path Parameters**:
-  - `type` (string, required): Type of the Pokémon.
-- **Response**:
-  - **200 OK**
-    ```json
-    [
-      {
-        "name": "charmander",
-        "url": "https://pokeapi.co/api/v2/pokemon/4/"
-      },
-      {
-        "name": "charmeleon",
-        "url": "https://pokeapi.co/api/v2/pokemon/5/"
-      },
-      ...
-    ]
-    ```
-  - **404 Not Found**
-    ```json
-    {
-      "error": "Pokémon not found."
-    }
-    ```
-
-### 4. Get a list of Pokémon by query
+### 2. Get a list of Pokémon by query
 
 - **Endpoint**: `/api/pokemon/search/:query?`
 - **Method**: `GET`
@@ -126,6 +64,99 @@ https://localhost.com:3000/api
     ```json
     {
       "error": "No matching Pokémon found."
+    }
+    ```
+
+### 3. Get All Pokémon Types
+
+- **Endpoint**: `/api/pokemon/type/`
+- **Method**: `GET`
+- **Description**: Fetches all Pokemon types.
+- **Response**:
+  - **200 OK**
+    ```json
+    [
+      {
+        "name": "normal",
+        "url": "https://pokeapi.co/api/v2/type/1/"
+      },
+      {
+        "name": "fighting",
+        "url": "https://pokeapi.co/api/v2/type/2/"
+      }
+      ...
+    ]
+    ```
+  - **404 Not Found**
+    ```json
+    {
+      "error": "Pokémon types not found."
+    }
+    ```
+
+### 4. Get Pokémon by Type
+
+- **Endpoint**: `/api/pokemon/type/:type?`
+- **Method**: `GET`
+- **Description**: Fetches the details of a list of Pokémon by its type.
+- **Path Parameters**:
+  - `type` (string, required): Type of the Pokémon.
+- **Response**:
+  - **200 OK**
+    ```json
+    [
+      {
+        "name": "pikachu",
+        "url": "https://pokeapi.co/api/v2/pokemon/25/",
+        "id": 25,
+        "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/25.svg"
+      },
+      {
+        "name": "raichu",
+        "url": "https://pokeapi.co/api/v2/pokemon/26/",
+        "id": 26,
+        "image": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/26.svg"
+      },
+      ...
+    ]
+    ```
+  - **404 Not Found**
+    ```json
+    {
+      "error": "Pokémon not found."
+    }
+    ```
+
+### 5. Get Pokémon by Name
+
+- **Endpoint**: `/api/pokemon/:name?`
+- **Method**: `GET`
+- **Description**: Fetches the details of a Pokémon by its name.
+- **Path Parameters**:
+  - `name` (string, required): Name of the Pokémon.
+- **Response**:
+  - **200 OK**
+    ```json
+    {
+      "abilities": [
+      {
+        "ability": {
+          "name": "static",
+          "url": "https://pokeapi.co/api/v2/ability/9/"
+        },
+        "is_hidden": false,
+        "slot": 1
+      },
+      ...
+      ],
+      "base_experience":112,
+      ...
+    }
+    ```
+  - **404 Not Found**
+    ```json
+    {
+      "error": "Pokémon not found."
     }
     ```
 

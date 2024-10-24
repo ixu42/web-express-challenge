@@ -15,12 +15,13 @@ const PokemonProfile = () => {
   const navigate = useNavigate();
 
   // Access the passed state (pokemonList) from location.state
-  const pokemonList = location.state?.pokemonList || [];
+  const displayedList = location.state?.displayedList || [];
   const offset = location.state?.offset || 0;
-  const matchingList = location.state?.matchingList || [];
-  const offsetForSearching = location.state?.offsetForSearching || 0;
   const searchTerm = location.state?.searchTerm || "";
   const morePokemon = location.state?.morePokemon;
+  const selectedType = location.state?.selectedType;
+  const sortOrder = location.state?.sortOrder;
+  // console.log("pokemon profile page | location.state", location.state);
 
   useEffect(() => {
     const fetchPokemonInfo = async () => {
@@ -45,65 +46,71 @@ const PokemonProfile = () => {
     navigate('/', {
       state: {
         from: 'profile',
-        pokemonList: pokemonList,
+        displayedList: displayedList,
         offset: offset,
-        matchingList: matchingList,
-        offsetForSearching: offsetForSearching,
         searchTerm: searchTerm,
         morePokemon: morePokemon,
+        selectedType: selectedType,
+        sortOrder: sortOrder,
         scrollPosition: location.state.scrollPosition,
       },
     });
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+  <div  className="flex justify-center items-center h-screen">
+    <p className="text-center text-2xl text-gray-600">Loading Pokémon data... 🐾</p>
+  </div>);
+
   if (error) return <div>{error}</div>;
 
 
-  const handleLike = async () => {{
-    try {
-      if (like) {
-        // If already liked, unlike the Pokémon
-        const unlikeResponse = await fetch(`/api/pokemon/unlike/${pokemonInfo.id}`, {
-          method: 'DELETE',
-        });
-        if (!unlikeResponse.ok) {
-          throw new Error('Please log in to like Pokémon');
-        }
-        setLike(false);  // Update state to reflect unliking
-      } else {
-        setLike(true);
-        setDislike(false);
-        const response = await fetch(`/api/pokemon/liked`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json', // Define the content type
-          },
-          body: JSON.stringify({
-            pokemon_id: pokemonInfo.id,  // Send the appropriate data
-            pokemon_name: pokemonInfo.name,
-          }),
-        });
-        if (!response.ok) {
-          throw new Error('Please log in to like Pokémon');
-        }
-
-        if (dislike) {
-          const undislikeResponse = await fetch(`/api/pokemon/undislike/${pokemonInfo.id}`, {
+  const handleLike = async () => {
+    {
+      try {
+        if (like) {
+          // If already liked, unlike the Pokémon
+          const unlikeResponse = await fetch(`/api/pokemon/unlike/${pokemonInfo.id}`, {
             method: 'DELETE',
           });
-          if (!undislikeResponse.ok) {
-            setUserError(true);
+          if (!unlikeResponse.ok) {
             throw new Error('Please log in to like Pokémon');
           }
+          setLike(false);  // Update state to reflect unliking
+        } else {
+          setLike(true);
           setDislike(false);
+          const response = await fetch(`/api/pokemon/liked`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json', // Define the content type
+            },
+            body: JSON.stringify({
+              pokemon_id: pokemonInfo.id,  // Send the appropriate data
+              pokemon_name: pokemonInfo.name,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error('Please log in to like Pokémon');
+          }
+
+          if (dislike) {
+            const undislikeResponse = await fetch(`/api/pokemon/undislike/${pokemonInfo.id}`, {
+              method: 'DELETE',
+            });
+            if (!undislikeResponse.ok) {
+              setUserError(true);
+              throw new Error('Please log in to like Pokémon');
+            }
+            setDislike(false);
+          }
         }
+      } catch (err) {
+        setUserError(true);
+        alert(err.message);
       }
-    } catch (err) {
-      setUserError(true);
-      alert(err.message);
     }
-  }};
+  };
 
   const handleDislike = async () => {
     try {
@@ -196,23 +203,23 @@ const PokemonInfo = ({ pokemonInfo }) => (
         <span>{pokemonInfo.types[0].type.name}</span>
         {pokemonInfo.types[1]?.type.name && <span>{pokemonInfo.types[1].type.name}</span>}
       </div>
-      </div>
+    </div>
 
-      <div className="stats-section">
-          <h2 className="text-center text-2xl font-bold mb-4">Stats</h2> {/* Centered "Stats" heading */}
-          <div className="flex flex-col space-y-2">
-            {pokemonInfo.stats.map((stats, index) => (
-              <div key={index} className="flex items-center">
-                <p className="w-1/4 min-w-[180px] whitespace-nowrap font-semibold">{stats.stat.name}:</p> {/* Semibold stat names */}
-                <div
-                  className="bg-blue-500 h-4 rounded"
-                  style={{ width: `${stats.base_stat}px` }} // Set width based on base_stat
-                ></div>
-                <span className="ml-2">{stats.base_stat}</span>
-              </div>
-            ))}
-        </div>
+    <div className="stats-section">
+      <h2 className="text-center text-2xl font-bold mb-4">Stats</h2> {/* Centered "Stats" heading */}
+      <div className="flex flex-col space-y-2">
+        {pokemonInfo.stats.map((stats, index) => (
+          <div key={index} className="flex items-center">
+            <p className="w-1/4 min-w-[180px] whitespace-nowrap font-semibold">{stats.stat.name}:</p> {/* Semibold stat names */}
+            <div
+              className="bg-blue-500 h-4 rounded"
+              style={{ width: `${stats.base_stat}px` }} // Set width based on base_stat
+            ></div>
+            <span className="ml-2">{stats.base_stat}</span>
+          </div>
+        ))}
       </div>
+    </div>
   </div>
 );
 
