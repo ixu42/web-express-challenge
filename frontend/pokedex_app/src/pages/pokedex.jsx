@@ -149,7 +149,7 @@ const Pokedex = () => {
     resetAll();
     setIsShuffling(true);
     setIsFetching(true);
-    await fetchPokemonList("", "", 0, "ID-asc", true);
+    await fetchPokemonList("", "", 0, "", true);
     setIsFetching(false);
     setIsShuffling(false);
   };
@@ -229,13 +229,18 @@ const Pokedex = () => {
       </header>
       <main>
         <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
-        <TypeFilter
-          types={pokemonTypes}
-          selectedType={selectedType}
-          onTypeChange={handleTypeChange}
-        />
-        <SortOptions sortOrder={sortOrder} onSort={sortPokemon} />
-        <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon} />
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 px-20">
+          <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon}/>
+          <div className="flex items-center gap-2">
+            <TypeFilter
+              types={pokemonTypes}
+              selectedType={selectedType}
+              onTypeChange={handleTypeChange}
+              className="min-w-[150px]"
+            />
+            <SortOptions sortOrder={sortOrder} onSort={sortPokemon} className="min-w-[100px]" />
+          </div>
+        </div>
         {/* Pokémon List or Search Results */}
         {!searchTerm ? (
           <PokemonList {...pokemonListProps} />

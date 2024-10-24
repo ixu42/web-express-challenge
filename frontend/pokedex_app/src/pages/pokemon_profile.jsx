@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { HandThumbDownIcon, HeartIcon } from '@heroicons/react/24/solid';
+import AuthContext from "../AuthContext";
 
 const PokemonProfile = () => {
   const { name } = useParams(); // Get the Pokémon name from the URL
@@ -10,6 +11,7 @@ const PokemonProfile = () => {
   const [userError, setUserError] = useState(false);
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
+  const { isAuthenticated, user } = useContext(AuthContext);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,6 +24,33 @@ const PokemonProfile = () => {
   const selectedType = location.state?.selectedType;
   const sortOrder = location.state?.sortOrder;
   // console.log("pokemon profile page | location.state", location.state);
+
+
+  const fetchLikedPokemon = () => {
+      fetch(`/api/user/${user.id}/liked_pokemons`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.liked_pokemons.includes(name))
+          setLike(true);})
+        .catch((error) => console.error("Error fetching liked pokemons' list", error));
+  };
+
+  const fetchDislikedPokemon = () => {
+      fetch(`/api/user/${user.id}/disliked_pokemons`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.disliked_pokemons.includes(name))
+          setDislike(true);})
+        .catch((error) => console.error("Error fetching disliked pokemons' list", error));
+
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchLikedPokemon();
+      fetchDislikedPokemon();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const fetchPokemonInfo = async () => {
@@ -63,7 +92,6 @@ const PokemonProfile = () => {
   </div>);
 
   if (error) return <div>{error}</div>;
-
 
   const handleLike = async () => {
     {

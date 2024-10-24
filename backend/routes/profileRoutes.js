@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const profileController = require("../controllers/profileController");
 const upload = require("../middlewares/uploadMiddleware");
-const { isAuthenticated } = require("../userController");
+const { isAuthenticated } = require("../middlewares/authMiddleware");
 
 router.get("/search", isAuthenticated, profileController.searchProfiles);
 router.get("/", isAuthenticated, profileController.getProfiles);

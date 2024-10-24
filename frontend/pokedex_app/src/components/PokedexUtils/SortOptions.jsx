@@ -1,12 +1,11 @@
 import React from "react";
 
 const SortOptions = ({ sortOrder, onSort }) => (
-  <div className="sort-container flex justify-end mr-8 sm:mr-12 md:mr-16">
-    <label htmlFor="sortOrder" className="text-lg font-bold mr-2 text-green-600">
-      Sort by:
-    </label>
+  <div>
+    <label className="text-lg font-semibold mr-2 text-gray-700">Sort by:</label>
     <select
       id="sortOrder"
+      className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
       value={sortOrder}
       onChange={(e) => { onSort(e.target.value) }} // Update sort order on change
     >
@@ -14,6 +13,8 @@ const SortOptions = ({ sortOrder, onSort }) => (
       <option value="ID-desc">ID (Descending)</option>
       <option value="A-Z">A-Z</option>
       <option value="Z-A">Z-A</option>
+      <option value="likes">Likes</option>
+      <option value="dislikes">Dislikes</option>
     </select>
   </div>
 );

@@ -75,9 +75,37 @@ const undislikePokemon = async (user_id, pokemon_id) => {
   return result.rows[0];
 };
 
+const sortByLikes = async () => {
+  const text = `
+    SELECT pokemons.id, pokemons.name, COUNT(user_pokemons.relationship) as likes
+    FROM pokemons
+    JOIN user_pokemons ON pokemons.id = user_pokemons.pokemon_id
+    WHERE user_pokemons.relationship = 'like'
+    GROUP BY pokemons.id, pokemons.name
+    ORDER BY likes DESC
+  `;
+  const result = await db.query(text);
+  return result.rows;
+};
+
+const sortByDislikes = async () => {
+  const text = `
+    SELECT pokemons.id, pokemons.name, COUNT(user_pokemons.relationship) as dislikes
+    FROM pokemons
+    JOIN user_pokemons ON pokemons.id = user_pokemons.pokemon_id
+    WHERE user_pokemons.relationship = 'dislike'
+    GROUP BY pokemons.id, pokemons.name
+    ORDER BY dislikes DESC
+  `;
+  const result = await db.query(text);
+  return result.rows;
+}
+
 module.exports = {
   likedPokemon,
   unlikePokemon,
   dislikedPokemon,
   undislikePokemon,
+  sortByLikes,
+  sortByDislikes,
 };

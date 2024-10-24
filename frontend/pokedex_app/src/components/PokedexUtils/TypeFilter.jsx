@@ -3,10 +3,14 @@ import React from "react";
 const TypeFilter = ({ types, selectedType, onTypeChange }) => {
   return (
     <div>
-      <h2>Filter by Type</h2>
-
+      <label className="text-lg font-semibold mr-2 text-gray-700">Filter by:</label>
       {/* Dropdown for type selection */}
-      <select value={selectedType} onChange={(e) => onTypeChange(e.target.value)}>
+      <select 
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        style={{ width: "auto" }}
+        value={selectedType}
+        onChange={(e) => onTypeChange(e.target.value)}
+      >
         <option value="">All Types</option>
         {types
           .filter((type) => type.name !== "unknown") // Exclude 'unknown' type

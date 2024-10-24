@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     setLoading(true);
-    await fetch("/api/logout", { method: "POST", credentials: "include" });
+    await fetch("/api/user/logout", { method: "POST", credentials: "include" });
     setIsAuthenticated(false);
     setUser(null);
     setLoading(false);
