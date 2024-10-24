@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../AuthContext";
+import HolyLoader from "holy-loader";
 
 const Community = () => {
   const [userList, setUserList] = useState([]);
@@ -28,10 +29,9 @@ const Community = () => {
       setLoading(true);
       const response = await fetch("/api/profile")
       const data = await response.json()
-      console.log("Fetched users: ", data)
+      setLoading(false)
       setUserList(data)
       recalculateCurrentPageUsers(data)
-      setLoading(false)
     }
     catch (error)
     {
@@ -56,10 +56,9 @@ const Community = () => {
           })
       )
       const data = await response.json()
-      console.log("Filtering's response:", data)
+      setLoading(false)
       setUserList(data)
       recalculateCurrentPageUsers(data)
-      setLoading(false)
     }
     catch
     {
@@ -150,10 +149,10 @@ const Community = () => {
           </form>
         </div>
         <div className="">
-          { (loading) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">Loading...</h2>  }
-          { (userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
+          { (loading) && <HolyLoader/>  }
+          { (!loading && userList.length === 0) && <h2 className="text-5xl m-10 p-10 text-center font-pokemon">No matches found</h2>}
           {
-            (userList.length > 0) && 
+            (!loading && userList.length > 0) && 
             (
               <ul className="m-80 grid grid-cols-4 gap-40">
                 {currentPageUsersState.map((user) => {
@@ -173,11 +172,13 @@ const Community = () => {
             )
           }
         </div>
-        <Pagination
-          currentPage={currentPage}
-          length={userList.length}
-          usersPerPage={usersPerPage}
-        />
+        {(!loading) && 
+          <Pagination
+            currentPage={currentPage}
+            length={userList.length}
+            usersPerPage={usersPerPage}
+          />
+        }
       </section>
     </main>
   );
