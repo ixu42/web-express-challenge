@@ -48,7 +48,8 @@ const undislikePokemon = async (user_id, pokemon_id) => {
   }
 }
 
-const sortByLikes = async (selectedType) => {
+
+const sortByLikes = async () => {
   try {
     console.log('sorting by likes');
     const pokemons = await pokemonModel.sortByLikes();
