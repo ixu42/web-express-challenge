@@ -101,20 +101,27 @@ const Profile = () => {
   };
 
   const handleBioSaving = async (event) => {
-    const newBio = { bio: bio };
-    const response = await fetch("api/profile/me/update/bio", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newBio),
-    });
-    const data = await response.json();
-    setOwnData(oldData => {
-      const newData = {...oldData, bio: data.bio};
-      return newData
-    });
-    setEditingBio(false);
+    try
+    {
+      const newBio = { bio: bio };
+      const response = await fetch("api/profile/me/update/bio", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newBio),
+      });
+      const data = await response.json();
+      setOwnData(oldData => {
+        const newData = {...oldData, bio: data.bio};
+        return newData
+      });
+      setEditingBio(false);
+    }
+    catch (error)
+    {
+      console.error("Error updating bio")
+    }
   };
 
   const handleFileChange = async (event) => {
