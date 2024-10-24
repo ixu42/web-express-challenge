@@ -150,7 +150,7 @@ const Community = () => {
           {
             (!loading && userList.length > 0) && 
             (
-              <ul className="m-80 grid grid-cols-4 gap-40">
+              <ul className="m-20 grid grid-cols-4 gap-40">
                 {currentPageUsersState.map((user) => {
 
                   return (
