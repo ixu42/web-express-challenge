@@ -1,16 +1,27 @@
 import { NavLink } from "react-router-dom";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import AuthContext from "../../AuthContext"; // Update with your actual path
 
 const Navbar = () => {
   const { isAuthenticated, logout, user } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null); 
 
-  //console.log(isAuthenticated);
-  //console.log(user);
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false); 
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     setDropdownOpen(false);
@@ -50,7 +61,7 @@ const Navbar = () => {
         )}
 
         {isAuthenticated && (
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button onClick={toggleDropdown} className="flex items-center focus:outline-none">
               <p className="text-2lg text-center mr-2">{user.name}</p>
               <img
