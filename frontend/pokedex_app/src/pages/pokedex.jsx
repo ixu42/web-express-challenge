@@ -10,7 +10,7 @@ import PokemonList from '../components/PokedexUtils/PokemonList'
 import SearchResults from '../components/PokedexUtils/SearchResults'
 import LoadMoreButton from '../components/PokedexUtils/LoadMoreButton'
 
-/* Pokedex handles data-fetching and manages state, 
+/* Pokedex handles data-fetching and manages state,
 while its child components (under PokedexUtils) renders the UI */
 
 const Pokedex = () => {
@@ -230,7 +230,7 @@ const Pokedex = () => {
       </header>
       <main>
         <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 px-20">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 px-20 mb-6">
           <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon}/>
           <div className="flex items-center gap-2">
             <TypeFilter

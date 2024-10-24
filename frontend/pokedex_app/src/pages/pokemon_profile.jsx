@@ -214,7 +214,7 @@ const PokemonProfile = () => {
 
 const PokemonInfo = ({ pokemonInfo }) => (
   <div className="pokemon-details">
-    <h1 className="font-pokemon text-[#E03C31] text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
+    <h1 className="font-pokemon text-[#E03C31] text-center text-6xl py-5 flex justify-evenly">{pokemonInfo.name}</h1>
     <img src={pokemonInfo.image} alt={`${pokemonInfo.name} sprite`} style={{ width: '150px', height: '150px' }} />
 
     <div className="info-section grid grid-cols-2 gap-4">
