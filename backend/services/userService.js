@@ -72,7 +72,7 @@ const registerUser = async (username, password, email) => {
 const loginUser = async (username, password ) => {
   try {
     console.log('loginUser');
-    if (!username || !password) {
+    if (!username) {
       throw new ValidationError('Username is required');
     }
     if (!password) {

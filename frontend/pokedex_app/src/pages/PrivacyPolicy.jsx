@@ -5,7 +5,7 @@ const PrivacyPolicy = () => {
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold text-center mb-6">Privacy Policy</h1>
       <p className="text-lg text-gray-700 mb-4">
-        Thank you for using the Pokedex App! This Privacy Policy outlines how we collect, use, and protect your information when you interact with our app. Please note that this is a student project and not intended for commercial use.
+        Thank you for using the Pokédex App! This Privacy Policy outlines how we collect, use, and protect your information when you interact with our app. Please note that this is a student project and not intended for commercial use.
       </p>
       <h2 className="text-2xl font-semibold mt-4">Information We Collect</h2>
       <p className="text-lg text-gray-700 mb-4">
