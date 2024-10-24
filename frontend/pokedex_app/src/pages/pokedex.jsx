@@ -15,14 +15,13 @@ while its child components (under PokedexUtils) renders the UI */
 
 const Pokedex = () => {
   const [displayedList, setDisplayedList] = useState([]);
-  const [offset, setOffset] = useState(0);
+  const [offset, setOffset] = useState(0); // For pagination
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("ID-asc");
-  const [morePokemon, setMorePokemon] = useState(true);
+  const [morePokemon, setMorePokemon] = useState(true); // Whether there is more pokemon to load
   const [isShuffling, setIsShuffling] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isFetching, setIsFetching] = useState(false); // Is fetching data or not
+  const [isLoading, setIsLoading] = useState(false); // For loading state of load more button
   const [pokemonTypes, setPokemonTypes] = useState([]); // List of Pokémon types
   const [selectedType, setSelectedType] = useState(""); // Currently selected type
 
@@ -31,11 +30,10 @@ const Pokedex = () => {
 
   const limit = 20; // Number of Pokémon per page
   const abortControllerRef = useRef(null); // Ref to store the current AbortController
-  const typingTimeoutRef = useRef(null);  // Ref to track the typing timeout
 
   // console.log("rendering Pokedex...");
 
-  const fetchPokemonList = async (type, query, offsetValue = 0, sortOrderValue = "", shouldShuffle = false) => {
+    const fetchPokemonList = async (type, query, offsetValue = 0, sortOrderValue = "", shouldShuffle = false) => {
     // Cancel the previous fetch request if it exists
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -65,7 +63,7 @@ const Pokedex = () => {
       setIsLoading(false);
       if (response.ok) {
         const fetchedPokemon = await response.json();
-        console.log("fetched pokemon:", fetchedPokemon);
+        // console.log("fetched pokemon:", fetchedPokemon);
         if (fetchedPokemon.length > limit) {
           setDisplayedList((prevList) => [...prevList, ...fetchedPokemon.slice(0, limit)]);
         } else {
@@ -81,7 +79,7 @@ const Pokedex = () => {
         console.error("Error fetching Pokémon:", error);
       }
     }
-  };
+  }
 
   const fetchPokemonTypes = async () => {
     try {
@@ -95,21 +93,13 @@ const Pokedex = () => {
 
   const searchPokemon = async (userInput) => {
     console.log("searchPokemon() called, userInput:", userInput);
-    setIsTyping(true); // User has started typing
-    clearTimeout(typingTimeoutRef.current); // Clear the previous timeout
-
     setSearchTerm(userInput);
     setOffset(0);
     setDisplayedList([]);
     setMorePokemon(true);
-
-    typingTimeoutRef.current = setTimeout(async () => {
-      setIsTyping(false); // User has stopped typing
-      setIsFetching(true); // Actual search starts
-      await fetchPokemonList(selectedType, userInput, 0, sortOrder, false)
-      setIsFetching(false); // Search completes
-
-    }, 300); // 300ms delay before performing the search
+    setIsFetching(true);
+    await fetchPokemonList(selectedType, userInput, 0, sortOrder, false)
+    setIsFetching(false);
   };
 
   const handleTypeChange = async (selectedType) => {
@@ -168,7 +158,7 @@ const Pokedex = () => {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect() for passed state");
+    // console.log("useEffect() for passed state");
 
     const initialOffset = location.state?.offset || 0; // Default to 0 if offset doesn't exist
     setOffset(initialOffset); // Set the offset for pagination
@@ -221,14 +211,14 @@ const Pokedex = () => {
   }, [location.state, navigate]);
 
   const pokemonListProps = { displayedList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder }
-  const searchResultsProps = { displayedList, offset, searchTerm, morePokemon, isTyping, isFetching, selectedType, sortOrder };
+  const searchResultsProps = { displayedList, offset, searchTerm, morePokemon, isFetching, selectedType, sortOrder };
 
   return (
     <div>
       <header>
         <img alt="pokemon logo" className="logo" src={logo} />
       </header>
-        <SearchBar searchTerm={searchTerm} onSearch={searchPokemon} />
+        <SearchBar onSearch={searchPokemon} lastSubmittedTerm={searchTerm} />
         <div className="flex flex-col md:flex-row items-center justify-center gap-4 px-20 mb-6">
           <ShuffleButton isShuffling={isShuffling} onShuffle={shufflePokemon}/>
           <div className="flex items-center gap-2">
@@ -247,7 +237,7 @@ const Pokedex = () => {
         ) : (
           <SearchResults {...searchResultsProps} />
         )}
-        {morePokemon && !isFetching && !isTyping && (<LoadMoreButton isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
+        {morePokemon && !isFetching && (<LoadMoreButton isLoading={isLoading} onLoadMore={loadMorePokemon} />)}
     </div>
   );
 };

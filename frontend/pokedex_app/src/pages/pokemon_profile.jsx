@@ -24,9 +24,7 @@ const PokemonProfile = () => {
   const selectedType = location.state?.selectedType;
   const sortOrder = location.state?.sortOrder;
   const scrollPosition = location.state?.scrollPosition || 0;
-  // const { displayedList = [], offset = 0, searchTerm = "", morePokemon = true, selectedType = "", sortOrder = "ID-asc" } = location.state || null;
-  console.log("pokemon profile page | location.state", location.state);
-
+  // console.log("pokemon profile page | location.state", location.state);
 
   const fetchLikedPokemon = () => {
       fetch(`/api/user/${user.id}/liked_pokemons`)
@@ -109,16 +107,6 @@ if (error) return (
     </p>
   </div>
 );
-  // if (error) return (
-  //   <div className="flex justify-center items-center h-screen">
-  //     <img
-  //         src="../../img/pikachu_detective.png"
-  //         alt="Pikachu Detective"
-  //         className="mb-4 w-24 h-24" // Adjust size as needed
-  //       />
-  //     <h2 className="text-center text-2xl text-gray-600">Oops! Pokémon Not Found🔍</h2>
-  //     <h2 className="text-center text-2xl text-gray-600">Please try another keyword</h2>
-  //   </div>);
 
   const handleLike = async () => {
     {

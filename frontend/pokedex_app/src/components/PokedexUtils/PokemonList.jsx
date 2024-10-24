@@ -69,7 +69,8 @@ const PokemonList = ({
             Try filter or sort pokemon differently! 🌟
           </p>
         </div>
-      )}
+      )
+      }
     </div>
   );
 };
