@@ -9,7 +9,7 @@ import defaultProfilePic from "../assets/no_profile_pic.jpg";
 
 const Profile = () => {
   const [editingBio, setEditingBio] = useState(false);
-  const [bio, setBio] = useState("Loading...");
+  const [bio, setBio] = useState("");
   const [ownData, setOwnData] = useState({
     id: 1,
     name: "Loading...",
@@ -103,6 +103,10 @@ const Profile = () => {
   const handleBioSaving = async (event) => {
     try
     {
+      if (editingBio == false)
+      {
+        return ;
+      }
       const newBio = { bio: bio };
       const response = await fetch("api/profile/me/update/bio", {
         method: "PATCH",
