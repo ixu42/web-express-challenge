@@ -52,8 +52,8 @@ const searchUsers = async (req, res, next) => {
 
 const registerUser = async (req, res, next) => {
   try {
-    const { username, password, email } = req.body;
-    const user = await userService.registerUser(username, password, email);
+    const { username, password} = req.body;
+    const user = await userService.registerUser(username, password);
     req.session.user = { id: user.id, username: user.username };
     res.status(201).json({ user: user, msg: "User registered" });
   } catch (error) {

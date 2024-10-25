@@ -57,13 +57,13 @@ const searchUsers = async (query) => {
   return result.rows[0]; // Return the array of users
 }
 
-const registerUser = async (username, password, email) => {
+const registerUser = async (username, password) => {
   const query = `
-    INSERT INTO users (username, password, email)
-    VALUES ($1, $2, $3)
+    INSERT INTO users (username, password)
+    VALUES ($1, $2)
     RETURNING *;
   `;
-  const result = await db.query(query, [username, password, email]);
+  const result = await db.query(query, [username, password]);
   if (result.rows.length === 0) {
     throw new UnauthorizedError("User not found");
   }

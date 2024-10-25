@@ -41,7 +41,7 @@ const searchUsers = async (username) => {
   }
 }
 
-const registerUser = async (username, password, email) => {
+const registerUser = async (username, password) => {
   try {
     console.log('registerUser');
     if (!username){
@@ -50,11 +50,8 @@ const registerUser = async (username, password, email) => {
     if (!password){
       throw new ValidationError("Password is required");
     }
-    if (!email){
-      throw new ValidationError("Email is required");
-    }
     const hash = await bcrypt.hash(password, saltRounds);
-    const user = await userModel.registerUser(username, hash, email);
+    const user = await userModel.registerUser(username, hash);
     const newProfile = {
       user_id: user.id,
       name: user.username,

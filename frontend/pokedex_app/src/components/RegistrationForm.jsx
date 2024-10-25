@@ -7,7 +7,6 @@ import AuthContext from "../AuthContext"; // for checking if user is authenticat
 const RegistrationForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
   const [pwordVisibility, setPwordVisibility] = useState(false);
 
   const { setIsAuthenticated, setUser } = useContext(AuthContext); // Get auth state from context
@@ -21,7 +20,6 @@ const RegistrationForm = (props) => {
     const newUser = {
       username: username,
       password: password,
-      email: email,
     };
     fetch("/api/user/register", {
       method: "POST",
@@ -53,10 +51,6 @@ const RegistrationForm = (props) => {
     setPassword(event.target.value);
   };
 
-  const handleEmail = (event) => {
-    setEmail(event.target.value);
-  };
-
   return (
     <section className="border-t-4 border-pink-700">
       <header className="pt-4 w-full text-center font-bold text-pink-950 text-2xl">
@@ -65,19 +59,6 @@ const RegistrationForm = (props) => {
         Register here
       </header>
       <form onSubmit={attemptRegistration}>
-        <div>
-          <label className="block mb-2 text-black" htmlFor="register-email">
-            Email address:
-          </label>
-          <input
-            autoComplete="off"
-            id="register-email"
-            className="w-full p-2 mb-6 text-pink-700 border-b-2 border-pink-700 outline-none focus:bg-gray-300"
-            type="email"
-            value={email}
-            onChange={handleEmail}
-          />
-        </div>
         <div>
           <label className="block mb-2 text-black" htmlFor="register-username">
             Username:

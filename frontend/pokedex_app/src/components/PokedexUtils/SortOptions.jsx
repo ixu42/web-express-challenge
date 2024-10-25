@@ -13,8 +13,8 @@ const SortOptions = ({ sortOrder, onSort }) => (
       <option value="ID-desc">ID (Descending)</option>
       <option value="A-Z">A-Z</option>
       <option value="Z-A">Z-A</option>
-      <option value="likes">Likes</option>
-      <option value="dislikes">Dislikes</option>
+      <option value="likes">Most likes</option>
+      <option value="dislikes">Most dislikes</option>
     </select>
   </div>
 );
